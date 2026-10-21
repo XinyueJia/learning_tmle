@@ -1,0 +1,46 @@
+{
+  "date": "2026-10-21",
+  "scope": "First-use empirical distribution and empirical variance definitions, RHC examples and explicit variance denominator",
+  "changed": [
+    "zh/src/chapters/ch00.md",
+    "zh/src/chapters/ch01.md",
+    "zh/src/tmle-overview.md",
+    "zh/src/chapters/ch07.md",
+    "zh/src/rhc-full.js"
+  ],
+  "build": "sh scripts/node.sh scripts/build.js (exit 0)",
+  "tests": {
+    "files": [
+      "tests/zh/dr-intro.test.js",
+      "tests/zh/tmle-overview.test.js",
+      "tests/zh/tmle-trace-view.test.js"
+    ],
+    "passed": 14,
+    "failed": 0,
+    "skipped": 0,
+    "actual_julia_panels_executed": true
+  },
+  "browser": {
+    "suite": "tests/zh/tmle-overview-browser.cjs",
+    "engine": "Chrome via Playwright",
+    "widths": [
+      1360,
+      375
+    ],
+    "passed": true,
+    "checks": [
+      "All six steps and accessible formula recalls",
+      "SE and variance agreement with independently reconstructed patient contributions",
+      "Reset and navigation",
+      "No page overflow or console errors"
+    ],
+    "visual_inspection": "Step6 375px: empirical variance explanation and horizontally scrollable formula"
+  },
+  "denominator_verification": [
+    "shared/js/rhc.js centres EIF and divides sum of squares by n",
+    "shared/js/tmle-trace.js averages centred squared EIF over n"
+  ],
+  "unchanged": "Numerical engines, data and Julia/R source; no full-suite rerun in this terminology-only pass",
+  "previous_full_verification": "zh/docs/VERIFICATION.json",
+  "evidence": "output/zh/verification/empirical-terms"
+}

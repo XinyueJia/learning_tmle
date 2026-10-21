@@ -1,0 +1,32 @@
+.if-function{margin:1.5rem 0;padding:1rem;border:1px solid var(--line,#b8cde1);border-radius:12px;background:#fff;min-width:0}
+.if-function figcaption{color:#011451;font-size:1rem;line-height:1.65;margin-bottom:1rem}
+.if-context{background:#f2f7fc;border-left:4px solid #005398;padding:.8rem 1rem;margin-bottom:1rem}
+.if-context p{margin:.5rem 0;line-height:1.8}
+.if-controls{display:flex;flex-wrap:wrap;align-items:flex-end;gap:1rem;margin:1rem 0}
+.if-controls label{display:grid;gap:.5rem;color:#172b4d;max-width:100%}
+.if-controls select{font:inherit;max-width:100%;background:#fff;color:#172b4d;border:1px solid #005398;border-radius:6px;padding:.5rem}
+.if-controls button{font:inherit;color:#005398;background:#fff;border:1px solid #005398;border-radius:6px;padding:.5rem .8rem;cursor:pointer}
+.if-function :focus-visible{outline:3px solid #005398;outline-offset:3px}
+.if-function .diagram-scroll{max-width:100%;overflow-x:auto;padding:1rem 0;overscroll-behavior-x:contain}
+.if-flow{display:flex;flex-wrap:nowrap;align-items:stretch;gap:12px;min-width:750px;width:max-content;max-width:none}
+.if-cell{width:215px;flex:0 0 215px;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:space-between;gap:1rem;text-align:center;padding:1rem .7rem;border:1px solid #b8cde1;border-radius:8px;color:#172b4d;background:#fff}
+.if-cell strong{font-size:1.3rem;color:#005398;white-space:nowrap}
+.if-cell span,.if-cell small{font-size:.88rem;line-height:1.6}
+.if-rule{background:#f2f7fc}
+.if-rule strong{font-size:1.1rem}
+.if-arrow{display:flex;align-items:center;font-size:34px;line-height:1;flex:0 0 28px;color:#005398}
+.if-substitution{overflow-x:auto;padding:.6rem 0;line-height:1.9}
+.if-meaning,.if-boundary{font-size:.95rem;line-height:1.8;color:#172b4d}
+.if-boundary{border-top:1px solid #b8cde1;padding-top:1rem}
+.if-function [hidden]{display:none!important}
+@media(max-width:600px){.if-function{padding:.7rem}.if-context{padding:.6rem}.if-controls{gap:.7rem}}
+
+.qg-introduction{min-width:0;max-width:100%}
+.qg-introduction table{min-width:1060px;table-layout:fixed}
+.qg-introduction th:nth-child(1){width:240px}
+.qg-introduction th:nth-child(2){width:170px}
+.qg-introduction th:nth-child(3){width:300px}
+.qg-introduction th:nth-child(4){width:350px}
+.qg-introduction th,.qg-introduction td{text-align:left;padding:.8rem;vertical-align:top}
+/* Anchor KaTeX’s accessible absolute MathML inside the local scroller. */
+.qg-introduction .inline-math{white-space:nowrap;position:relative}

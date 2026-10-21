@@ -1,0 +1,585 @@
+{
+  "version": 1,
+  "source": "en/R/ch05.R",
+  "lineCount": 52,
+  "cohort": {
+    "n": 5735,
+    "events": 1918
+  },
+  "lines": [
+    {
+      "line": 4,
+      "code": "script_argument <- grep(\"^--file=\", commandArgs(FALSE), value = TRUE)",
+      "inputs": [],
+      "outputs": [
+        "script_argument"
+      ],
+      "operation": "commandArgs(FALSE) reads the startup arguments. grep matches the start of a string using ^, and value=TRUE retains the matched strings. The result is a character vector of length zero or one locating the file run by Rscript.",
+      "formulaTex": null,
+      "dimensions": {
+        "script_argument": []
+      }
+    },
+    {
+      "line": 6,
+      "code": "source_files <- vapply(sys.frames(), function(frame) if (is.null(frame$ofile)) \"\" else frame$ofile, character(1))",
+      "inputs": [],
+      "outputs": [
+        "source_files"
+      ],
+      "operation": "sys.frames() reads the call frames. vapply applies a function to each frame, requiring one character string per result. When source() runs a script, ofile records its path; frames without a path return an empty string.",
+      "formulaTex": null,
+      "dimensions": {
+        "source_files": []
+      }
+    },
+    {
+      "line": 8,
+      "code": "script_path <- if (any(nzchar(source_files))) tail(source_files[nzchar(source_files)], 1) else if (length(script_argument)) sub(\"^--file=\", \"\", script_argument[1]) else file.path(\"en\", \"R\", \"ch05.R\")",
+      "inputs": [
+        "source_files",
+        "script_argument"
+      ],
+      "outputs": [
+        "script_path"
+      ],
+      "operation": "if selects the source path: use the last non-empty ofile when called through source(); otherwise remove the --file= prefix. Code pasted into the R console at the project root defaults to this lesson’s script path. The output is one path string; [] indexing starts at 1.",
+      "formulaTex": null,
+      "dimensions": {
+        "source_files": [],
+        "script_argument": [],
+        "script_path": []
+      }
+    },
+    {
+      "line": 10,
+      "code": "stopifnot(length(script_path) == 1L, !is.na(script_path))",
+      "inputs": [
+        "script_path"
+      ],
+      "outputs": [],
+      "operation": "length checks that the path has one element. 1L is integer 1, and !is.na excludes missing values. stopifnot requires every condition to be TRUE and stops otherwise.",
+      "formulaTex": null,
+      "dimensions": {
+        "script_path": []
+      }
+    },
+    {
+      "line": 12,
+      "code": "project_root <- normalizePath(file.path(dirname(script_path), \"..\", \"..\"), mustWork = TRUE)",
+      "inputs": [
+        "script_path"
+      ],
+      "outputs": [
+        "project_root"
+      ],
+      "operation": "dirname extracts the script directory. file.path joins the path two levels up to the project root; normalizePath requires that directory to exist. The result is independent of the current working directory.",
+      "formulaTex": null,
+      "dimensions": {
+        "script_path": [],
+        "project_root": []
+      }
+    },
+    {
+      "line": 14,
+      "code": "source(file.path(project_root, \"shared\", \"R\", \"RHCCase.R\"))",
+      "inputs": [
+        "project_root"
+      ],
+      "outputs": [],
+      "operation": "source reads and executes the shared R definitions for reading the CSV, mathematical functions and manual model fitting. Only base R is used; no TMLE package is required.",
+      "formulaTex": null,
+      "dimensions": {
+        "project_root": []
+      }
+    },
+    {
+      "line": 16,
+      "code": "data <- rhc_data()",
+      "inputs": [],
+      "outputs": [
+        "data"
+      ],
+      "operation": "Read the original CSV, calculate empirical probabilities for the eight (x,a,y) cells and return the resulting data and model in a list. Later calculations use these same patient records.",
+      "formulaTex": null,
+      "dimensions": {
+        "data": []
+      }
+    },
+    {
+      "line": 18,
+      "code": "model <- data$empirical_model",
+      "inputs": [
+        "data"
+      ],
+      "outputs": [
+        "model"
+      ],
+      "operation": "Use a list representing the saturated model of the full empirical distribution as the mathematical reference point for checking gradients.",
+      "formulaTex": null,
+      "dimensions": {
+        "data": [],
+        "model": []
+      }
+    },
+    {
+      "line": 20,
+      "code": "cells <- data$cells",
+      "inputs": [
+        "data"
+      ],
+      "outputs": [
+        "cells"
+      ],
+      "operation": "Extract the eight-cell table in x, a, y order, keeping subsequent vectors aligned.",
+      "formulaTex": null,
+      "dimensions": {
+        "data": [],
+        "cells": [
+          8,
+          5
+        ]
+      }
+    },
+    {
+      "line": 22,
+      "code": "q_at_cell <- model$q[cbind(cells$a + 1L, cells$x + 1L)]",
+      "inputs": [
+        "model",
+        "cells"
+      ],
+      "outputs": [
+        "q_at_cell"
+      ],
+      "operation": "A two-column index matrix selects individual entries from the R matrix. The first cbind column gives row a+1 and the second gives column x+1, producing eight values.",
+      "formulaTex": "q_j=Q(a_j,x_j)",
+      "dimensions": {
+        "model": [],
+        "cells": [
+          8,
+          5
+        ],
+        "q_at_cell": [
+          8
+        ]
+      }
+    },
+    {
+      "line": 24,
+      "code": "score <- (cells$x - model$px[2]) + (cells$a - model$g[cells$x + 1L]) + (cells$y - q_at_cell)",
+      "inputs": [
+        "cells",
+        "model",
+        "q_at_cell"
+      ],
+      "outputs": [
+        "score"
+      ],
+      "operation": "Add the three centred mechanism directions element by element to obtain eight mixed-score values. Index g using x+1.",
+      "formulaTex": "S=(X-p_1)+(A-g(X))+(Y-Q(A,X))",
+      "dimensions": {
+        "cells": [
+          8,
+          5
+        ],
+        "model": [],
+        "q_at_cell": [
+          8
+        ],
+        "score": [
+          8
+        ]
+      }
+    },
+    {
+      "line": 26,
+      "code": "check <- direction_check(data, score)",
+      "inputs": [
+        "data",
+        "score"
+      ],
+      "outputs": [
+        "check"
+      ],
+      "operation": "Calculate a central difference quotient and gradient pairing along a valid probability path; return a list.",
+      "formulaTex": "\\dot\\Psi\\approx[\\Psi(P_h)-\\Psi(P_{-h})]/(2h)",
+      "dimensions": {
+        "data": [],
+        "score": [
+          8
+        ],
+        "check": []
+      }
+    },
+    {
+      "line": 28,
+      "code": "outcome_score <- cells$y - q_at_cell",
+      "inputs": [
+        "cells",
+        "q_at_cell"
+      ],
+      "outputs": [
+        "outcome_score"
+      ],
+      "operation": "Keep only the centred residual of the outcome mechanism, producing eight values; hold the other two mechanisms fixed.",
+      "formulaTex": "S_Y=Y-Q(A,X)",
+      "dimensions": {
+        "cells": [
+          8,
+          5
+        ],
+        "q_at_cell": [
+          8
+        ],
+        "outcome_score": [
+          8
+        ]
+      }
+    },
+    {
+      "line": 30,
+      "code": "outcome_check <- direction_check(data, outcome_score)",
+      "inputs": [
+        "data",
+        "outcome_score"
+      ],
+      "outputs": [
+        "outcome_check"
+      ],
+      "operation": "Check the pure outcome direction at the same empirical reference point.",
+      "formulaTex": null,
+      "dimensions": {
+        "data": [],
+        "outcome_score": [
+          8
+        ],
+        "outcome_check": []
+      }
+    },
+    {
+      "line": 32,
+      "code": "point <- point_direction(data, 4L)",
+      "inputs": [
+        "data"
+      ],
+      "outputs": [
+        "point"
+      ],
+      "operation": "Reuse Chapter 2’s point direction at (0,1,1), returning a list with the score and mean derivative.",
+      "formulaTex": null,
+      "dimensions": {
+        "data": [],
+        "point": []
+      }
+    },
+    {
+      "line": 34,
+      "code": "point_check <- direction_check(data, point$score)",
+      "inputs": [
+        "data",
+        "point"
+      ],
+      "outputs": [
+        "point_check"
+      ],
+      "operation": "Pair the same score with the derivative of the sex-standardised risk difference. This target differs from the mean.",
+      "formulaTex": null,
+      "dimensions": {
+        "data": [],
+        "point": [],
+        "point_check": []
+      }
+    },
+    {
+      "line": 36,
+      "code": "print(list(mixed = check, outcome = outcome_check, point = point_check))",
+      "inputs": [
+        "check",
+        "outcome_check",
+        "point_check"
+      ],
+      "outputs": [],
+      "operation": "Store the three checks by name in a list and print them separately, keeping derivatives of different targets distinct.",
+      "formulaTex": null,
+      "dimensions": {
+        "check": [],
+        "outcome_check": [],
+        "point_check": []
+      }
+    },
+    {
+      "line": 38,
+      "code": "p <- cells$p",
+      "inputs": [
+        "cells"
+      ],
+      "outputs": [
+        "p"
+      ],
+      "operation": "Read the eight empirical cell probabilities as elementwise divisors when converting h to a score.",
+      "formulaTex": null,
+      "dimensions": {
+        "cells": [
+          8,
+          5
+        ],
+        "p": [
+          8
+        ]
+      }
+    },
+    {
+      "line": 40,
+      "code": "for (j in 1:7) {",
+      "inputs": [],
+      "outputs": [
+        "j"
+      ],
+      "operation": "The for loop assigns j the values 1 to 7. The opening brace begins the loop body, constructing seven independent probability-mass transfer directions.",
+      "formulaTex": null,
+      "dimensions": {
+        "j": []
+      }
+    },
+    {
+      "line": 42,
+      "code": "  h <- numeric(8) ",
+      "inputs": [],
+      "outputs": [
+        "h"
+      ],
+      "operation": "numeric(8) creates a numeric vector of eight zeros, newly created on each iteration.",
+      "formulaTex": null,
+      "dimensions": {
+        "h": [
+          8
+        ]
+      }
+    },
+    {
+      "line": 44,
+      "code": "  h[j] <- 1",
+      "inputs": [
+        "h",
+        "j"
+      ],
+      "outputs": [
+        "h"
+      ],
+      "operation": "Using one-based [] indexing, set the mass increment in cell j to 1.",
+      "formulaTex": null,
+      "dimensions": {
+        "h": [
+          8
+        ],
+        "j": []
+      }
+    },
+    {
+      "line": 46,
+      "code": "  h[8] <- -1",
+      "inputs": [
+        "h"
+      ],
+      "outputs": [
+        "h"
+      ],
+      "operation": "Set the eighth increment to −1 to offset +1 in cell j, ensuring that h sums to 0.",
+      "formulaTex": "\\sum_jh_j=0",
+      "dimensions": {
+        "h": [
+          8
+        ]
+      }
+    },
+    {
+      "line": 48,
+      "code": "  contrast_check <- direction_check(data, h / p)",
+      "inputs": [
+        "data",
+        "h",
+        "p"
+      ],
+      "outputs": [
+        "contrast_check"
+      ],
+      "operation": "Elementwise / converts the mass direction h into a score. The shared function uses a fixed central-difference step on paths with strictly positive probabilities.",
+      "formulaTex": "S_j=h_j/p_j",
+      "dimensions": {
+        "data": [],
+        "h": [
+          8
+        ],
+        "p": [
+          8
+        ],
+        "contrast_check": []
+      }
+    },
+    {
+      "line": 50,
+      "code": "  cat(\"direction\", j, \"; finite difference =\", contrast_check$finite_difference, \"; pairing =\", contrast_check$pairing, \"\\n\")",
+      "inputs": [
+        "j",
+        "contrast_check"
+      ],
+      "outputs": [],
+      "operation": "Display the direct difference quotient and gradient pairing for this independent direction.",
+      "formulaTex": null,
+      "dimensions": {
+        "j": [],
+        "contrast_check": []
+      }
+    },
+    {
+      "line": 52,
+      "code": "}",
+      "inputs": [],
+      "outputs": [],
+      "operation": "End the loop. These seven numerical checks help detect errors; the result for all directions still relies on the proof in the text.",
+      "formulaTex": null,
+      "dimensions": {}
+    }
+  ],
+  "objects": {
+    "project_root": {
+      "key": "project_root",
+      "label": "project_root",
+      "type": "character vector",
+      "dimensions": [],
+      "dimensionText": "path or parameter string"
+    },
+    "source_files": {
+      "key": "source_files",
+      "label": "source_files",
+      "type": "character vector",
+      "dimensions": [],
+      "dimensionText": "path or parameter string"
+    },
+    "cells": {
+      "key": "cells",
+      "label": "cells",
+      "type": "data.frame",
+      "dimensions": [
+        8,
+        5
+      ],
+      "dimensionText": "8 rows × 5 columns (x, a, y, n, p)"
+    },
+    "p": {
+      "key": "p",
+      "label": "p",
+      "type": "numeric vector",
+      "dimensions": [
+        8
+      ],
+      "dimensionText": "Length 8; aligned according to (x, a, y) grid"
+    },
+    "script_argument": {
+      "key": "script_argument",
+      "label": "script_argument",
+      "type": "character vector",
+      "dimensions": [],
+      "dimensionText": "path or parameter string"
+    },
+    "data": {
+      "key": "data",
+      "label": "data",
+      "type": "list",
+      "dimensions": [],
+      "dimensionText": "Named container; each member has its own dimensions"
+    },
+    "point_check": {
+      "key": "point_check",
+      "label": "point_check",
+      "type": "list",
+      "dimensions": [],
+      "dimensionText": "Named container; each member has its own dimensions"
+    },
+    "script_path": {
+      "key": "script_path",
+      "label": "script_path",
+      "type": "character vector",
+      "dimensions": [],
+      "dimensionText": "path or parameter string"
+    },
+    "outcome_check": {
+      "key": "outcome_check",
+      "label": "outcome_check",
+      "type": "list",
+      "dimensions": [],
+      "dimensionText": "Named container; each member has its own dimensions"
+    },
+    "point": {
+      "key": "point",
+      "label": "point",
+      "type": "list",
+      "dimensions": [],
+      "dimensionText": "Named container describing a point direction"
+    },
+    "q_at_cell": {
+      "key": "q_at_cell",
+      "label": "q_at_cell",
+      "type": "numeric vector",
+      "dimensions": [
+        8
+      ],
+      "dimensionText": "Length 8; aligned according to (x, a, y) grid"
+    },
+    "outcome_score": {
+      "key": "outcome_score",
+      "label": "outcome_score",
+      "type": "numeric vector",
+      "dimensions": [
+        8
+      ],
+      "dimensionText": "Length 8; aligned according to (x, a, y) grid"
+    },
+    "j": {
+      "key": "j",
+      "label": "j",
+      "type": "integer scalar",
+      "dimensions": [],
+      "dimensionText": "Length 1"
+    },
+    "contrast_check": {
+      "key": "contrast_check",
+      "label": "contrast_check",
+      "type": "list",
+      "dimensions": [],
+      "dimensionText": "Named container; each member has its own dimensions"
+    },
+    "h": {
+      "key": "h",
+      "label": "h",
+      "type": "numeric vector",
+      "dimensions": [
+        8
+      ],
+      "dimensionText": "Length 8; aligned according to (x, a, y) grid"
+    },
+    "model": {
+      "key": "model",
+      "label": "model",
+      "type": "list",
+      "dimensions": [],
+      "dimensionText": "Named container; each member has its own dimensions"
+    },
+    "score": {
+      "key": "score",
+      "label": "score",
+      "type": "numeric vector",
+      "dimensions": [
+        8
+      ],
+      "dimensionText": "Length 8; aligned according to (x, a, y) grid"
+    },
+    "check": {
+      "key": "check",
+      "label": "check",
+      "type": "list",
+      "dimensions": [],
+      "dimensionText": "Named container; each member has its own dimensions"
+    }
+  }
+}

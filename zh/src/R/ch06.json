@@ -1,0 +1,219 @@
+{
+  "version": 1,
+  "source": "zh/R/ch06.R",
+  "lineCount": 25,
+  "cohort": {
+    "n": 5735,
+    "events": 1918
+  },
+  "lines": [
+    {
+      "line": 4,
+      "code": "script_argument <- grep(\"^--file=\", commandArgs(FALSE), value = TRUE)",
+      "inputs": [],
+      "outputs": [
+        "script_argument"
+      ],
+      "operation": "commandArgs(FALSE)读取启动参数，grep按^匹配开头，value=TRUE保留字符串。输出零项或一项字符向量，定位Rscript当前文件。",
+      "formulaTex": null,
+      "dimensions": {
+        "script_argument": []
+      }
+    },
+    {
+      "line": 6,
+      "code": "source_files <- vapply(sys.frames(), function(frame) if (is.null(frame$ofile)) \"\" else frame$ofile, character(1))",
+      "inputs": [],
+      "outputs": [
+        "source_files"
+      ],
+      "operation": "sys.frames()读取调用环境；vapply逐个返回长度1字符。被source()调用时ofile记录当前脚本路径；没有路径的环境返回空串。",
+      "formulaTex": null,
+      "dimensions": {
+        "source_files": []
+      }
+    },
+    {
+      "line": 8,
+      "code": "script_path <- if (any(nzchar(source_files))) tail(source_files[nzchar(source_files)], 1) else if (length(script_argument)) sub(\"^--file=\", \"\", script_argument[1]) else file.path(\"zh\", \"R\", \"ch06.R\")",
+      "inputs": [
+        "source_files",
+        "script_argument"
+      ],
+      "outputs": [
+        "script_path"
+      ],
+      "operation": "if选择来源：source()时取最后一个非空ofile，否则去掉--file=前缀。在项目根R控制台直接运行时，默认使用本讲脚本位置；输出一个路径字符串，[]索引从1开始。",
+      "formulaTex": null,
+      "dimensions": {
+        "source_files": [],
+        "script_argument": [],
+        "script_path": []
+      }
+    },
+    {
+      "line": 10,
+      "code": "stopifnot(length(script_path) == 1L, !is.na(script_path))",
+      "inputs": [
+        "script_path"
+      ],
+      "outputs": [],
+      "operation": "length检查路径只有一项；1L是整数1，!is.na排除缺失。stopifnot要求所有条件为TRUE，否则停止。",
+      "formulaTex": null,
+      "dimensions": {
+        "script_path": []
+      }
+    },
+    {
+      "line": 12,
+      "code": "project_root <- normalizePath(file.path(dirname(script_path), \"..\", \"..\"), mustWork = TRUE)",
+      "inputs": [
+        "script_path"
+      ],
+      "outputs": [
+        "project_root"
+      ],
+      "operation": "dirname取脚本目录；file.path向上两层拼接项目根，normalizePath要求目录存在。路径不依赖当前工作目录。",
+      "formulaTex": null,
+      "dimensions": {
+        "script_path": [],
+        "project_root": []
+      }
+    },
+    {
+      "line": 14,
+      "code": "source(file.path(project_root, \"shared\", \"R\", \"RHCCase.R\"))",
+      "inputs": [
+        "project_root"
+      ],
+      "outputs": [],
+      "operation": "source读取并执行共享R定义，提供实际CSV读取、纯数学函数与手动拟合器。仅使用base R，无需安装TMLE软件包。",
+      "formulaTex": null,
+      "dimensions": {
+        "project_root": []
+      }
+    },
+    {
+      "line": 16,
+      "code": "data <- rhc_data()",
+      "inputs": [],
+      "outputs": [
+        "data"
+      ],
+      "operation": "从同一官方CSV计算各观测组合的概率及经验模型，输出list；后续所有数值由输入记录决定。",
+      "formulaTex": null,
+      "dimensions": {
+        "data": []
+      }
+    },
+    {
+      "line": 18,
+      "code": "demo <- projection_demo(data, b = 1)",
+      "inputs": [
+        "data"
+      ],
+      "outputs": [
+        "demo"
+      ],
+      "operation": "在本练习固定经验g，b设候选附加分量系数；手工加权线性代数投影返回list。",
+      "formulaTex": "f=D+b(A-g(X))",
+      "dimensions": {
+        "data": [],
+        "demo": []
+      }
+    },
+    {
+      "line": 20,
+      "code": "cat(\"candidate norm squared =\", demo$candidate_second_moment, \"; projection =\", demo$projection_second_moment, \"; residual =\", demo$residual_second_moment, \"\\n\")",
+      "inputs": [
+        "demo"
+      ],
+      "outputs": [],
+      "operation": "显示三个加权平方范数标量，检查勾股分解；单位是概率差平方。",
+      "formulaTex": "\\lVert f\\rVert^2=\\lVert\\Pi f\\rVert^2+\\lVert f-\\Pi f\\rVert^2",
+      "dimensions": {
+        "demo": []
+      }
+    },
+    {
+      "line": 22,
+      "code": "projection_error <- max(abs(demo$projection - demo$canonical))",
+      "inputs": [
+        "demo"
+      ],
+      "outputs": [
+        "projection_error"
+      ],
+      "operation": "逐格相减后abs取绝对值，max把8项收缩为一个最大误差。",
+      "formulaTex": null,
+      "dimensions": {
+        "demo": [],
+        "projection_error": []
+      }
+    },
+    {
+      "line": 24,
+      "code": "cat(\"maximum projection error =\", projection_error, \"\\n\")",
+      "inputs": [
+        "projection_error"
+      ],
+      "outputs": [],
+      "operation": "显示投影与典范梯度的最大数值差；该练习使用固定g的模型。",
+      "formulaTex": null,
+      "dimensions": {
+        "projection_error": []
+      }
+    }
+  ],
+  "objects": {
+    "project_root": {
+      "key": "project_root",
+      "label": "project_root",
+      "type": "character vector",
+      "dimensions": [],
+      "dimensionText": "路径或参数字符串"
+    },
+    "demo": {
+      "key": "demo",
+      "label": "demo",
+      "type": "list",
+      "dimensions": [],
+      "dimensionText": "命名容器；各成员按自身维度"
+    },
+    "projection_error": {
+      "key": "projection_error",
+      "label": "projection_error",
+      "type": "numeric scalar (double)",
+      "dimensions": [],
+      "dimensionText": "长度1"
+    },
+    "source_files": {
+      "key": "source_files",
+      "label": "source_files",
+      "type": "character vector",
+      "dimensions": [],
+      "dimensionText": "路径或参数字符串"
+    },
+    "script_argument": {
+      "key": "script_argument",
+      "label": "script_argument",
+      "type": "character vector",
+      "dimensions": [],
+      "dimensionText": "路径或参数字符串"
+    },
+    "data": {
+      "key": "data",
+      "label": "data",
+      "type": "list",
+      "dimensions": [],
+      "dimensionText": "命名容器；各成员按自身维度"
+    },
+    "script_path": {
+      "key": "script_path",
+      "label": "script_path",
+      "type": "character vector",
+      "dimensions": [],
+      "dimensionText": "路径或参数字符串"
+    }
+  }
+}

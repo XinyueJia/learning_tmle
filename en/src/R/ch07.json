@@ -1,0 +1,285 @@
+{
+  "version": 1,
+  "source": "en/R/ch07.R",
+  "lineCount": 29,
+  "cohort": {
+    "n": 5735,
+    "events": 1918
+  },
+  "lines": [
+    {
+      "line": 4,
+      "code": "script_argument <- grep(\"^--file=\", commandArgs(FALSE), value = TRUE)",
+      "inputs": [],
+      "outputs": [
+        "script_argument"
+      ],
+      "operation": "commandArgs(FALSE) reads the startup arguments. grep matches the start of a string using ^, and value=TRUE retains the matched strings. The result is a character vector of length zero or one locating the file run by Rscript.",
+      "formulaTex": null,
+      "dimensions": {
+        "script_argument": []
+      }
+    },
+    {
+      "line": 6,
+      "code": "source_files <- vapply(sys.frames(), function(frame) if (is.null(frame$ofile)) \"\" else frame$ofile, character(1))",
+      "inputs": [],
+      "outputs": [
+        "source_files"
+      ],
+      "operation": "sys.frames() reads the call frames. vapply applies a function to each frame, requiring one character string per result. When source() runs a script, ofile records its path; frames without a path return an empty string.",
+      "formulaTex": null,
+      "dimensions": {
+        "source_files": []
+      }
+    },
+    {
+      "line": 8,
+      "code": "script_path <- if (any(nzchar(source_files))) tail(source_files[nzchar(source_files)], 1) else if (length(script_argument)) sub(\"^--file=\", \"\", script_argument[1]) else file.path(\"en\", \"R\", \"ch07.R\")",
+      "inputs": [
+        "source_files",
+        "script_argument"
+      ],
+      "outputs": [
+        "script_path"
+      ],
+      "operation": "if selects the source path: use the last non-empty ofile when called through source(); otherwise remove the --file= prefix. Code pasted into the R console at the project root defaults to this lesson’s script path. The output is one path string; [] indexing starts at 1.",
+      "formulaTex": null,
+      "dimensions": {
+        "source_files": [],
+        "script_argument": [],
+        "script_path": []
+      }
+    },
+    {
+      "line": 10,
+      "code": "stopifnot(length(script_path) == 1L, !is.na(script_path))",
+      "inputs": [
+        "script_path"
+      ],
+      "outputs": [],
+      "operation": "length checks that the path has one element. 1L is integer 1, and !is.na excludes missing values. stopifnot requires every condition to be TRUE and stops otherwise.",
+      "formulaTex": null,
+      "dimensions": {
+        "script_path": []
+      }
+    },
+    {
+      "line": 12,
+      "code": "project_root <- normalizePath(file.path(dirname(script_path), \"..\", \"..\"), mustWork = TRUE)",
+      "inputs": [
+        "script_path"
+      ],
+      "outputs": [
+        "project_root"
+      ],
+      "operation": "dirname extracts the script directory. file.path joins the path two levels up to the project root; normalizePath requires that directory to exist. The result is independent of the current working directory.",
+      "formulaTex": null,
+      "dimensions": {
+        "script_path": [],
+        "project_root": []
+      }
+    },
+    {
+      "line": 14,
+      "code": "source(file.path(project_root, \"shared\", \"R\", \"RHCCase.R\"))",
+      "inputs": [
+        "project_root"
+      ],
+      "outputs": [],
+      "operation": "source reads and executes the shared R definitions for reading the CSV, mathematical functions and manual model fitting. Only base R is used; no TMLE package is required.",
+      "formulaTex": null,
+      "dimensions": {
+        "project_root": []
+      }
+    },
+    {
+      "line": 16,
+      "code": "data <- rhc_data()",
+      "inputs": [],
+      "outputs": [
+        "data"
+      ],
+      "operation": "Read the original CSV, calculate empirical probabilities for the eight (x,a,y) cells and return the resulting data and model in a list. Later calculations use these same patient records.",
+      "formulaTex": null,
+      "dimensions": {
+        "data": []
+      }
+    },
+    {
+      "line": 18,
+      "code": "initial_values <- eif_values(data$initial_fit, data$cells)",
+      "inputs": [
+        "data"
+      ],
+      "outputs": [
+        "initial_values"
+      ],
+      "operation": "Evaluate the EIF under the initial fitted Q and g at eight observed combinations, returning an eight-element vector.",
+      "formulaTex": null,
+      "dimensions": {
+        "data": [],
+        "initial_values": [
+          8
+        ]
+      }
+    },
+    {
+      "line": 20,
+      "code": "initial_moments <- if_variance(data, initial_values)",
+      "inputs": [
+        "data",
+        "initial_values"
+      ],
+      "outputs": [
+        "initial_moments"
+      ],
+      "operation": "Calculate the mean, second moment, centred variance and SE using the current cell probabilities; return a list.",
+      "formulaTex": "\\widehat{\\operatorname{var}}(D)=\\sum_jp_j(D_j-\\overline D)^2,\\quad\\widehat{SE}=\\sqrt{\\widehat{\\operatorname{var}}(D)/n}",
+      "dimensions": {
+        "data": [],
+        "initial_values": [
+          8
+        ],
+        "initial_moments": []
+      }
+    },
+    {
+      "line": 22,
+      "code": "saturated_values <- eif_values(data$empirical_model, data$cells)",
+      "inputs": [
+        "data"
+      ],
+      "outputs": [
+        "saturated_values"
+      ],
+      "operation": "Evaluate eight EIF values under the saturated model of the full empirical distribution, distinct from the initial Q fitted using A alone.",
+      "formulaTex": null,
+      "dimensions": {
+        "data": [],
+        "saturated_values": [
+          8
+        ]
+      }
+    },
+    {
+      "line": 24,
+      "code": "saturated_moments <- if_variance(data, saturated_values)",
+      "inputs": [
+        "data",
+        "saturated_values"
+      ],
+      "outputs": [
+        "saturated_moments"
+      ],
+      "operation": "Use the same probability weights to obtain a second list of empirical moments.",
+      "formulaTex": null,
+      "dimensions": {
+        "data": [],
+        "saturated_values": [
+          8
+        ],
+        "saturated_moments": []
+      }
+    },
+    {
+      "line": 26,
+      "code": "print(list(initial = initial_moments, saturated = saturated_moments))",
+      "inputs": [
+        "initial_moments",
+        "saturated_moments"
+      ],
+      "outputs": [],
+      "operation": "Display both sets of empirical means, second moments, variances and SEs by name. These are not known efficiency bounds at P0.",
+      "formulaTex": null,
+      "dimensions": {
+        "initial_moments": [],
+        "saturated_moments": []
+      }
+    },
+    {
+      "line": 28,
+      "code": "cat(\"initial SE in percentage points =\", 100 * initial_moments$se, \"; saturated =\", 100 * saturated_moments$se, \"\\n\")",
+      "inputs": [
+        "initial_moments",
+        "saturated_moments"
+      ],
+      "outputs": [],
+      "operation": "Multiply each standard error by 100 to convert a probability difference to percentage points. A variance would instead be multiplied by 10,000 to express it in squared percentage points.",
+      "formulaTex": null,
+      "dimensions": {
+        "initial_moments": [],
+        "saturated_moments": []
+      }
+    }
+  ],
+  "objects": {
+    "project_root": {
+      "key": "project_root",
+      "label": "project_root",
+      "type": "character vector",
+      "dimensions": [],
+      "dimensionText": "path or parameter string"
+    },
+    "initial_values": {
+      "key": "initial_values",
+      "label": "initial_values",
+      "type": "numeric vector",
+      "dimensions": [
+        8
+      ],
+      "dimensionText": "Length 8; aligned according to (x, a, y) grid"
+    },
+    "source_files": {
+      "key": "source_files",
+      "label": "source_files",
+      "type": "character vector",
+      "dimensions": [],
+      "dimensionText": "path or parameter string"
+    },
+    "script_argument": {
+      "key": "script_argument",
+      "label": "script_argument",
+      "type": "character vector",
+      "dimensions": [],
+      "dimensionText": "path or parameter string"
+    },
+    "data": {
+      "key": "data",
+      "label": "data",
+      "type": "list",
+      "dimensions": [],
+      "dimensionText": "Named container; each member has its own dimensions"
+    },
+    "script_path": {
+      "key": "script_path",
+      "label": "script_path",
+      "type": "character vector",
+      "dimensions": [],
+      "dimensionText": "path or parameter string"
+    },
+    "saturated_values": {
+      "key": "saturated_values",
+      "label": "saturated_values",
+      "type": "numeric vector",
+      "dimensions": [
+        8
+      ],
+      "dimensionText": "Length 8; aligned according to (x, a, y) grid"
+    },
+    "initial_moments": {
+      "key": "initial_moments",
+      "label": "initial_moments",
+      "type": "list",
+      "dimensions": [],
+      "dimensionText": "Named container; each member has its own dimensions"
+    },
+    "saturated_moments": {
+      "key": "saturated_moments",
+      "label": "saturated_moments",
+      "type": "list",
+      "dimensions": [],
+      "dimensionText": "Named container; each member has its own dimensions"
+    }
+  }
+}

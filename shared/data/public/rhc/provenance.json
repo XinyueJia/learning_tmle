@@ -1,0 +1,256 @@
+{
+  "dataset": "SUPPORT right heart catheterisation (RHC)",
+  "original_study": {
+    "citation": "Connors AF Jr et al. The effectiveness of right heart catheterization in the initial care of critically ill patients. JAMA. 1996;276(11):889–897.",
+    "doi": "10.1001/jama.276.11.889",
+    "pubmed": "https://pubmed.ncbi.nlm.nih.gov/8782638/",
+    "primary_article_mirror": "https://ekroc.weebly.com/uploads/2/1/6/3/21633182/connorsetal1996.pdf"
+  },
+  "source_url": "https://hbiostat.org/data/repo/rhc.csv",
+  "retrieved_on": "2026-10-16",
+  "source_file": "source.csv",
+  "source_bytes": 2320412,
+  "source_sha256": "9ef4ab578be4b40ad5d97d3a7e08ffdc1f9f76aeeefee51b4996e4221556f8e8",
+  "unchanged_source": true,
+  "documentation_urls": [
+    "https://hbiostat.org/data/repo/rhc.html",
+    "https://hbiostat.org/data/repo/crhc",
+    "https://hbiostat.org/data/repo/rhc.sav"
+  ],
+  "permission": {
+    "url": "https://hbiostat.org/data/",
+    "basis": "Repository permission to use datasets; cite original paper and acknowledge Vanderbilt. No separate named CC/ODC licence was stated on the page inspected.",
+    "required_acknowledgement": "Data obtained from http://hbiostat.org/data courtesy of the Vanderbilt University Department of Biostatistics."
+  },
+  "transformations_to_source": "None. Retained original bytes, unnamed row index, NA markers, leading spaces, all patients and source fields.",
+  "teaching_encoding": {
+    "x": "0=Female, 1=Male, using released sex field; this is the source categorisation, not a claim about gender identity.",
+    "a": "0=No RHC, 1=RHC in first 24 hours after study entry (swang1).",
+    "y": "0=No, 1=Yes from released dth30 (30-day mortality from study entry).",
+    "exclusions": "None from released 5735-row cohort. Original SUPPORT eligibility restrictions remain.",
+    "known_causal_truth": false,
+    "sufficient_confounder_claim": false,
+    "estimand": "Early hand calculations: sex-standardised observed-data mortality risk difference (Psi_X). Lesson 8: W-standardised observed-data mortality risk difference (Psi_W), using the same 5735 patients. Causal interpretation of either requires additional unverified assumptions.",
+    "w": {
+      "fields": [
+        "sex",
+        "age",
+        "race",
+        "cardiohx",
+        "chfhx",
+        "dementhx",
+        "psychhx",
+        "chrpulhx",
+        "renalhx",
+        "liverhx",
+        "gibledhx",
+        "malighx",
+        "immunhx",
+        "transhx",
+        "amihx"
+      ],
+      "design_columns": 17,
+      "design_definition": "Intercept, male indicator, standardised age, race_black and race_other indicators, and 12 history/comorbidity fields. Q additionally includes A.",
+      "missingness_in_selected_fields": 0,
+      "acute_day1_physiology_included": false,
+      "clinical_sufficiency_verified": false
+    }
+  },
+  "audit": {
+    "rows": 5735,
+    "csv_columns_including_unnamed_export_index": 63,
+    "documented_variables": 62,
+    "unique_ptid": 5735,
+    "treatment": {
+      "No RHC": 3551,
+      "RHC": 2184
+    },
+    "outcome_dth30": {
+      "No": 3817,
+      "Yes": 1918
+    },
+    "sex": {
+      "Male": 3192,
+      "Female": 2543
+    },
+    "eight_cells": [
+      {
+        "x": 0,
+        "sex": "Female",
+        "a": 0,
+        "y": 0,
+        "n": 1143
+      },
+      {
+        "x": 0,
+        "sex": "Female",
+        "a": 0,
+        "y": 1,
+        "n": 494
+      },
+      {
+        "x": 0,
+        "sex": "Female",
+        "a": 1,
+        "y": 0,
+        "n": 558
+      },
+      {
+        "x": 0,
+        "sex": "Female",
+        "a": 1,
+        "y": 1,
+        "n": 348
+      },
+      {
+        "x": 1,
+        "sex": "Male",
+        "a": 0,
+        "y": 0,
+        "n": 1320
+      },
+      {
+        "x": 1,
+        "sex": "Male",
+        "a": 0,
+        "y": 1,
+        "n": 594
+      },
+      {
+        "x": 1,
+        "sex": "Male",
+        "a": 1,
+        "y": 0,
+        "n": 796
+      },
+      {
+        "x": 1,
+        "sex": "Male",
+        "a": 1,
+        "y": 1,
+        "n": 482
+      }
+    ],
+    "missingness": {
+      "cat2": 4535,
+      "dschdte": 1,
+      "dthdte": 2013,
+      "adld3p": 4296,
+      "urin1": 3028
+    },
+    "date_origin": "1960-01-01",
+    "date_origin_evidence": "Official rhc.sav sadmdte/dthdte origin attribute: month=1, day=1, year=1960; numerical values agree with CSV. Downloaded separately for metadata verification; not an analysis input.",
+    "study_entry_date_range": [
+      "1989-06-11",
+      "1994-01-23"
+    ],
+    "dth30_vs_dthdte_minus_sadmdte_le30_mismatches": 0,
+    "t3d30_vs_min_death_duration30_mismatches": 0,
+    "dth30_yes_duration_range_days": [
+      2,
+      30
+    ],
+    "day30_deaths": 26,
+    "last_contact_before_death": 2151,
+    "dth30_no_lastcontact_under30": 11,
+    "dth30_no_lastcontact_under30_missing_deathdate": 8,
+    "dth30_no_lastcontact_under30_rows": [
+      {
+        "ptid": "00778",
+        "sadmdte": "12344",
+        "dthdte": "NA",
+        "lstctdte": "12348",
+        "dth30": "No",
+        "death": "No"
+      },
+      {
+        "ptid": "00847",
+        "sadmdte": "11766",
+        "dthdte": "NA",
+        "lstctdte": "11772",
+        "dth30": "No",
+        "death": "No"
+      },
+      {
+        "ptid": "04173",
+        "sadmdte": "12421",
+        "dthdte": "NA",
+        "lstctdte": "12442",
+        "dth30": "No",
+        "death": "No"
+      },
+      {
+        "ptid": "04200",
+        "sadmdte": "11727",
+        "dthdte": "11764",
+        "lstctdte": "11738",
+        "dth30": "No",
+        "death": "Yes"
+      },
+      {
+        "ptid": "05041",
+        "sadmdte": "12056",
+        "dthdte": "NA",
+        "lstctdte": "12066",
+        "dth30": "No",
+        "death": "No"
+      },
+      {
+        "ptid": "05208",
+        "sadmdte": "11994",
+        "dthdte": "NA",
+        "lstctdte": "11996",
+        "dth30": "No",
+        "death": "No"
+      },
+      {
+        "ptid": "07437",
+        "sadmdte": "10971",
+        "dthdte": "11021",
+        "lstctdte": "10998",
+        "dth30": "No",
+        "death": "Yes"
+      },
+      {
+        "ptid": "08117",
+        "sadmdte": "10933",
+        "dthdte": "10985",
+        "lstctdte": "10952",
+        "dth30": "No",
+        "death": "Yes"
+      },
+      {
+        "ptid": "08562",
+        "sadmdte": "12109",
+        "dthdte": "NA",
+        "lstctdte": "12118",
+        "dth30": "No",
+        "death": "No"
+      },
+      {
+        "ptid": "09165",
+        "sadmdte": "12190",
+        "dthdte": "NA",
+        "lstctdte": "12218",
+        "dth30": "No",
+        "death": "No"
+      },
+      {
+        "ptid": "09767",
+        "sadmdte": "12164",
+        "dthdte": "NA",
+        "lstctdte": "12172",
+        "dth30": "No",
+        "death": "No"
+      }
+    ]
+  },
+  "design_limits": [
+    "RHC was observationally selected even though SUPPORT phase II randomised a different decision-support intervention.",
+    "Original cohort excluded death or discharge within 48 hours; do not generalise to all newly eligible ICU patients or claim a clean baseline target-trial emulation.",
+    "Treatment is classified over first 24 hours; no exact catheter insertion time is released.",
+    "Day-1 physiology uses worst value in a 24-hour window, so pre-RHC ordering is not established.",
+    "Original study confirms date of death or survival to day180 for all patients; last contact field alone is not a death censoring date.",
+    "Sex alone cannot control confounding by indication; adding all day-1 measurements is not automatically valid baseline adjustment."
+  ]
+}

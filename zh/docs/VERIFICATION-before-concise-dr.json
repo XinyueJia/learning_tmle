@@ -1,0 +1,56 @@
+{
+  "date": "2026-10-20",
+  "scope": "Chapter 0 route-comparison caption and adjacent prose: replace unexplained saturated-frequency wording with actual grouped proportions and target-population averaging",
+  "previous_verification": "zh/docs/VERIFICATION-before-route-wording.json",
+  "entry": "http://127.0.0.1:4174/zh/?edition=route-wording#chapter-0",
+  "source": {
+    "cohort": "SUPPORT/RHC",
+    "records": 5735,
+    "events30d": 1918,
+    "treated24h": 2184,
+    "source_sha256": "9ef4ab578be4b40ad5d97d3a7e08ffdc1f9f76aeeefee51b4996e4221556f8e8",
+    "source_bytes": 2320412,
+    "whole_source_retained": true,
+    "outcome_evidence": "Original study explicitly confirms death date or survival180 for every patient; publisheddth30 exactly agrees with dates on all5735",
+    "permission": "Vanderbilt repository use permission with original citation and acknowledgement, notCCBY"
+  },
+  "changes": [
+    "Explain grouped observed death/treatment proportions, same full-cohort sex composition, and IPW cancellation yielding the same average",
+    "Keep PSM target-population distinction and explain that alternative fitted models can give different estimates"
+  ],
+  "build": {
+    "command": "sh scripts/node.sh scripts/build.js",
+    "exit_code": 0,
+    "log": "output/zh/verification/route-wording/build.log"
+  },
+  "tests": {
+    "command": "sh scripts/node.sh --test tests/zh/estimation-routes.test.js",
+    "passed": 5,
+    "failed": 0,
+    "skipped": 0,
+    "exit_code": 0,
+    "log": "output/zh/verification/route-wording/tests.log"
+  },
+  "browser": {
+    "command": "sh scripts/node.sh tests/zh/estimation-routes-browser.cjs",
+    "browser": "Chrome",
+    "viewports": [
+      1360,
+      375
+    ],
+    "exit_code": 0,
+    "log": "output/zh/verification/route-wording/browser.log"
+  },
+  "not_changed": [
+    "Numerical engines, patient data, formulas, Julia/R programmes and explanations"
+  ],
+  "not_rerun": [
+    "Full-book numerical and language test suites; this change only edits two prose passages"
+  ],
+  "not_verified": [
+    "Learning outcomes with actual novice readers",
+    "Physical mobile devices, other browser engines, complete spoken screen-reader review",
+    "Causal identification, actual study representativeness/iid assumptions, finite-sample accuracy or confidence-interval coverage",
+    "Browser start from extracted release archive"
+  ]
+}

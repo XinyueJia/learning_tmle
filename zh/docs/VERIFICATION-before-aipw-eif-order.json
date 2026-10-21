@@ -1,0 +1,55 @@
+{
+  "date": "2026-10-20",
+  "scope": "Chapter 0 TMLE step 2: connect signed IPW weights to weighted outcomes and EIF residual corrections using the same original six RHC patient rows and full-cohort fitting",
+  "entry": "http://127.0.0.1:4174/zh/?edition=ipw-eif-bridge#chapter-0",
+  "source": {
+    "cohort": "SUPPORT/RHC",
+    "records": 5735,
+    "events30d": 1918,
+    "treated24h": 2184,
+    "source_sha256": "9ef4ab578be4b40ad5d97d3a7e08ffdc1f9f76aeeefee51b4996e4221556f8e8",
+    "source_bytes": 2320412,
+    "whole_source_retained": true,
+    "outcome_evidence": "Original study explicitly confirms death date or survival180 for every patient; publisheddth30 exactly agrees with dates on all5735",
+    "permission": "Vanderbilt repository use permission with original citation and acknowledgement, notCCBY"
+  },
+  "previous_verification": "zh/docs/VERIFICATION-before-ipw-eif-bridge.json",
+  "mathematics_review": "zh/reviews/ch00-tmle-overview.md (independent IPW / EIF bridge review, no open issues)",
+  "build": {
+    "command": "sh scripts/node.sh scripts/build.js",
+    "exit_code": 0
+  },
+  "tests": {
+    "command": "sh scripts/node.sh --test tests/zh/tmle-overview.test.js tests/zh/tmle-calibration.test.js tests/zh/dr-intro.test.js",
+    "passed": 7,
+    "failed": 0,
+    "skipped": 0,
+    "exit_code": 0,
+    "log": "output/zh/verification/ipw-eif-bridge/tests.log",
+    "scope": "Existing overview, calibration and intro checks plus six-row H*Y versus H*(Y-QA) arithmetic, independent separate-arm total-n HT sums, explicit difference from arm-normalised weights, full-cohort residual correction and AIPW reconstruction"
+  },
+  "browser": {
+    "command": "sh scripts/node.sh tests/zh/tmle-overview-browser.cjs",
+    "browser": "Chrome",
+    "viewports": [
+      1360,
+      375
+    ],
+    "exit_code": 0,
+    "log": "output/zh/verification/ipw-eif-bridge/browser.log",
+    "scope": "Chrome1360/375: original six rows align across shared weights and both operations; zero Y/nonzero residual example; IPW value; local keyboard scroll; inline symbol scan and all existing six-step states, formula recalls, disclosure, reset and chapter navigation; no page overflow or console errors"
+  },
+  "visual_inspection": [
+    "output/zh/playwright/tmle-ipw-bridge-1360.png",
+    "output/zh/playwright/tmle-ipw-bridge-375.png"
+  ],
+  "not_rerun": [
+    "Full-book test suite and Julia/R programmes; no numerical engine or language-programme changes. Previous complete-suite records retained in verification history."
+  ],
+  "not_verified": [
+    "Learning outcomes with actual novice readers",
+    "Physical mobile devices, other browser engines, complete spoken screen-reader review",
+    "Causal identification, actual study representativeness/iid assumptions, finite-sample accuracy or confidence-interval coverage",
+    "Browser start from extracted release archive"
+  ]
+}

@@ -1,0 +1,922 @@
+{
+  "version": 1,
+  "source": "en/R/ch08.R",
+  "lineCount": 115,
+  "cohort": {
+    "n": 5735,
+    "events": 1918
+  },
+  "lines": [
+    {
+      "line": 4,
+      "code": "script_argument <- grep(\"^--file=\", commandArgs(FALSE), value = TRUE)",
+      "inputs": [],
+      "outputs": [
+        "script_argument"
+      ],
+      "operation": "commandArgs(FALSE) reads the startup arguments. grep matches the start of a string using ^, and value=TRUE retains the matched strings. The result is a character vector of length zero or one locating the file run by Rscript.",
+      "formulaTex": null,
+      "dimensions": {
+        "script_argument": []
+      }
+    },
+    {
+      "line": 6,
+      "code": "source_files <- vapply(sys.frames(), function(frame) if (is.null(frame$ofile)) \"\" else frame$ofile, character(1))",
+      "inputs": [],
+      "outputs": [
+        "source_files"
+      ],
+      "operation": "sys.frames() reads the call frames. vapply applies a function to each frame, requiring one character string per result. When source() runs a script, ofile records its path; frames without a path return an empty string.",
+      "formulaTex": null,
+      "dimensions": {
+        "source_files": []
+      }
+    },
+    {
+      "line": 8,
+      "code": "script_path <- if (any(nzchar(source_files))) tail(source_files[nzchar(source_files)], 1) else if (length(script_argument)) sub(\"^--file=\", \"\", script_argument[1]) else file.path(\"en\", \"R\", \"ch08.R\")",
+      "inputs": [
+        "source_files",
+        "script_argument"
+      ],
+      "outputs": [
+        "script_path"
+      ],
+      "operation": "if selects the source path: use the last non-empty ofile when called through source(); otherwise remove the --file= prefix. Code pasted into the R console at the project root defaults to this lesson’s script path. The output is one path string; [] indexing starts at 1.",
+      "formulaTex": null,
+      "dimensions": {
+        "source_files": [],
+        "script_argument": [],
+        "script_path": []
+      }
+    },
+    {
+      "line": 10,
+      "code": "stopifnot(length(script_path) == 1L, !is.na(script_path))",
+      "inputs": [
+        "script_path"
+      ],
+      "outputs": [],
+      "operation": "length checks that the path has one element. 1L is integer 1, and !is.na excludes missing values. stopifnot requires every condition to be TRUE and stops otherwise.",
+      "formulaTex": null,
+      "dimensions": {
+        "script_path": []
+      }
+    },
+    {
+      "line": 12,
+      "code": "project_root <- normalizePath(file.path(dirname(script_path), \"..\", \"..\"), mustWork = TRUE)",
+      "inputs": [
+        "script_path"
+      ],
+      "outputs": [
+        "project_root"
+      ],
+      "operation": "dirname extracts the script directory. file.path joins the path two levels up to the project root; normalizePath requires that directory to exist. The result is independent of the current working directory.",
+      "formulaTex": null,
+      "dimensions": {
+        "script_path": [],
+        "project_root": []
+      }
+    },
+    {
+      "line": 14,
+      "code": "source(file.path(project_root, \"shared\", \"R\", \"RHCCase.R\"))",
+      "inputs": [
+        "project_root"
+      ],
+      "outputs": [],
+      "operation": "source reads and executes the shared R definitions for reading the CSV, mathematical functions and manual model fitting. Only base R is used; no TMLE package is required.",
+      "formulaTex": null,
+      "dimensions": {
+        "project_root": []
+      }
+    },
+    {
+      "line": 16,
+      "code": "data <- rhc_data()",
+      "inputs": [],
+      "outputs": [
+        "data"
+      ],
+      "operation": "Read the original CSV, calculate empirical probabilities for the eight (x,a,y) cells and return the resulting data and model in a list. Later calculations use these same patient records.",
+      "formulaTex": null,
+      "dimensions": {
+        "data": []
+      }
+    },
+    {
+      "line": 18,
+      "code": "for (epsilon in c(0, 0.1, 0.2)) {",
+      "inputs": [],
+      "outputs": [
+        "epsilon"
+      ],
+      "operation": "Manually try three epsilon scalars in sequence. The for loop only evaluates the score; it does not solve for a root.",
+      "formulaTex": null,
+      "dimensions": {
+        "epsilon": []
+      }
+    },
+    {
+      "line": 20,
+      "code": "  cat(\"trial epsilon =\", epsilon, \"; score =\", fluctuation_score(data, epsilon)$score, \"\\n\")",
+      "inputs": [
+        "data",
+        "epsilon"
+      ],
+      "outputs": [],
+      "operation": "Calculate one empirical score for each trial coefficient using the fixed initial offset and H.",
+      "formulaTex": "s_n(\\epsilon)=\\sum_jp_jH_j(y_j-Q_{\\epsilon,j})",
+      "dimensions": {
+        "data": [],
+        "epsilon": []
+      }
+    },
+    {
+      "line": 22,
+      "code": "}",
+      "inputs": [],
+      "outputs": [],
+      "operation": "End the manual trial loop; the original data and fitted models remain fixed.",
+      "formulaTex": null,
+      "dimensions": {}
+    },
+    {
+      "line": 24,
+      "code": "lo <- -1",
+      "inputs": [],
+      "outputs": [
+        "lo"
+      ],
+      "operation": "Set the lower endpoint of the root bracket for the sex-stratified calculation.",
+      "formulaTex": null,
+      "dimensions": {
+        "lo": []
+      }
+    },
+    {
+      "line": 26,
+      "code": "hi <- 1",
+      "inputs": [],
+      "outputs": [
+        "hi"
+      ],
+      "operation": "Set the upper endpoint of the root bracket for the sex-stratified calculation.",
+      "formulaTex": null,
+      "dimensions": {
+        "hi": []
+      }
+    },
+    {
+      "line": 28,
+      "code": "tolerance <- 1e-12",
+      "inputs": [],
+      "outputs": [
+        "tolerance"
+      ],
+      "operation": "Set the tolerance for the score’s absolute value. Approximate zero remains distinct from exact zero.",
+      "formulaTex": null,
+      "dimensions": {
+        "tolerance": []
+      }
+    },
+    {
+      "line": 30,
+      "code": "stopifnot(fluctuation_score(data, lo)$score >= 0, fluctuation_score(data, hi)$score <= 0)",
+      "inputs": [
+        "data",
+        "lo",
+        "hi"
+      ],
+      "outputs": [],
+      "operation": "Check that the non-increasing score brackets a root between the interval endpoints; stop if it does not.",
+      "formulaTex": null,
+      "dimensions": {
+        "data": [],
+        "lo": [],
+        "hi": []
+      }
+    },
+    {
+      "line": 32,
+      "code": "targeted <- NULL",
+      "inputs": [],
+      "outputs": [
+        "targeted"
+      ],
+      "operation": "NULL marks a root result that has not yet been calculated. Store the updated object after a successful solve.",
+      "formulaTex": null,
+      "dimensions": {
+        "targeted": []
+      }
+    },
+    {
+      "line": 34,
+      "code": "for (iteration in 1:200) {",
+      "inputs": [],
+      "outputs": [
+        "iteration"
+      ],
+      "operation": "Run at most 200 explicit bisection steps, calculating one interval midpoint each time.",
+      "formulaTex": null,
+      "dimensions": {
+        "iteration": []
+      }
+    },
+    {
+      "line": 36,
+      "code": "  step <- bisection_step(data, lo, hi)",
+      "inputs": [
+        "data",
+        "lo",
+        "hi"
+      ],
+      "outputs": [
+        "step"
+      ],
+      "operation": "The shared pure function returns midpoint, score and the narrower lo/hi bracket.",
+      "formulaTex": null,
+      "dimensions": {
+        "data": [],
+        "lo": [],
+        "hi": [],
+        "step": []
+      }
+    },
+    {
+      "line": 38,
+      "code": "  if (iteration <= 5) cat(\"bisection\", iteration, \"; epsilon =\", step$midpoint, \"; score =\", step$score, \"\\n\")",
+      "inputs": [
+        "iteration",
+        "step"
+      ],
+      "outputs": [],
+      "operation": "Display the first five bisection steps for checking; all iterations follow the same rule.",
+      "formulaTex": null,
+      "dimensions": {
+        "iteration": [],
+        "step": []
+      }
+    },
+    {
+      "line": 40,
+      "code": "  if (abs(step$score) <= tolerance) {",
+      "inputs": [
+        "step",
+        "tolerance"
+      ],
+      "outputs": [],
+      "operation": "abs takes the score’s absolute value. Enter the success branch only when it meets the specified tolerance.",
+      "formulaTex": null,
+      "dimensions": {
+        "step": [],
+        "tolerance": []
+      }
+    },
+    {
+      "line": 42,
+      "code": "    targeted <- case_at(data, step$midpoint)",
+      "inputs": [
+        "data",
+        "step"
+      ],
+      "outputs": [
+        "targeted"
+      ],
+      "operation": "Update the four Q values using the solved midpoint, standardise using empirical X proportions, and calculate the complete empirical EIF and SE.",
+      "formulaTex": "Q^*_{a,x}=\\operatorname{expit}(\\operatorname{logit}\\widehat Q_{a,x}+\\widehat\\epsilon H_{a,x})",
+      "dimensions": {
+        "data": [],
+        "step": [],
+        "targeted": []
+      }
+    },
+    {
+      "line": 44,
+      "code": "    break",
+      "inputs": [],
+      "outputs": [],
+      "operation": "break exits the innermost for loop, retaining the successful targeted object.",
+      "formulaTex": null,
+      "dimensions": {}
+    },
+    {
+      "line": 46,
+      "code": "  }",
+      "inputs": [],
+      "outputs": [],
+      "operation": "End the convergence-check branch.",
+      "formulaTex": null,
+      "dimensions": {}
+    },
+    {
+      "line": 48,
+      "code": "  stopifnot(step$midpoint != lo, step$midpoint != hi)",
+      "inputs": [
+        "step",
+        "lo",
+        "hi"
+      ],
+      "outputs": [],
+      "operation": "Stop when floating-point precision makes the midpoint equal an endpoint, so the interval cannot be narrowed further.",
+      "formulaTex": null,
+      "dimensions": {
+        "step": [],
+        "lo": [],
+        "hi": []
+      }
+    },
+    {
+      "line": 50,
+      "code": "  lo <- step$lo",
+      "inputs": [
+        "step"
+      ],
+      "outputs": [
+        "lo"
+      ],
+      "operation": "Replace the lower bound with the new bound selected by the sign of the score.",
+      "formulaTex": null,
+      "dimensions": {
+        "step": [],
+        "lo": []
+      }
+    },
+    {
+      "line": 52,
+      "code": "  hi <- step$hi",
+      "inputs": [
+        "step"
+      ],
+      "outputs": [
+        "hi"
+      ],
+      "operation": "Replace the upper bound with the new bound selected by the sign of the score.",
+      "formulaTex": null,
+      "dimensions": {
+        "step": [],
+        "hi": []
+      }
+    },
+    {
+      "line": 54,
+      "code": "}",
+      "inputs": [],
+      "outputs": [],
+      "operation": "End the bisection loop. targeted remains NULL if convergence has not been reached.",
+      "formulaTex": null,
+      "dimensions": {}
+    },
+    {
+      "line": 56,
+      "code": "if (is.null(targeted)) stop(\"Eight-cell bisection did not converge\")",
+      "inputs": [
+        "targeted"
+      ],
+      "outputs": [],
+      "operation": "Report failure explicitly if the iteration limit is reached without a result meeting tolerance.",
+      "formulaTex": null,
+      "dimensions": {
+        "targeted": []
+      }
+    },
+    {
+      "line": 58,
+      "code": "print(targeted$groups)",
+      "inputs": [
+        "targeted"
+      ],
+      "outputs": [],
+      "operation": "Display the four updated Q values and score contributions. Standardise both arms using the original empirical X weights.",
+      "formulaTex": null,
+      "dimensions": {
+        "targeted": []
+      }
+    },
+    {
+      "line": 60,
+      "code": "cat(\"eight-cell epsilon =\", targeted$epsilon, \"; estimate =\", targeted$estimate, \"; EIF mean =\", targeted$eif_mean, \"; SE =\", targeted$se, \"\\n\")",
+      "inputs": [
+        "targeted"
+      ],
+      "outputs": [],
+      "operation": "Display the sex-stratified TMLE risk difference, empirical EIF mean within tolerance, and SE. Adjustment here uses sex only.",
+      "formulaTex": null,
+      "dimensions": {
+        "targeted": []
+      }
+    },
+    {
+      "line": 62,
+      "code": "rows <- read_rhc_rows(DEFAULT_SOURCE)",
+      "inputs": [],
+      "outputs": [
+        "rows"
+      ],
+      "operation": "Reread the same 5,735 original patient records. Expanding the adjustment set does not change the cohort.",
+      "formulaTex": null,
+      "dimensions": {
+        "rows": [
+          "n",
+          63
+        ]
+      }
+    },
+    {
+      "line": 64,
+      "code": "fit <- prepare_full(rows)",
+      "inputs": [
+        "rows"
+      ],
+      "outputs": [
+        "fit"
+      ],
+      "operation": "Construct the baseline design in a fixed column order: n×17 for g and n×18 for Q. Age scaling uses denominator n, white is the race reference, and there is no regularisation or implicit truncation.",
+      "formulaTex": null,
+      "dimensions": {
+        "rows": [
+          "n",
+          63
+        ],
+        "fit": []
+      }
+    },
+    {
+      "line": 66,
+      "code": "initial <- full_at(fit, 0)",
+      "inputs": [
+        "fit"
+      ],
+      "outputs": [
+        "initial"
+      ],
+      "operation": "epsilon=0 retains the initial prediction and returns the initial standardised risk difference, AIPW and empirical score.",
+      "formulaTex": "\\widehat\\psi_{\\rm AIPW}=\\widehat\\psi_{\\rm init}+P_n\\widehat D_{\\rm init}",
+      "dimensions": {
+        "fit": [],
+        "initial": []
+      }
+    },
+    {
+      "line": 68,
+      "code": "cat(\"baseline columns =\", fit$feature_names, \"; age mean =\", fit$age_mean, \"; age SD =\", fit$age_sd, \"\\n\")",
+      "inputs": [
+        "fit"
+      ],
+      "outputs": [],
+      "operation": "Display the design columns and age-standardisation parameters so readers can check the fixed adjustment set.",
+      "formulaTex": null,
+      "dimensions": {
+        "fit": []
+      }
+    },
+    {
+      "line": 70,
+      "code": "cat(\"g range =\", range(fit$g), \"; initial =\", initial$estimate, \"; AIPW =\", initial$aipw, \"; score =\", initial$score, \"\\n\")",
+      "inputs": [
+        "fit",
+        "initial"
+      ],
+      "outputs": [],
+      "operation": "range displays the minimum and maximum across all n fitted g values. Keep the initial plug-in estimate, AIPW and score distinct.",
+      "formulaTex": null,
+      "dimensions": {
+        "fit": [],
+        "initial": []
+      }
+    },
+    {
+      "line": 72,
+      "code": "for (epsilon in c(0, 0.002, 0.004)) {",
+      "inputs": [],
+      "outputs": [
+        "epsilon"
+      ],
+      "operation": "Manually try three update coefficients with the full baseline model, then find the root by bisection.",
+      "formulaTex": null,
+      "dimensions": {
+        "epsilon": []
+      }
+    },
+    {
+      "line": 74,
+      "code": "  trial <- full_at(fit, epsilon)",
+      "inputs": [
+        "fit",
+        "epsilon"
+      ],
+      "outputs": [
+        "trial"
+      ],
+      "operation": "For each patient, calculate the update using fixed offset plus epsilon×H, then calculate the score and mean log likelihood.",
+      "formulaTex": null,
+      "dimensions": {
+        "fit": [],
+        "epsilon": [],
+        "trial": []
+      }
+    },
+    {
+      "line": 76,
+      "code": "  cat(\"full trial epsilon =\", epsilon, \"; score =\", trial$score, \"; log likelihood =\", trial$log_likelihood, \"\\n\")",
+      "inputs": [
+        "epsilon",
+        "trial"
+      ],
+      "outputs": [],
+      "operation": "Display the mean score and mean log likelihood over all 5,735 patients; the denominator is the full cohort size.",
+      "formulaTex": null,
+      "dimensions": {
+        "epsilon": [],
+        "trial": []
+      }
+    },
+    {
+      "line": 78,
+      "code": "}",
+      "inputs": [],
+      "outputs": [],
+      "operation": "End the manual trials for the full baseline model.",
+      "formulaTex": null,
+      "dimensions": {}
+    },
+    {
+      "line": 80,
+      "code": "lo <- -0.25",
+      "inputs": [],
+      "outputs": [
+        "lo"
+      ],
+      "operation": "Set the lower bisection bound for the full baseline model’s score.",
+      "formulaTex": null,
+      "dimensions": {
+        "lo": []
+      }
+    },
+    {
+      "line": 82,
+      "code": "hi <- 0.25",
+      "inputs": [],
+      "outputs": [
+        "hi"
+      ],
+      "operation": "Set the upper bisection bound for the full baseline model’s score.",
+      "formulaTex": null,
+      "dimensions": {
+        "hi": []
+      }
+    },
+    {
+      "line": 84,
+      "code": "stopifnot(full_at(fit, lo)$score >= 0, full_at(fit, hi)$score <= 0)",
+      "inputs": [
+        "fit",
+        "lo",
+        "hi"
+      ],
+      "outputs": [],
+      "operation": "Check that the non-increasing score for the full baseline model brackets a root. Stop explicitly if this fails.",
+      "formulaTex": null,
+      "dimensions": {
+        "fit": [],
+        "lo": [],
+        "hi": []
+      }
+    },
+    {
+      "line": 86,
+      "code": "full_targeted <- NULL",
+      "inputs": [],
+      "outputs": [
+        "full_targeted"
+      ],
+      "operation": "Use NULL to mark that no result for the full baseline model has yet met tolerance.",
+      "formulaTex": null,
+      "dimensions": {
+        "full_targeted": []
+      }
+    },
+    {
+      "line": 88,
+      "code": "for (iteration in 1:200) {",
+      "inputs": [],
+      "outputs": [
+        "iteration"
+      ],
+      "operation": "Start up to 200 explicit bisection steps for the full baseline model.",
+      "formulaTex": null,
+      "dimensions": {
+        "iteration": []
+      }
+    },
+    {
+      "line": 90,
+      "code": "  step <- full_bisection_step(fit, lo, hi)",
+      "inputs": [
+        "fit",
+        "lo",
+        "hi"
+      ],
+      "outputs": [
+        "step"
+      ],
+      "operation": "Evaluate the midpoint score and narrow the bracket using the same fit, keeping all initial Q and g values fixed.",
+      "formulaTex": null,
+      "dimensions": {
+        "fit": [],
+        "lo": [],
+        "hi": [],
+        "step": []
+      }
+    },
+    {
+      "line": 92,
+      "code": "  if (iteration <= 5) cat(\"full bisection\", iteration, \"; epsilon =\", step$midpoint, \"; score =\", step$score, \"\\n\")",
+      "inputs": [
+        "iteration",
+        "step"
+      ],
+      "outputs": [],
+      "operation": "Display the midpoint and score for the first five patient-level bisection steps so readers can check them manually.",
+      "formulaTex": null,
+      "dimensions": {
+        "iteration": [],
+        "step": []
+      }
+    },
+    {
+      "line": 94,
+      "code": "  if (abs(step$score) <= tolerance) {",
+      "inputs": [
+        "step",
+        "tolerance"
+      ],
+      "outputs": [],
+      "operation": "Check the full n-patient score against the same prespecified tolerance, 1e−12.",
+      "formulaTex": null,
+      "dimensions": {
+        "step": [],
+        "tolerance": []
+      }
+    },
+    {
+      "line": 96,
+      "code": "    full_targeted <- full_at(fit, step$midpoint)",
+      "inputs": [
+        "fit",
+        "step"
+      ],
+      "outputs": [
+        "full_targeted"
+      ],
+      "operation": "Name the result targeted only after solving for the root. Both arms use the same epsilon and are standardised over the same n patients.",
+      "formulaTex": "\\widehat\\psi_{\\rm TMLE}=n^{-1}\\sum_i(Q^*_{1,i}-Q^*_{0,i})",
+      "dimensions": {
+        "fit": [],
+        "step": [],
+        "full_targeted": []
+      }
+    },
+    {
+      "line": 98,
+      "code": "    break",
+      "inputs": [],
+      "outputs": [],
+      "operation": "Exit the bisection loop for the full baseline model.",
+      "formulaTex": null,
+      "dimensions": {}
+    },
+    {
+      "line": 100,
+      "code": "  }",
+      "inputs": [],
+      "outputs": [],
+      "operation": "End the convergence branch for the full baseline model.",
+      "formulaTex": null,
+      "dimensions": {}
+    },
+    {
+      "line": 102,
+      "code": "  stopifnot(step$midpoint != lo, step$midpoint != hi)",
+      "inputs": [
+        "step",
+        "lo",
+        "hi"
+      ],
+      "outputs": [],
+      "operation": "Stop immediately when floating-point precision prevents further narrowing, avoiding false convergence.",
+      "formulaTex": null,
+      "dimensions": {
+        "step": [],
+        "lo": [],
+        "hi": []
+      }
+    },
+    {
+      "line": 104,
+      "code": "  lo <- step$lo",
+      "inputs": [
+        "step"
+      ],
+      "outputs": [
+        "lo"
+      ],
+      "operation": "Keep the new lower bound of the bracket containing the root.",
+      "formulaTex": null,
+      "dimensions": {
+        "step": [],
+        "lo": []
+      }
+    },
+    {
+      "line": 106,
+      "code": "  hi <- step$hi",
+      "inputs": [
+        "step"
+      ],
+      "outputs": [
+        "hi"
+      ],
+      "operation": "Keep the new upper bound of the bracket containing the root.",
+      "formulaTex": null,
+      "dimensions": {
+        "step": [],
+        "hi": []
+      }
+    },
+    {
+      "line": 108,
+      "code": "}",
+      "inputs": [],
+      "outputs": [],
+      "operation": "End the full baseline model’s bisection loop.",
+      "formulaTex": null,
+      "dimensions": {}
+    },
+    {
+      "line": 110,
+      "code": "if (is.null(full_targeted)) stop(\"Full baseline bisection did not converge\")",
+      "inputs": [
+        "full_targeted"
+      ],
+      "outputs": [],
+      "operation": "Report an error when iterations are exhausted; success is defined by the score tolerance.",
+      "formulaTex": null,
+      "dimensions": {
+        "full_targeted": []
+      }
+    },
+    {
+      "line": 112,
+      "code": "cat(\"full epsilon =\", full_targeted$epsilon, \"; risk0 =\", full_targeted$risk0, \"; risk1 =\", full_targeted$risk1, \"; TMLE =\", full_targeted$estimate, \"\\n\")",
+      "inputs": [
+        "full_targeted"
+      ],
+      "outputs": [],
+      "operation": "Display the solved coefficient, each arm’s mean risk over all n patients, and the standardised risk difference.",
+      "formulaTex": null,
+      "dimensions": {
+        "full_targeted": []
+      }
+    },
+    {
+      "line": 114,
+      "code": "cat(\"full score =\", full_targeted$score, \"; EIF mean =\", full_targeted$eif_mean, \"; empirical SE =\", full_targeted$se, \"\\n\")",
+      "inputs": [
+        "full_targeted"
+      ],
+      "outputs": [],
+      "operation": "Display the likelihood score, full EIF mean and empirical SE separately. See this chapter’s technical notes for finite-sample and inference conditions.",
+      "formulaTex": null,
+      "dimensions": {
+        "full_targeted": []
+      }
+    }
+  ],
+  "objects": {
+    "project_root": {
+      "key": "project_root",
+      "label": "project_root",
+      "type": "character vector",
+      "dimensions": [],
+      "dimensionText": "path or parameter string"
+    },
+    "step": {
+      "key": "step",
+      "label": "step",
+      "type": "list",
+      "dimensions": [],
+      "dimensionText": "Named container; each member has its own dimensions"
+    },
+    "epsilon": {
+      "key": "epsilon",
+      "label": "epsilon",
+      "type": "numeric scalar (double)",
+      "dimensions": [],
+      "dimensionText": "Length 1"
+    },
+    "source_files": {
+      "key": "source_files",
+      "label": "source_files",
+      "type": "character vector",
+      "dimensions": [],
+      "dimensionText": "path or parameter string"
+    },
+    "targeted": {
+      "key": "targeted",
+      "label": "targeted",
+      "type": "list",
+      "dimensions": [],
+      "dimensionText": "Named container; each member has its own dimensions"
+    },
+    "script_argument": {
+      "key": "script_argument",
+      "label": "script_argument",
+      "type": "character vector",
+      "dimensions": [],
+      "dimensionText": "path or parameter string"
+    },
+    "tolerance": {
+      "key": "tolerance",
+      "label": "tolerance",
+      "type": "numeric scalar (double)",
+      "dimensions": [],
+      "dimensionText": "Length 1"
+    },
+    "data": {
+      "key": "data",
+      "label": "data",
+      "type": "list",
+      "dimensions": [],
+      "dimensionText": "Named container; each member has its own dimensions"
+    },
+    "script_path": {
+      "key": "script_path",
+      "label": "script_path",
+      "type": "character vector",
+      "dimensions": [],
+      "dimensionText": "path or parameter string"
+    },
+    "trial": {
+      "key": "trial",
+      "label": "trial",
+      "type": "list",
+      "dimensions": [],
+      "dimensionText": "Named container; each member has its own dimensions"
+    },
+    "hi": {
+      "key": "hi",
+      "label": "hi",
+      "type": "numeric scalar (double)",
+      "dimensions": [],
+      "dimensionText": "Length 1"
+    },
+    "full_targeted": {
+      "key": "full_targeted",
+      "label": "full_targeted",
+      "type": "list",
+      "dimensions": [],
+      "dimensionText": "Named container; each member has its own dimensions"
+    },
+    "fit": {
+      "key": "fit",
+      "label": "fit",
+      "type": "list",
+      "dimensions": [],
+      "dimensionText": "Named container; each member has its own dimensions"
+    },
+    "initial": {
+      "key": "initial",
+      "label": "initial",
+      "type": "list",
+      "dimensions": [],
+      "dimensionText": "Named container; each member has its own dimensions"
+    },
+    "lo": {
+      "key": "lo",
+      "label": "lo",
+      "type": "numeric scalar (double)",
+      "dimensions": [],
+      "dimensionText": "Length 1"
+    },
+    "iteration": {
+      "key": "iteration",
+      "label": "iteration",
+      "type": "integer scalar",
+      "dimensions": [],
+      "dimensionText": "Length 1"
+    },
+    "rows": {
+      "key": "rows",
+      "label": "rows",
+      "type": "data.frame",
+      "dimensions": [
+        "n",
+        63
+      ],
+      "dimensionText": "5735 rows × 63 columns"
+    }
+  }
+}

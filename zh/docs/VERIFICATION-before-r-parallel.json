@@ -1,0 +1,150 @@
+{
+  "date": "2026-10-17",
+  "scope": "Readability edit of Chapters0–8 and related figure/experiment copy",
+  "entry": "http://127.0.0.1:4174/zh/?edition=clear-prose#chapter-0",
+  "previous_verification": "zh/docs/VERIFICATION-before-readability.json",
+  "source": {
+    "cohort": "SUPPORT/RHC",
+    "records": 5735,
+    "events30d": 1918,
+    "treated24h": 2184,
+    "source_sha256": "9ef4ab578be4b40ad5d97d3a7e08ffdc1f9f76aeeefee51b4996e4221556f8e8",
+    "source_bytes": 2320412,
+    "whole_source_retained": true,
+    "outcome_evidence": "Original study explicitly confirms death date or survival180 for every patient; publisheddth30 exactly agrees with dates on all5735",
+    "permission": "Vanderbilt repository use permission with original citation and acknowledgement, notCCBY"
+  },
+  "completed": [
+    "All nine chapters edited sequentially for positive concept/purpose/example/derivation flow",
+    "Removed obsolete implementation history and repeated pre-emptive denials",
+    "Edited Q/g, IF, probability transfer, mean-error and object-operation figure captions and prompts",
+    "Edited Chapter8 step descriptions and linked-column definitions",
+    "Retained theorem conditions, mathematical counterexamples, full derivations and relevant study-design assumptions",
+    "Independent mathematical and pedagogical reviews completed, findings resolved"
+  ],
+  "build": {
+    "command": "sh scripts/node.sh scripts/build.js",
+    "chapters": 9,
+    "exit_code": 0
+  },
+  "javascript": {
+    "command": "JULIA_BIN=<installed Julia1.12.5> JULIA_DEPOT_PATH=/private/tmp/eif-tutorial-julia-depot sh scripts/node.sh --test tests/*.test.js tests/zh/*.test.js",
+    "passed": 184,
+    "failed": 0,
+    "skipped": 0,
+    "exit_code": 0,
+    "new_tests": 0,
+    "copy_assertions": "Updated obsolete literal-copy assertions to match instructional content; retained independent numerical, identity, mapping and browser checks",
+    "Julia": "Real workbooks, cross-language trace and concatenated displayed panels executed in actual Julia processes",
+    "log": "output/zh/verification/readability/tests.log"
+  },
+  "browser": [
+    {
+      "command": "sh scripts/node.sh tests/zh/rhc-browser.cjs",
+      "browser": "Chrome",
+      "viewports": [
+        1360,
+        375
+      ],
+      "exit_code": 0,
+      "log": "output/zh/verification/readability/rhc-browser.log"
+    },
+    {
+      "command": "sh scripts/node.sh tests/zh/blue-reading-browser.cjs",
+      "browser": "Chrome",
+      "viewports": [
+        1360,
+        375
+      ],
+      "exit_code": 0,
+      "log": "output/zh/verification/readability/blue-reading-browser.log"
+    },
+    {
+      "command": "sh scripts/node.sh tests/zh/tmle-trace-browser.cjs",
+      "browser": "Chrome",
+      "viewports": [
+        1360,
+        375
+      ],
+      "exit_code": 0,
+      "log": "output/zh/verification/readability/tmle-trace-browser.log"
+    },
+    {
+      "command": "sh scripts/node.sh tests/zh/if-motivation-browser.cjs",
+      "browser": "Chrome",
+      "viewports": [
+        1360,
+        375
+      ],
+      "exit_code": 0,
+      "log": "output/zh/verification/readability/if-motivation-browser.log"
+    },
+    {
+      "command": "sh scripts/node.sh tests/zh/mean-error-browser.cjs",
+      "browser": "Chrome",
+      "viewports": [
+        1360,
+        375
+      ],
+      "exit_code": 0,
+      "log": "output/zh/verification/readability/mean-error-browser.log"
+    },
+    {
+      "command": "sh scripts/node.sh tests/zh/if-notation-browser.cjs",
+      "browser": "Chrome",
+      "viewports": [
+        1360,
+        375
+      ],
+      "exit_code": 0,
+      "log": "output/zh/verification/readability/if-notation-browser.log"
+    },
+    {
+      "command": "sh scripts/node.sh tests/zh/qg-visual-browser.cjs",
+      "browser": "Chrome",
+      "viewports": [
+        1360,
+        375
+      ],
+      "exit_code": 0,
+      "log": "output/zh/verification/readability/qg-visual-browser.log"
+    },
+    {
+      "command": "sh scripts/node.sh tests/zh/if-function-browser.cjs",
+      "browser": "Chrome",
+      "viewports": [
+        1360,
+        375
+      ],
+      "exit_code": 0,
+      "log": "output/zh/verification/readability/if-function-browser.log"
+    }
+  ],
+  "independent_review": {
+    "mathematics": "zh/reviews/readability-mathematics.md",
+    "pedagogy": "zh/reviews/readability-audit.md",
+    "result": "passed; findings closed"
+  },
+  "preservation": {
+    "manifest": "zh/docs/READABILITY_PRESERVED.json",
+    "calculation_data_Julia_files_unchanged": 37,
+    "display_equations_unchanged": 54,
+    "all_nine_chapter_markers_unchanged": true,
+    "original_materials": "checked by package.py"
+  },
+  "visual_inspection": [
+    "output/zh/playwright/why-if-positive-1360.png",
+    "output/zh/playwright/if-input-output-375.png"
+  ],
+  "unverified": [
+    "Physical touch devices and other browser engines",
+    "Complete spoken screen-reader flow",
+    "Beginner learning outcomes",
+    "Clinical causal identification or inference coverage",
+    "Historical separate127-test Julia suite",
+    "Browser regression of extracted release"
+  ],
+  "open_implementation_issues": [],
+  "handoff": "zh/docs/PROGRESS.md and zh/docs/chapters/ch00–08.md",
+  "delivery": "releases/EIF_Tutorial_Complete.zip and .sha256; package.py checks original materials, CRC/SHA256 and every workspace member"
+}

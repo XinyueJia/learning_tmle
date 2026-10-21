@@ -1,0 +1,11 @@
+.lesson-language-control{display:flex;flex-wrap:wrap;align-items:center;gap:12px 24px;padding:14px 16px;margin:16px 0;border:1px solid #b8cce0;border-radius:8px;background:#f2f7fc;color:#011451}
+.lesson-language-control label{display:flex;align-items:center;gap:12px;font-weight:650}
+.lesson-language-control select{min-width:150px;padding:8px;background:white;color:#011451;border:1px solid #005398;border-radius:5px}
+.lesson-language-control>span{font-size:13px}
+.lesson-code-panel{min-width:0}
+.lesson-code-panel[hidden]{display:none!important}
+.r-line-card{padding:14px 16px;margin:16px 0;border:1px solid #b8cce0;border-radius:8px;background:#fff}
+.r-line-card pre{max-width:100%;overflow:auto;white-space:pre}
+.r-line-card h4{margin-top:0}
+.r-code-object-map{display:flex;flex-wrap:wrap;gap:8px}
+@media(max-width:800px){.lesson-language-control{gap:10px}.lesson-language-control label{width:100%}.lesson-language-control select{flex:1;min-width:0}.r-line-card{padding:12px}}

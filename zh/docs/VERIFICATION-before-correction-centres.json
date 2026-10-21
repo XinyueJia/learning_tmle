@@ -1,0 +1,110 @@
+{
+  "date": "2026-10-17",
+  "scope": "Chapter0: one observed cohort, descriptive versus inferential targets, true/estimated IF, iid mean standard error",
+  "entry": "http://127.0.0.1:4174/zh/?edition=sampling-if#chapter-0",
+  "previous_verification": "zh/docs/VERIFICATION-before-sampling-if.json",
+  "source": {
+    "cohort": "SUPPORT/RHC",
+    "records": 5735,
+    "events30d": 1918,
+    "treated24h": 2184,
+    "source_sha256": "9ef4ab578be4b40ad5d97d3a7e08ffdc1f9f76aeeefee51b4996e4221556f8e8",
+    "source_bytes": 2320412,
+    "whole_source_retained": true,
+    "outcome_evidence": "Original study explicitly confirms death date or survival180 for every patient; publisheddth30 exactly agrees with dates on all5735",
+    "permission": "Vanderbilt repository use permission with original citation and acknowledgement, notCCBY"
+  },
+  "completed": [
+    "Distinguish the known descriptive proportion among 5735 records from inference about an unknown target population",
+    "Define hypothetical repeated sampling within a stated sampling model; all calculations use only current records",
+    "Clarify observed-outcome IPW and currently fixed fitted weights versus uncertainty of the complete fitting rule",
+    "Retain both exact centring derivations, add translation cancellation and n-1 sample-variance SE formula with symbol recalls",
+    "Visualise full-cohort estimated IF, squared sum, sample variance and standard error; distinguish estimated spread from unknown realised error",
+    "Keep assumed m separate from the fixed iid SE calculation, and report unavailable variance/SE for n=1"
+  ],
+  "build": {
+    "command": "sh scripts/node.sh scripts/build.js",
+    "chapters": 9,
+    "exit_code": 0,
+    "log": "output/zh/verification/sampling-if/build.log"
+  },
+  "focused_tests": {
+    "passed": 18,
+    "failed": 0,
+    "skipped": 0,
+    "exit_code": 0,
+    "log": "output/zh/verification/sampling-if/focused.log"
+  },
+  "full_tests": {
+    "command": "JULIA_BIN=<installed Julia1.12.5> JULIA_DEPOT_PATH=/private/tmp/eif-tutorial-julia-depot sh scripts/node.sh --test tests/*.test.js tests/zh/*.test.js",
+    "passed": 200,
+    "failed": 0,
+    "skipped": 0,
+    "exit_code": 0,
+    "includes": "Actual Julia and R displayed programme execution and source mapping guards",
+    "log": "output/zh/verification/sampling-if/full-tests.log"
+  },
+  "browser": [
+    {
+      "command": "sh scripts/node.sh tests/zh/mean-error-browser.cjs",
+      "browser": "Chrome",
+      "viewports": [
+        1360,
+        375
+      ],
+      "exit_code": 0,
+      "log": "output/zh/verification/sampling-if/mean-error-browser.log"
+    },
+    {
+      "command": "sh scripts/node.sh tests/zh/if-motivation-browser.cjs",
+      "browser": "Chrome",
+      "viewports": [
+        1360,
+        375
+      ],
+      "exit_code": 0,
+      "log": "output/zh/verification/sampling-if/if-motivation-browser.log"
+    },
+    {
+      "command": "sh scripts/node.sh tests/zh/rhc-browser.cjs",
+      "browser": "Chrome",
+      "viewports": [
+        1360,
+        375
+      ],
+      "exit_code": 0,
+      "log": "output/zh/verification/sampling-if/rhc-browser.log"
+    }
+  ],
+  "browser_tooling": "Existing installed Playwright and Chrome run via repository Node wrapper; npx CLI unavailable, no dependency installation",
+  "visual_inspection": [
+    "Lead viewed desktop complete four-stage standard-error calculation",
+    "Lead viewed mobile final standard-error block after local horizontal scrolling"
+  ],
+  "numerical_oracle": {
+    "independent_reviewer": "Python standard-library CSV/Fraction/sqrt calculation",
+    "observed_risk": 0.33443766346992154,
+    "sample_variance_denominator": "n-1",
+    "sample_variance": 0.22262793189129587,
+    "standard_error": 0.006230503077185706,
+    "standard_error_pp": 0.6230503077185706,
+    "true_error": "unknown"
+  },
+  "preservation": {
+    "date": "2026-10-17",
+    "compared_with": "Previous delivered scalar-wording release",
+    "original_display_equations_retained_in_order": 61,
+    "new_display_equations": 2,
+    "chapters_1_to_8_byte_identical": true,
+    "shared_data_and_Julia_R_files_unchanged": 49,
+    "source_csv_sha256": "9ef4ab578be4b40ad5d97d3a7e08ffdc1f9f76aeeefee51b4996e4221556f8e8"
+  },
+  "review": "zh/reviews/ch00-sampling-if.md",
+  "unverified_this_run": [
+    "Clinical identification, actual iid assumptions, target-population representativeness and confidence-interval coverage",
+    "Physical devices, other browser engines, complete spoken screen-reader flow and learning outcomes",
+    "Browser run of extracted release and independent R all-row harness; full test suite did execute displayed R programmes"
+  ],
+  "open_implementation_issues": [],
+  "delivery": "releases/EIF_Tutorial_Complete.zip and .sha256; original materials and all archived workspace members verified by package.py"
+}

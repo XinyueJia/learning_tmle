@@ -1,0 +1,922 @@
+{
+  "version": 1,
+  "source": "zh/R/ch08.R",
+  "lineCount": 115,
+  "cohort": {
+    "n": 5735,
+    "events": 1918
+  },
+  "lines": [
+    {
+      "line": 4,
+      "code": "script_argument <- grep(\"^--file=\", commandArgs(FALSE), value = TRUE)",
+      "inputs": [],
+      "outputs": [
+        "script_argument"
+      ],
+      "operation": "commandArgs(FALSE)读取启动参数，grep按^匹配开头，value=TRUE保留字符串。输出零项或一项字符向量，定位Rscript当前文件。",
+      "formulaTex": null,
+      "dimensions": {
+        "script_argument": []
+      }
+    },
+    {
+      "line": 6,
+      "code": "source_files <- vapply(sys.frames(), function(frame) if (is.null(frame$ofile)) \"\" else frame$ofile, character(1))",
+      "inputs": [],
+      "outputs": [
+        "source_files"
+      ],
+      "operation": "sys.frames()读取调用环境；vapply逐个返回长度1字符。被source()调用时ofile记录当前脚本路径；没有路径的环境返回空串。",
+      "formulaTex": null,
+      "dimensions": {
+        "source_files": []
+      }
+    },
+    {
+      "line": 8,
+      "code": "script_path <- if (any(nzchar(source_files))) tail(source_files[nzchar(source_files)], 1) else if (length(script_argument)) sub(\"^--file=\", \"\", script_argument[1]) else file.path(\"zh\", \"R\", \"ch08.R\")",
+      "inputs": [
+        "source_files",
+        "script_argument"
+      ],
+      "outputs": [
+        "script_path"
+      ],
+      "operation": "if选择来源：source()时取最后一个非空ofile，否则去掉--file=前缀。在项目根R控制台直接运行时，默认使用本讲脚本位置；输出一个路径字符串，[]索引从1开始。",
+      "formulaTex": null,
+      "dimensions": {
+        "source_files": [],
+        "script_argument": [],
+        "script_path": []
+      }
+    },
+    {
+      "line": 10,
+      "code": "stopifnot(length(script_path) == 1L, !is.na(script_path))",
+      "inputs": [
+        "script_path"
+      ],
+      "outputs": [],
+      "operation": "length检查路径只有一项；1L是整数1，!is.na排除缺失。stopifnot要求所有条件为TRUE，否则停止。",
+      "formulaTex": null,
+      "dimensions": {
+        "script_path": []
+      }
+    },
+    {
+      "line": 12,
+      "code": "project_root <- normalizePath(file.path(dirname(script_path), \"..\", \"..\"), mustWork = TRUE)",
+      "inputs": [
+        "script_path"
+      ],
+      "outputs": [
+        "project_root"
+      ],
+      "operation": "dirname取脚本目录；file.path向上两层拼接项目根，normalizePath要求目录存在。路径不依赖当前工作目录。",
+      "formulaTex": null,
+      "dimensions": {
+        "script_path": [],
+        "project_root": []
+      }
+    },
+    {
+      "line": 14,
+      "code": "source(file.path(project_root, \"shared\", \"R\", \"RHCCase.R\"))",
+      "inputs": [
+        "project_root"
+      ],
+      "outputs": [],
+      "operation": "source读取并执行共享R定义，提供实际CSV读取、纯数学函数与手动拟合器。仅使用base R，无需安装TMLE软件包。",
+      "formulaTex": null,
+      "dimensions": {
+        "project_root": []
+      }
+    },
+    {
+      "line": 16,
+      "code": "data <- rhc_data()",
+      "inputs": [],
+      "outputs": [
+        "data"
+      ],
+      "operation": "从同一官方CSV计算各观测组合的概率及经验模型，输出list；后续所有数值由输入记录决定。",
+      "formulaTex": null,
+      "dimensions": {
+        "data": []
+      }
+    },
+    {
+      "line": 18,
+      "code": "for (epsilon in c(0, 0.1, 0.2)) {",
+      "inputs": [],
+      "outputs": [
+        "epsilon"
+      ],
+      "operation": "依次手动试探三个epsilon标量，for仅查看score，不自动求根。",
+      "formulaTex": null,
+      "dimensions": {
+        "epsilon": []
+      }
+    },
+    {
+      "line": 20,
+      "code": "  cat(\"trial epsilon =\", epsilon, \"; score =\", fluctuation_score(data, epsilon)$score, \"\\n\")",
+      "inputs": [
+        "data",
+        "epsilon"
+      ],
+      "outputs": [],
+      "operation": "用固定初始offset和H计算每个试探幅度的经验score标量。",
+      "formulaTex": "s_n(\\epsilon)=\\sum_jp_jH_j(y_j-Q_{\\epsilon,j})",
+      "dimensions": {
+        "data": [],
+        "epsilon": []
+      }
+    },
+    {
+      "line": 22,
+      "code": "}",
+      "inputs": [],
+      "outputs": [],
+      "operation": "结束手动试探循环；初始数据和模型不变。",
+      "formulaTex": null,
+      "dimensions": {}
+    },
+    {
+      "line": 24,
+      "code": "lo <- -1",
+      "inputs": [],
+      "outputs": [
+        "lo"
+      ],
+      "operation": "设定按sex分层计算的求根区间的下端点标量。",
+      "formulaTex": null,
+      "dimensions": {
+        "lo": []
+      }
+    },
+    {
+      "line": 26,
+      "code": "hi <- 1",
+      "inputs": [],
+      "outputs": [
+        "hi"
+      ],
+      "operation": "设定按sex分层计算的求根区间的上端点标量。",
+      "formulaTex": null,
+      "dimensions": {
+        "hi": []
+      }
+    },
+    {
+      "line": 28,
+      "code": "tolerance <- 1e-12",
+      "inputs": [],
+      "outputs": [
+        "tolerance"
+      ],
+      "operation": "设置score绝对值容差，不把近似零写成精确零。",
+      "formulaTex": null,
+      "dimensions": {
+        "tolerance": []
+      }
+    },
+    {
+      "line": 30,
+      "code": "stopifnot(fluctuation_score(data, lo)$score >= 0, fluctuation_score(data, hi)$score <= 0)",
+      "inputs": [
+        "data",
+        "lo",
+        "hi"
+      ],
+      "outputs": [],
+      "operation": "先核对非增score在区间两端夹住根；不满足则停止。",
+      "formulaTex": null,
+      "dimensions": {
+        "data": [],
+        "lo": [],
+        "hi": []
+      }
+    },
+    {
+      "line": 32,
+      "code": "targeted <- NULL",
+      "inputs": [],
+      "outputs": [
+        "targeted"
+      ],
+      "operation": "NULL标记求根结果尚待计算；成功后保存更新对象。",
+      "formulaTex": null,
+      "dimensions": {
+        "targeted": []
+      }
+    },
+    {
+      "line": 34,
+      "code": "for (iteration in 1:200) {",
+      "inputs": [],
+      "outputs": [
+        "iteration"
+      ],
+      "operation": "最多200次显式二分，每次计算一个区间中点。",
+      "formulaTex": null,
+      "dimensions": {
+        "iteration": []
+      }
+    },
+    {
+      "line": 36,
+      "code": "  step <- bisection_step(data, lo, hi)",
+      "inputs": [
+        "data",
+        "lo",
+        "hi"
+      ],
+      "outputs": [
+        "step"
+      ],
+      "operation": "共享纯函数返回midpoint、score以及缩小后的lo/hi。",
+      "formulaTex": null,
+      "dimensions": {
+        "data": [],
+        "lo": [],
+        "hi": [],
+        "step": []
+      }
+    },
+    {
+      "line": 38,
+      "code": "  if (iteration <= 5) cat(\"bisection\", iteration, \"; epsilon =\", step$midpoint, \"; score =\", step$score, \"\\n\")",
+      "inputs": [
+        "iteration",
+        "step"
+      ],
+      "outputs": [],
+      "operation": "显示前5次二分以便核对，全部迭代仍按相同规则计算。",
+      "formulaTex": null,
+      "dimensions": {
+        "iteration": [],
+        "step": []
+      }
+    },
+    {
+      "line": 40,
+      "code": "  if (abs(step$score) <= tolerance) {",
+      "inputs": [
+        "step",
+        "tolerance"
+      ],
+      "outputs": [],
+      "operation": "abs取score绝对值；达到预定容差才进入成功分支。",
+      "formulaTex": null,
+      "dimensions": {
+        "step": [],
+        "tolerance": []
+      }
+    },
+    {
+      "line": 42,
+      "code": "    targeted <- case_at(data, step$midpoint)",
+      "inputs": [
+        "data",
+        "step"
+      ],
+      "outputs": [
+        "targeted"
+      ],
+      "operation": "用已求出的中点更新四组Q，按经验X比例标准化，并计算完整经验EIF与SE。",
+      "formulaTex": "Q^*_{a,x}=\\operatorname{expit}(\\operatorname{logit}\\widehat Q_{a,x}+\\widehat\\epsilon H_{a,x})",
+      "dimensions": {
+        "data": [],
+        "step": [],
+        "targeted": []
+      }
+    },
+    {
+      "line": 44,
+      "code": "    break",
+      "inputs": [],
+      "outputs": [],
+      "operation": "break退出最近一层for循环，保留合格targeted对象。",
+      "formulaTex": null,
+      "dimensions": {}
+    },
+    {
+      "line": 46,
+      "code": "  }",
+      "inputs": [],
+      "outputs": [],
+      "operation": "结束收敛判断分支。",
+      "formulaTex": null,
+      "dimensions": {}
+    },
+    {
+      "line": 48,
+      "code": "  stopifnot(step$midpoint != lo, step$midpoint != hi)",
+      "inputs": [
+        "step",
+        "lo",
+        "hi"
+      ],
+      "outputs": [],
+      "operation": "防止浮点中点等于端点时继续假装缩小区间。",
+      "formulaTex": null,
+      "dimensions": {
+        "step": [],
+        "lo": [],
+        "hi": []
+      }
+    },
+    {
+      "line": 50,
+      "code": "  lo <- step$lo",
+      "inputs": [
+        "step"
+      ],
+      "outputs": [
+        "lo"
+      ],
+      "operation": "以score符号确定的新下界替换旧下界。",
+      "formulaTex": null,
+      "dimensions": {
+        "step": [],
+        "lo": []
+      }
+    },
+    {
+      "line": 52,
+      "code": "  hi <- step$hi",
+      "inputs": [
+        "step"
+      ],
+      "outputs": [
+        "hi"
+      ],
+      "operation": "以score符号确定的新上界替换旧上界。",
+      "formulaTex": null,
+      "dimensions": {
+        "step": [],
+        "hi": []
+      }
+    },
+    {
+      "line": 54,
+      "code": "}",
+      "inputs": [],
+      "outputs": [],
+      "operation": "结束二分循环；未收敛时targeted仍为NULL。",
+      "formulaTex": null,
+      "dimensions": {}
+    },
+    {
+      "line": 56,
+      "code": "if (is.null(targeted)) stop(\"Eight-cell bisection did not converge\")",
+      "inputs": [
+        "targeted"
+      ],
+      "outputs": [],
+      "operation": "达到迭代上限仍无合格结果时显式失败，不输出伪收敛。",
+      "formulaTex": null,
+      "dimensions": {
+        "targeted": []
+      }
+    },
+    {
+      "line": 58,
+      "code": "print(targeted$groups)",
+      "inputs": [
+        "targeted"
+      ],
+      "outputs": [],
+      "operation": "显示4组更新Q与score贡献，同一x的两臂按原经验X权重标准化。",
+      "formulaTex": null,
+      "dimensions": {
+        "targeted": []
+      }
+    },
+    {
+      "line": 60,
+      "code": "cat(\"eight-cell epsilon =\", targeted$epsilon, \"; estimate =\", targeted$estimate, \"; EIF mean =\", targeted$eif_mean, \"; SE =\", targeted$se, \"\\n\")",
+      "inputs": [
+        "targeted"
+      ],
+      "outputs": [],
+      "operation": "显示按sex分层的TMLE风险差、容差内经验EIF平均与SE；只按性别标准化。",
+      "formulaTex": null,
+      "dimensions": {
+        "targeted": []
+      }
+    },
+    {
+      "line": 62,
+      "code": "rows <- read_rhc_rows(DEFAULT_SOURCE)",
+      "inputs": [],
+      "outputs": [
+        "rows"
+      ],
+      "operation": "重新读取同一5735人原记录，扩展调整变量时不换队列。",
+      "formulaTex": null,
+      "dimensions": {
+        "rows": [
+          "n",
+          63
+        ]
+      }
+    },
+    {
+      "line": 64,
+      "code": "fit <- prepare_full(rows)",
+      "inputs": [
+        "rows"
+      ],
+      "outputs": [
+        "fit"
+      ],
+      "operation": "构建固定顺序的n×17基线design，拟合g及n×18的Q；年龄分母n、white参考、无正则或隐式截断。",
+      "formulaTex": null,
+      "dimensions": {
+        "rows": [
+          "n",
+          63
+        ],
+        "fit": []
+      }
+    },
+    {
+      "line": 66,
+      "code": "initial <- full_at(fit, 0)",
+      "inputs": [
+        "fit"
+      ],
+      "outputs": [
+        "initial"
+      ],
+      "operation": "epsilon=0保留初始预测，返回初始标准化风险差、AIPW与经验score。",
+      "formulaTex": "\\widehat\\psi_{\\rm AIPW}=\\widehat\\psi_{\\rm init}+P_n\\widehat D_{\\rm init}",
+      "dimensions": {
+        "fit": [],
+        "initial": []
+      }
+    },
+    {
+      "line": 68,
+      "code": "cat(\"baseline columns =\", fit$feature_names, \"; age mean =\", fit$age_mean, \"; age SD =\", fit$age_sd, \"\\n\")",
+      "inputs": [
+        "fit"
+      ],
+      "outputs": [],
+      "operation": "显示设计列和年龄标准化参数，读者可以核对固定调整集。",
+      "formulaTex": null,
+      "dimensions": {
+        "fit": []
+      }
+    },
+    {
+      "line": 70,
+      "code": "cat(\"g range =\", range(fit$g), \"; initial =\", initial$estimate, \"; AIPW =\", initial$aipw, \"; score =\", initial$score, \"\\n\")",
+      "inputs": [
+        "fit",
+        "initial"
+      ],
+      "outputs": [],
+      "operation": "range显示全部n项g的最小和最大；区分初始plug-in、AIPW及score。",
+      "formulaTex": null,
+      "dimensions": {
+        "fit": [],
+        "initial": []
+      }
+    },
+    {
+      "line": 72,
+      "code": "for (epsilon in c(0, 0.002, 0.004)) {",
+      "inputs": [],
+      "outputs": [
+        "epsilon"
+      ],
+      "operation": "对完整基线模型手动试探三个幅度，随后通过二分寻找根。",
+      "formulaTex": null,
+      "dimensions": {
+        "epsilon": []
+      }
+    },
+    {
+      "line": 74,
+      "code": "  trial <- full_at(fit, epsilon)",
+      "inputs": [
+        "fit",
+        "epsilon"
+      ],
+      "outputs": [
+        "trial"
+      ],
+      "operation": "逐人计算固定offset加epsilon×H的更新、score和平均对数似然。",
+      "formulaTex": null,
+      "dimensions": {
+        "fit": [],
+        "epsilon": [],
+        "trial": []
+      }
+    },
+    {
+      "line": 76,
+      "code": "  cat(\"full trial epsilon =\", epsilon, \"; score =\", trial$score, \"; log likelihood =\", trial$log_likelihood, \"\\n\")",
+      "inputs": [
+        "epsilon",
+        "trial"
+      ],
+      "outputs": [],
+      "operation": "显示同一完整5735人平均score和对数似然，分母为全部人数。",
+      "formulaTex": null,
+      "dimensions": {
+        "epsilon": [],
+        "trial": []
+      }
+    },
+    {
+      "line": 78,
+      "code": "}",
+      "inputs": [],
+      "outputs": [],
+      "operation": "结束完整基线手动试探。",
+      "formulaTex": null,
+      "dimensions": {}
+    },
+    {
+      "line": 80,
+      "code": "lo <- -0.25",
+      "inputs": [],
+      "outputs": [
+        "lo"
+      ],
+      "operation": "设置完整基线score二分下界。",
+      "formulaTex": null,
+      "dimensions": {
+        "lo": []
+      }
+    },
+    {
+      "line": 82,
+      "code": "hi <- 0.25",
+      "inputs": [],
+      "outputs": [
+        "hi"
+      ],
+      "operation": "设置完整基线score二分上界。",
+      "formulaTex": null,
+      "dimensions": {
+        "hi": []
+      }
+    },
+    {
+      "line": 84,
+      "code": "stopifnot(full_at(fit, lo)$score >= 0, full_at(fit, hi)$score <= 0)",
+      "inputs": [
+        "fit",
+        "lo",
+        "hi"
+      ],
+      "outputs": [],
+      "operation": "确认完整基线非增score夹住根，失败明确停止。",
+      "formulaTex": null,
+      "dimensions": {
+        "fit": [],
+        "lo": [],
+        "hi": []
+      }
+    },
+    {
+      "line": 86,
+      "code": "full_targeted <- NULL",
+      "inputs": [],
+      "outputs": [
+        "full_targeted"
+      ],
+      "operation": "以NULL表示还没有达到容差的完整基线结果。",
+      "formulaTex": null,
+      "dimensions": {
+        "full_targeted": []
+      }
+    },
+    {
+      "line": 88,
+      "code": "for (iteration in 1:200) {",
+      "inputs": [],
+      "outputs": [
+        "iteration"
+      ],
+      "operation": "开始最多200次完整基线手动二分。",
+      "formulaTex": null,
+      "dimensions": {
+        "iteration": []
+      }
+    },
+    {
+      "line": 90,
+      "code": "  step <- full_bisection_step(fit, lo, hi)",
+      "inputs": [
+        "fit",
+        "lo",
+        "hi"
+      ],
+      "outputs": [
+        "step"
+      ],
+      "operation": "在同一fit上计算中点score及更新区间，保留全部初始Q/g。",
+      "formulaTex": null,
+      "dimensions": {
+        "fit": [],
+        "lo": [],
+        "hi": [],
+        "step": []
+      }
+    },
+    {
+      "line": 92,
+      "code": "  if (iteration <= 5) cat(\"full bisection\", iteration, \"; epsilon =\", step$midpoint, \"; score =\", step$score, \"\\n\")",
+      "inputs": [
+        "iteration",
+        "step"
+      ],
+      "outputs": [],
+      "operation": "显示前5次逐人二分的中点与score，便于手工核对。",
+      "formulaTex": null,
+      "dimensions": {
+        "iteration": [],
+        "step": []
+      }
+    },
+    {
+      "line": 94,
+      "code": "  if (abs(step$score) <= tolerance) {",
+      "inputs": [
+        "step",
+        "tolerance"
+      ],
+      "outputs": [],
+      "operation": "同一个预设1e−12容差检查完整n人score。",
+      "formulaTex": null,
+      "dimensions": {
+        "step": [],
+        "tolerance": []
+      }
+    },
+    {
+      "line": 96,
+      "code": "    full_targeted <- full_at(fit, step$midpoint)",
+      "inputs": [
+        "fit",
+        "step"
+      ],
+      "outputs": [
+        "full_targeted"
+      ],
+      "operation": "仅在求根后命名为targeted；两臂更新共用同一epsilon并对同一n人标准化。",
+      "formulaTex": "\\widehat\\psi_{\\rm TMLE}=n^{-1}\\sum_i(Q^*_{1,i}-Q^*_{0,i})",
+      "dimensions": {
+        "fit": [],
+        "step": [],
+        "full_targeted": []
+      }
+    },
+    {
+      "line": 98,
+      "code": "    break",
+      "inputs": [],
+      "outputs": [],
+      "operation": "退出完整基线二分循环。",
+      "formulaTex": null,
+      "dimensions": {}
+    },
+    {
+      "line": 100,
+      "code": "  }",
+      "inputs": [],
+      "outputs": [],
+      "operation": "结束完整基线收敛分支。",
+      "formulaTex": null,
+      "dimensions": {}
+    },
+    {
+      "line": 102,
+      "code": "  stopifnot(step$midpoint != lo, step$midpoint != hi)",
+      "inputs": [
+        "step",
+        "lo",
+        "hi"
+      ],
+      "outputs": [],
+      "operation": "浮点中点无法继续缩小时立即停止，避免假收敛。",
+      "formulaTex": null,
+      "dimensions": {
+        "step": [],
+        "lo": [],
+        "hi": []
+      }
+    },
+    {
+      "line": 104,
+      "code": "  lo <- step$lo",
+      "inputs": [
+        "step"
+      ],
+      "outputs": [
+        "lo"
+      ],
+      "operation": "保留含根的新下界标量。",
+      "formulaTex": null,
+      "dimensions": {
+        "step": [],
+        "lo": []
+      }
+    },
+    {
+      "line": 106,
+      "code": "  hi <- step$hi",
+      "inputs": [
+        "step"
+      ],
+      "outputs": [
+        "hi"
+      ],
+      "operation": "保留含根的新上界标量。",
+      "formulaTex": null,
+      "dimensions": {
+        "step": [],
+        "hi": []
+      }
+    },
+    {
+      "line": 108,
+      "code": "}",
+      "inputs": [],
+      "outputs": [],
+      "operation": "结束完整基线二分循环。",
+      "formulaTex": null,
+      "dimensions": {}
+    },
+    {
+      "line": 110,
+      "code": "if (is.null(full_targeted)) stop(\"Full baseline bisection did not converge\")",
+      "inputs": [
+        "full_targeted"
+      ],
+      "outputs": [],
+      "operation": "迭代耗尽时明确报错；合格结果以score容差为准。",
+      "formulaTex": null,
+      "dimensions": {
+        "full_targeted": []
+      }
+    },
+    {
+      "line": 112,
+      "code": "cat(\"full epsilon =\", full_targeted$epsilon, \"; risk0 =\", full_targeted$risk0, \"; risk1 =\", full_targeted$risk1, \"; TMLE =\", full_targeted$estimate, \"\\n\")",
+      "inputs": [
+        "full_targeted"
+      ],
+      "outputs": [],
+      "operation": "分别显示求根幅度、两臂全部n人平均风险和标准化风险差。",
+      "formulaTex": null,
+      "dimensions": {
+        "full_targeted": []
+      }
+    },
+    {
+      "line": 114,
+      "code": "cat(\"full score =\", full_targeted$score, \"; EIF mean =\", full_targeted$eif_mean, \"; empirical SE =\", full_targeted$se, \"\\n\")",
+      "inputs": [
+        "full_targeted"
+      ],
+      "outputs": [],
+      "operation": "分别显示似然score、完整EIF平均和经验SE；有限样本和推断条件见本章技术说明。",
+      "formulaTex": null,
+      "dimensions": {
+        "full_targeted": []
+      }
+    }
+  ],
+  "objects": {
+    "project_root": {
+      "key": "project_root",
+      "label": "project_root",
+      "type": "character vector",
+      "dimensions": [],
+      "dimensionText": "路径或参数字符串"
+    },
+    "step": {
+      "key": "step",
+      "label": "step",
+      "type": "list",
+      "dimensions": [],
+      "dimensionText": "命名容器；各成员按自身维度"
+    },
+    "epsilon": {
+      "key": "epsilon",
+      "label": "epsilon",
+      "type": "numeric scalar (double)",
+      "dimensions": [],
+      "dimensionText": "长度1"
+    },
+    "source_files": {
+      "key": "source_files",
+      "label": "source_files",
+      "type": "character vector",
+      "dimensions": [],
+      "dimensionText": "路径或参数字符串"
+    },
+    "targeted": {
+      "key": "targeted",
+      "label": "targeted",
+      "type": "list",
+      "dimensions": [],
+      "dimensionText": "命名容器；各成员按自身维度"
+    },
+    "script_argument": {
+      "key": "script_argument",
+      "label": "script_argument",
+      "type": "character vector",
+      "dimensions": [],
+      "dimensionText": "路径或参数字符串"
+    },
+    "tolerance": {
+      "key": "tolerance",
+      "label": "tolerance",
+      "type": "numeric scalar (double)",
+      "dimensions": [],
+      "dimensionText": "长度1"
+    },
+    "data": {
+      "key": "data",
+      "label": "data",
+      "type": "list",
+      "dimensions": [],
+      "dimensionText": "命名容器；各成员按自身维度"
+    },
+    "script_path": {
+      "key": "script_path",
+      "label": "script_path",
+      "type": "character vector",
+      "dimensions": [],
+      "dimensionText": "路径或参数字符串"
+    },
+    "trial": {
+      "key": "trial",
+      "label": "trial",
+      "type": "list",
+      "dimensions": [],
+      "dimensionText": "命名容器；各成员按自身维度"
+    },
+    "hi": {
+      "key": "hi",
+      "label": "hi",
+      "type": "numeric scalar (double)",
+      "dimensions": [],
+      "dimensionText": "长度1"
+    },
+    "full_targeted": {
+      "key": "full_targeted",
+      "label": "full_targeted",
+      "type": "list",
+      "dimensions": [],
+      "dimensionText": "命名容器；各成员按自身维度"
+    },
+    "fit": {
+      "key": "fit",
+      "label": "fit",
+      "type": "list",
+      "dimensions": [],
+      "dimensionText": "命名容器；各成员按自身维度"
+    },
+    "initial": {
+      "key": "initial",
+      "label": "initial",
+      "type": "list",
+      "dimensions": [],
+      "dimensionText": "命名容器；各成员按自身维度"
+    },
+    "lo": {
+      "key": "lo",
+      "label": "lo",
+      "type": "numeric scalar (double)",
+      "dimensions": [],
+      "dimensionText": "长度1"
+    },
+    "iteration": {
+      "key": "iteration",
+      "label": "iteration",
+      "type": "integer scalar",
+      "dimensions": [],
+      "dimensionText": "长度1"
+    },
+    "rows": {
+      "key": "rows",
+      "label": "rows",
+      "type": "data.frame",
+      "dimensions": [
+        "n",
+        63
+      ],
+      "dimensionText": "5735行×63列"
+    }
+  }
+}

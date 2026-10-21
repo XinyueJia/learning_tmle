@@ -1,0 +1,771 @@
+{
+  "version": 1,
+  "cohort": {
+    "n": 5735,
+    "events": 1918,
+    "source": "shared/data/public/rhc/source.csv"
+  },
+  "allowedMathIds": [
+    "raw-cohort",
+    "binary-encoding",
+    "sample-size",
+    "outcomes",
+    "events",
+    "sample-mean",
+    "influence",
+    "mean-influence",
+    "eight-cell-summary",
+    "weighted-mean",
+    "numerical-check",
+    "baseline-design",
+    "initial-models",
+    "factual-prediction"
+  ],
+  "objects": {
+    "rhc-module": {
+      "id": "rhc-module",
+      "label": "读取与计算函数模块",
+      "julia": "RHCCase",
+      "type": "Module",
+      "dimensions": [],
+      "role": "setup",
+      "dimensionText": "模块，不是患者数据"
+    },
+    "rhc-exports": {
+      "id": "rhc-exports",
+      "label": "当前脚本可调用的函数名",
+      "julia": "using .RHCCase",
+      "type": "导出名称绑定",
+      "dimensions": [],
+      "role": "setup",
+      "dimensionText": "名称集合，不是数值向量"
+    },
+    "source-path": {
+      "id": "source-path",
+      "label": "冻结原始 CSV 的位置",
+      "julia": "DEFAULT_SOURCE",
+      "type": "String",
+      "dimensions": [],
+      "role": "input",
+      "dimensionText": "一个文件路径字符串"
+    },
+    "raw-records": {
+      "id": "raw-records",
+      "label": "原始患者记录",
+      "julia": "rows",
+      "type": "Vector{Dict{String,String}}",
+      "dimensions": [
+        "n"
+      ],
+      "role": "input",
+      "dimensionText": "n 条字典记录，每条保留 63 个原字段",
+      "tableDimensions": [
+        "n",
+        63
+      ],
+      "unit": "患者记录"
+    },
+    "observations": {
+      "id": "observations",
+      "label": "每位患者的三个二元标签",
+      "julia": "observations",
+      "type": "Vector{NamedTuple{(:x,:a,:y),Tuple{Int,Int,Int}}}",
+      "dimensions": [
+        "n"
+      ],
+      "role": "derived-data",
+      "dimensionText": "n 条 (x,a,y) 记录；顺序与原始行相同"
+    },
+    "sample-size": {
+      "id": "sample-size",
+      "label": "患者总人数",
+      "julia": "n",
+      "type": "Int",
+      "dimensions": [],
+      "role": "summary",
+      "dimensionText": "标量，1 个整数",
+      "unit": "人"
+    },
+    "outcomes": {
+      "id": "outcomes",
+      "label": "逐人的 30 日死亡指标",
+      "julia": "y",
+      "type": "Vector{Int}",
+      "dimensions": [
+        "n"
+      ],
+      "role": "input",
+      "dimensionText": "n 维向量，每人一个 0/1",
+      "symbol": "Y_i",
+      "unit": "0/1 指标"
+    },
+    "events": {
+      "id": "events",
+      "label": "30 日死亡人数",
+      "julia": "events",
+      "type": "Int",
+      "dimensions": [],
+      "role": "summary",
+      "dimensionText": "标量，1 个整数",
+      "symbol": "M",
+      "unit": "人"
+    },
+    "risk": {
+      "id": "risk",
+      "label": "全队列样本死亡比例",
+      "julia": "risk",
+      "type": "Float64",
+      "dimensions": [],
+      "role": "estimate",
+      "dimensionText": "标量，1 个小数",
+      "symbol": "\\widehat\\mu",
+      "unit": "概率"
+    },
+    "influence": {
+      "id": "influence",
+      "label": "逐人的均值影响值",
+      "julia": "influence",
+      "type": "Vector{Float64}",
+      "dimensions": [
+        "n"
+      ],
+      "role": "derived-data",
+      "dimensionText": "n 维向量，允许负数",
+      "symbol": "D_i",
+      "unit": "概率差 / 单位替换比例"
+    },
+    "mean-influence": {
+      "id": "mean-influence",
+      "label": "逐人影响值的平均",
+      "julia": "mean_influence",
+      "type": "Float64",
+      "dimensions": [],
+      "role": "summary",
+      "dimensionText": "标量，1 个小数",
+      "symbol": "\\overline D",
+      "unit": "概率差 / 单位替换比例"
+    },
+    "coarse-data": {
+      "id": "coarse-data",
+      "label": "同一批患者的分组计数容器",
+      "julia": "data",
+      "type": "NamedTuple",
+      "dimensions": [],
+      "role": "derived-data",
+      "dimensionText": "一个带字段的记录容器；data.cells 是 8 维向量",
+      "nestedDimensions": {
+        "cells": [
+          8
+        ]
+      },
+      "unit": "格内人数仍以人计"
+    },
+    "mean-check": {
+      "id": "mean-check",
+      "label": "按组计算均值的返回容器",
+      "julia": "check",
+      "type": "NamedTuple{(:risk,:values,:mean)}",
+      "dimensions": [],
+      "role": "validation",
+      "dimensionText": "一个容器，含 2 个标量和 1 个 8 维向量"
+    },
+    "check-risk": {
+      "id": "check-risk",
+      "label": "按组人数加权死亡比例",
+      "julia": "check.risk",
+      "type": "Float64",
+      "dimensions": [],
+      "role": "validation",
+      "dimensionText": "标量，1 个小数",
+      "unit": "概率"
+    },
+    "check-values": {
+      "id": "check-values",
+      "label": "各观测组合的均值影响值",
+      "julia": "check.values",
+      "type": "Vector{Float64}",
+      "dimensions": [
+        8
+      ],
+      "role": "validation",
+      "dimensionText": "8 维向量，每格一项",
+      "unit": "概率差 / 单位替换比例"
+    },
+    "check-mean": {
+      "id": "check-mean",
+      "label": "按组人数加权的影响值平均",
+      "julia": "check.mean",
+      "type": "Float64",
+      "dimensions": [],
+      "role": "validation",
+      "dimensionText": "标量，1 个小数",
+      "unit": "概率差 / 单位替换比例"
+    },
+    "assertion-result": {
+      "id": "assertion-result",
+      "label": "检查成功后继续执行",
+      "julia": "@assert",
+      "type": "Nothing（条件失败则抛出 AssertionError）",
+      "dimensions": [],
+      "role": "validation",
+      "dimensionText": "成功时无数值输出"
+    },
+    "terminal-output": {
+      "id": "terminal-output",
+      "label": "终端显示的文字和已有结果",
+      "julia": "println(...)",
+      "type": "Nothing（副作用为写入终端）",
+      "dimensions": [],
+      "role": "display",
+      "dimensionText": "显示文本，不是新的统计量"
+    },
+    "baseline-w": {
+      "id": "baseline-w",
+      "label": "指定的原始基线变量",
+      "julia": "sex, age, race, HISTORY_FIELDS",
+      "type": "原始字段的概念性表",
+      "dimensions": [
+        "n",
+        15
+      ],
+      "role": "input",
+      "dimensionText": "n × 15 原始基线变量；race 尚是单列分类变量",
+      "sourceFields": [
+        "sex",
+        "age",
+        "race",
+        "cardiohx",
+        "chfhx",
+        "dementhx",
+        "psychhx",
+        "chrpulhx",
+        "renalhx",
+        "liverhx",
+        "gibledhx",
+        "malighx",
+        "immunhx",
+        "transhx",
+        "amihx"
+      ]
+    },
+    "design-matrix": {
+      "id": "design-matrix",
+      "label": "初始模型实际使用的基线设计矩阵",
+      "julia": "fit.design",
+      "type": "Matrix{Float64}",
+      "dimensions": [
+        "n",
+        17
+      ],
+      "role": "derived-data",
+      "dimensionText": "n × 17：截距、male、age_z、两个 race 指示列、12 项病史",
+      "featureNames": [
+        "intercept",
+        "male",
+        "age_z",
+        "race_black",
+        "race_other",
+        "cardiohx",
+        "chfhx",
+        "dementhx",
+        "psychhx",
+        "chrpulhx",
+        "renalhx",
+        "liverhx",
+        "gibledhx",
+        "malighx",
+        "immunhx",
+        "transhx",
+        "amihx"
+      ]
+    },
+    "treatment-vector": {
+      "id": "treatment-vector",
+      "label": "实际接受 RHC 的指标",
+      "julia": "fit.a",
+      "type": "Vector{Float64}",
+      "dimensions": [
+        "n"
+      ],
+      "role": "input",
+      "dimensionText": "n 维向量，每人一个实际 A；取值 0.0 或 1.0",
+      "symbol": "A_i"
+    },
+    "outcome-vector": {
+      "id": "outcome-vector",
+      "label": "模型使用的实际死亡指标",
+      "julia": "fit.y",
+      "type": "Vector{Float64}",
+      "dimensions": [
+        "n"
+      ],
+      "role": "input",
+      "dimensionText": "n 维浮点向量，与第一讲 y 的 0/1 信息相同",
+      "symbol": "Y_i",
+      "sameValuesAs": "outcomes"
+    },
+    "initial-fit": {
+      "id": "initial-fit",
+      "label": "仅初始模型的返回容器",
+      "julia": "fit",
+      "type": "NamedTuple",
+      "dimensions": [],
+      "role": "fitted-model",
+      "dimensionText": "一个容器，含设计矩阵、实际 A/Y、初始 g/Q 和拟合诊断"
+    },
+    "propensity": {
+      "id": "propensity",
+      "label": "每人在其基线下接受 RHC 的拟合概率",
+      "julia": "g / fit.g",
+      "type": "Vector{Float64}",
+      "dimensions": [
+        "n"
+      ],
+      "role": "prediction",
+      "dimensionText": "n 维初始概率向量",
+      "symbol": "\\widehat g(W_i)",
+      "unit": "概率"
+    },
+    "q0": {
+      "id": "q0",
+      "label": "同一批人将预测输入 A 设为 0 的初始风险",
+      "julia": "q0 / fit.q0",
+      "type": "Vector{Float64}",
+      "dimensions": [
+        "n"
+      ],
+      "role": "prediction",
+      "dimensionText": "n 维初始概率向量，基线 W 保持原值",
+      "symbol": "\\widehat Q(0,W_i)",
+      "unit": "概率"
+    },
+    "q1": {
+      "id": "q1",
+      "label": "同一批人将预测输入 A 设为 1 的初始风险",
+      "julia": "q1 / fit.q1",
+      "type": "Vector{Float64}",
+      "dimensions": [
+        "n"
+      ],
+      "role": "prediction",
+      "dimensionText": "n 维初始概率向量，基线 W 保持原值",
+      "symbol": "\\widehat Q(1,W_i)",
+      "unit": "概率"
+    },
+    "qa": {
+      "id": "qa",
+      "label": "按实际 A 选出的初始预测风险",
+      "julia": "qa",
+      "type": "Vector{Float64}",
+      "dimensions": [
+        "n"
+      ],
+      "role": "prediction",
+      "dimensionText": "n 维向量，每行仅选实际接受的那一臂预测",
+      "symbol": "\\widehat Q(A_i,W_i)",
+      "unit": "概率"
+    },
+    "risk-difference": {
+      "id": "risk-difference",
+      "label": "逐人的两臂初始预测风险差",
+      "julia": "q1 - q0",
+      "type": "Vector{Float64}",
+      "dimensions": [
+        "n"
+      ],
+      "role": "derived-data",
+      "dimensionText": "n 维差值向量；取均值后才成为一个标准化风险差",
+      "symbol": "\\widehat Q(1,W_i)-\\widehat Q(0,W_i)",
+      "unit": "概率差"
+    }
+  },
+  "chapters": {
+    "ch01": {
+      "source": "zh/julia/rhc_lessons/ch01.jl",
+      "lineCount": 32,
+      "lines": [
+        {
+          "line": 3,
+          "code": "include(joinpath(@__DIR__, \"..\", \"..\", \"..\", \"shared\", \"julia\", \"RHCCase.jl\"))",
+          "kind": "setup",
+          "inputs": [],
+          "outputs": [
+            "rhc-module"
+          ],
+          "mathIds": [],
+          "formulaTex": null,
+          "operation": "include 读取并执行另一个 Julia 文件；joinpath 把路径片段拼起来，@__DIR__ 是当前脚本所在目录，三个 .. 依次返回上三级目录，找到共享 RHCCase.jl。此行载入函数定义，还没有对患者求均值。"
+        },
+        {
+          "line": 5,
+          "code": "using .RHCCase",
+          "kind": "setup",
+          "inputs": [
+            "rhc-module"
+          ],
+          "outputs": [
+            "rhc-exports",
+            "source-path"
+          ],
+          "mathIds": [],
+          "formulaTex": null,
+          "operation": "using 把已载入 RHCCase 模块公开的函数名和 DEFAULT_SOURCE 带到当前脚本；模块名前的点表示本地模块。DEFAULT_SOURCE 是原始 CSV 的文件路径，不是患者数据。"
+        },
+        {
+          "line": 7,
+          "code": "rows = read_rhc_rows(DEFAULT_SOURCE)",
+          "kind": "read",
+          "inputs": [
+            "source-path",
+            "rhc-exports"
+          ],
+          "outputs": [
+            "raw-records"
+          ],
+          "mathIds": [
+            "raw-cohort"
+          ],
+          "formulaTex": "\\mathrm{rows}=(r_1,\\ldots,r_n)",
+          "operation": "先调用 read_rhc_rows 读取原始 CSV，再用 = 把返回结果存为 rows；每项是一位患者的字段字典，原字段暂存为字符串。输入路径与输出记录是两个对象；读取器检查字段与患者编号，保留全部原始行。"
+        },
+        {
+          "line": 9,
+          "code": "observations = rhc_observations(rows)",
+          "kind": "encode",
+          "inputs": [
+            "raw-records"
+          ],
+          "outputs": [
+            "observations"
+          ],
+          "mathIds": [
+            "binary-encoding"
+          ],
+          "formulaTex": "O_i=(X_i,A_i,Y_i),\\quad Y_i=\\mathbf1\\{\\mathrm{dth30}_i=\\mathrm{Yes}\\}",
+          "operation": "将 rows 交给 rhc_observations；按原顺序逐行把 sex、swang1、dth30 编成整数 x、a、y。每条结果是带字段名的 (x,a,y)，不是模型预测，也没有删除患者。"
+        },
+        {
+          "line": 11,
+          "code": "n = length(observations)",
+          "kind": "reduce",
+          "inputs": [
+            "observations"
+          ],
+          "outputs": [
+            "sample-size"
+          ],
+          "mathIds": [
+            "sample-size"
+          ],
+          "formulaTex": "n=\\operatorname{length}(O_1,\\ldots,O_n)",
+          "operation": "length 数容器里有多少条患者记录，把一个整数存入 n；容器有 n 条记录，n 本身只有一个数。"
+        },
+        {
+          "line": 13,
+          "code": "y = [person.y for person in observations]",
+          "kind": "extract",
+          "inputs": [
+            "observations"
+          ],
+          "outputs": [
+            "outcomes"
+          ],
+          "mathIds": [
+            "outcomes"
+          ],
+          "formulaTex": "\\mathbf Y=(Y_1,\\ldots,Y_n)^\\mathsf T",
+          "operation": "方括号建立向量；for person in observations 依次取出一位患者，person.y 的点号从该记录取 y 字段。结果 y 保留每位患者的原顺序，长度是 n；Y=0/1 是结局标签，不是数组下标。"
+        },
+        {
+          "line": 15,
+          "code": "events = sum(y)",
+          "kind": "reduce",
+          "inputs": [
+            "outcomes"
+          ],
+          "outputs": [
+            "events"
+          ],
+          "mathIds": [
+            "events"
+          ],
+          "formulaTex": "M=\\sum_{i=1}^nY_i",
+          "operation": "sum 将 y 里的 n 个 0/1 相加：死亡者加 1，其他人加 0。输出 events 是死亡总人数这个整数标量，向量在这里收缩成一个数。"
+        },
+        {
+          "line": 17,
+          "code": "risk = events / n",
+          "kind": "divide",
+          "inputs": [
+            "events",
+            "sample-size"
+          ],
+          "outputs": [
+            "risk"
+          ],
+          "mathIds": [
+            "sample-mean"
+          ],
+          "formulaTex": "\\widehat\\mu=\\frac{M}{n}=\\frac1n\\sum_{i=1}^nY_i",
+          "operation": "先用 / 将死亡人数 events 除以总人数 n，再把结果存为 risk；两个标量相除仍得到一个标量。risk 是全队列死亡比例，不是每位患者的模型预测，也不是处理效应。"
+        },
+        {
+          "line": 19,
+          "code": "influence = y .- risk",
+          "kind": "broadcast",
+          "inputs": [
+            "outcomes",
+            "risk"
+          ],
+          "outputs": [
+            "influence"
+          ],
+          "mathIds": [
+            "influence"
+          ],
+          "formulaTex": "D_i=Y_i-\\widehat\\mu,\\quad\\mathbf D=\\mathbf Y-\\widehat\\mu\\mathbf1_n",
+          "operation": ".- 中的点表示逐元素相减（broadcast）：给向量 y 的每一个元素都减去同一个标量 risk。输出 influence 仍有 n 项，Y=0 得到负的 risk，Y=1 得到 1-risk；这里没有求平均。",
+          "broadcast": {
+            "operator": ".-",
+            "vector": "outcomes",
+            "scalar": "risk",
+            "output": "influence"
+          }
+        },
+        {
+          "line": 21,
+          "code": "mean_influence = sum(influence) / n",
+          "kind": "reduce",
+          "inputs": [
+            "influence",
+            "sample-size"
+          ],
+          "outputs": [
+            "mean-influence"
+          ],
+          "mathIds": [
+            "mean-influence"
+          ],
+          "formulaTex": "\\overline D=\\frac1n\\sum_{i=1}^nD_i=\\frac1n\\sum_{i=1}^n(Y_i-\\widehat\\mu)\\approx0",
+          "operation": "sum 先把 n 项 influence 相加，/ n 再除以总人数，得到一个标量 mean_influence。正负影响值在平均时抵消；实数恒等式为 0，浮点运算允许很小的误差；不是每个人的影响值都为 0。"
+        },
+        {
+          "line": 23,
+          "code": "data = rhc_data(DEFAULT_SOURCE)",
+          "kind": "aggregate",
+          "inputs": [
+            "source-path"
+          ],
+          "outputs": [
+            "coarse-data"
+          ],
+          "mathIds": [
+            "eight-cell-summary"
+          ],
+          "formulaTex": "n_j=\\#\\{i:(X_i,A_i,Y_i)=(x_j,a_j,y_j)\\},\\quad\\sum_{j=1}^8n_j=n",
+          "operation": "rhc_data 重新读取同一原始 CSV，按 x、a、y 的 0/1 组合统计人数，再返回带字段的 data 容器。data.cells 的每个元素对应一种观测组合，其中 n 是该组合人数；data.n 为总人数5735。"
+        },
+        {
+          "line": 25,
+          "code": "check = mean_if(data)",
+          "kind": "validate",
+          "inputs": [
+            "coarse-data"
+          ],
+          "outputs": [
+            "mean-check",
+            "check-risk",
+            "check-values",
+            "check-mean"
+          ],
+          "mathIds": [
+            "weighted-mean"
+          ],
+          "formulaTex": "\\mathrm{check.risk}=\\sum_{j=1}^8\\frac{n_j}{n}y_j,\\quad\\mathrm{check.mean}=\\sum_{j=1}^8\\frac{n_j}{n}(y_j-\\widehat\\mu)",
+          "operation": "mean_if(data) 现在实际调用共享函数，按格人数求死亡比例和影响值加权平均；把返回容器存为 check。check.risk 是死亡比例标量，check.values 是 8 项格影响值，check.mean 是按人数加权的影响值平均，三者不能互换。"
+        },
+        {
+          "line": 27,
+          "code": "@assert isapprox(check.risk, risk) && abs(mean_influence) < 1e-12",
+          "kind": "assert",
+          "inputs": [
+            "check-risk",
+            "risk",
+            "mean-influence"
+          ],
+          "outputs": [
+            "assertion-result"
+          ],
+          "mathIds": [
+            "numerical-check"
+          ],
+          "formulaTex": "\\mathrm{check.risk}\\approx\\widehat\\mu\\quad\\land\\quad|\\overline D|<10^{-12}",
+          "operation": "@assert 要求两个条件同时成立；isapprox 检查按组人数加权的风险与逐人 risk 在默认数值容差内接近，&& 表示并且，abs 取绝对值，1e-12 是 10 的负 12 次方。成功继续，失败报错停止；此行没有重新拟合模型，也未直接检查 check.mean。"
+        },
+        {
+          "line": 28,
+          "code": "println(\"原始患者数 n = \", n, \"；30 日死亡人数 = \", events)",
+          "kind": "print",
+          "inputs": [
+            "sample-size",
+            "events"
+          ],
+          "outputs": [
+            "terminal-output"
+          ],
+          "mathIds": [
+            "sample-size",
+            "events"
+          ],
+          "formulaTex": "n,\\quad M",
+          "operation": "println 依次显示引号中的中文标签、已有的 n 与 events，然后换行；逗号只分隔显示片段，不做求和。两项显示的是患者总人数与死亡人数，没有产生新估计量。"
+        },
+        {
+          "line": 29,
+          "code": "println(\"样本死亡风险 μ̂ = \", risk)",
+          "kind": "print",
+          "inputs": [
+            "risk"
+          ],
+          "outputs": [
+            "terminal-output"
+          ],
+          "mathIds": [
+            "sample-mean"
+          ],
+          "formulaTex": "\\widehat\\mu",
+          "operation": "println 在“样本死亡风险 μ̂”标签后显示已有的 risk，然后换行；读取标量，不再计算均值，也没有逐人预测。"
+        },
+        {
+          "line": 30,
+          "code": "println(\"Y=0 的 IF = \", -risk, \"；Y=1 的 IF = \", 1-risk)",
+          "kind": "print",
+          "inputs": [
+            "risk"
+          ],
+          "outputs": [
+            "terminal-output"
+          ],
+          "mathIds": [
+            "influence"
+          ],
+          "formulaTex": "D(0)=-\\widehat\\mu,\\quad D(1)=1-\\widehat\\mu",
+          "operation": "println 显示两种可能结局标签的影响值：-risk 是 0-risk，1-risk 是 1 减同一中心。这里列出 Y=0 与 Y=1 的函数值，不是遍历患者、重算 n 项向量或预测死亡概率。"
+        },
+        {
+          "line": 31,
+          "code": "println(\"逐人 IF 平均 = \", mean_influence, \"；按组人数加权 IF 平均 = \", check.mean)",
+          "kind": "print",
+          "inputs": [
+            "mean-influence",
+            "check-mean"
+          ],
+          "outputs": [
+            "terminal-output"
+          ],
+          "mathIds": [
+            "mean-influence",
+            "weighted-mean"
+          ],
+          "formulaTex": "\\overline D,\\quad\\sum_{j=1}^8(n_j/n)D_j",
+          "operation": "println 在两个不同标签后分别显示逐人影响值平均 mean_influence 与按组人数加权平均 check.mean。check.mean 的点号是读取字段；逗号只分隔文字和数值，这行没有再平均，也没有断言两者精确相等。"
+        }
+      ]
+    },
+    "ch00": {
+      "excerpts": [
+        {
+          "id": "read-raw",
+          "kind": "source-excerpt",
+          "source": "zh/julia/rhc_lessons/ch01.jl",
+          "startLine": 7,
+          "endLine": 7,
+          "code": "rows = read_rhc_rows(DEFAULT_SOURCE)",
+          "inputs": [
+            "source-path"
+          ],
+          "outputs": [
+            "raw-records"
+          ],
+          "mathIds": [
+            "raw-cohort"
+          ],
+          "formulaTex": "\\mathrm{rows}=(r_1,\\ldots,r_n)",
+          "operation": "读取同一份冻结原始 CSV，输出逐人记录；这是实际第一讲第 7 行。"
+        },
+        {
+          "id": "aggregate-eight-cells",
+          "kind": "source-excerpt",
+          "source": "zh/julia/rhc_lessons/ch01.jl",
+          "startLine": 23,
+          "endLine": 23,
+          "code": "data = rhc_data(DEFAULT_SOURCE)",
+          "inputs": [
+            "source-path"
+          ],
+          "outputs": [
+            "coarse-data"
+          ],
+          "mathIds": [
+            "eight-cell-summary"
+          ],
+          "formulaTex": "\\sum_{j=1}^8n_j=n",
+          "operation": "按 sex、RHC、30 日死亡的取值组合统计人数，输出分组计数容器；这是实际第一讲第 23 行。"
+        },
+        {
+          "id": "initial-models",
+          "kind": "runnable-api-example",
+          "source": null,
+          "code": "fit = prepare_full(rows)\ng = fit.g\nq0 = fit.q0\nq1 = fit.q1\nqa = fit.a .* q1 + (1 .- fit.a) .* q0",
+          "inputs": [
+            "raw-records"
+          ],
+          "outputs": [
+            "initial-fit",
+            "design-matrix",
+            "treatment-vector",
+            "outcome-vector",
+            "propensity",
+            "q0",
+            "q1",
+            "qa"
+          ],
+          "mathIds": [
+            "baseline-design",
+            "initial-models",
+            "factual-prediction"
+          ],
+          "formulaTex": "\\widehat g_i=\\widehat g(W_i),\\quad\\widehat q_{ai}=\\widehat Q(a,W_i),\\quad\\widehat q_{Ai}=A_i\\widehat q_{1i}+(1-A_i)\\widehat q_{0i}",
+          "operation": "先把原始 rows 交给导出的 prepare_full，仅拟合初始 g 与 Q；fit.design 为 n×17，Q 模型再加实际 A，拟合输入为 n×18。用点号读取 fit 已保存的初始 g、q0、q1；最后逐行乘实际 A 与 1-A，只选择实际接受的那一臂预测，得到 n 维 qa。这里尚未执行 TMLE 更新。",
+          "prerequisite": "先执行第一讲的 include、using 和 read-raw 片段，使 rows 已存在。",
+          "sourceReferences": [
+            {
+              "source": "shared/julia/RHCCase.jl",
+              "startLine": 193,
+              "endLine": 194,
+              "code": "function prepare_full(rows)\n    observations = rhc_observations(rows)"
+            },
+            {
+              "source": "shared/julia/RHCCase.jl",
+              "startLine": 208,
+              "endLine": 223,
+              "code": "    design = zeros(n, length(FULL_FEATURES))\n    for (i, (row, person)) in enumerate(zip(rows, observations))\n        design[i,:] = [1.0, person.x, (age[i]-age_mean)/age_sd,\n            Float64(row[\"race\"] == \"black\"), Float64(row[\"race\"] == \"other\"),\n            [parse(Float64,row[k]) for k in HISTORY_FIELDS]...]\n    end\n    a = Float64[p.a for p in observations]\n    y = Float64[p.y for p in observations]\n    g_fit = fit_logistic(design, a)\n    q_fit = fit_logistic(hcat(design, a), y)\n    q0 = expit.(hcat(design, zeros(n)) * q_fit.coefficients)\n    q1 = expit.(hcat(design, ones(n)) * q_fit.coefficients)\n    g = g_fit.probabilities\n    h = a ./ g - (1 .- a) ./ (1 .- g)\n    (; n, feature_names=copy(FULL_FEATURES), q_feature_names=[FULL_FEATURES..., \"A\"],\n       age_mean, age_sd, design, a, y, g_fit, q_fit, g, q0, q1, h)"
+            },
+            {
+              "source": "shared/julia/RHCCase.jl",
+              "startLine": 234,
+              "endLine": 234,
+              "code": "    q_observed = fit.a .* q1 + (1 .- fit.a) .* q0"
+            }
+          ],
+          "notes": [
+            "这是调用现有公开 API 的可运行示例，不是冒称原脚本里已经存在的连续源码片段。",
+            "full_analysis 会调用 solve_full 完成 targeting，因此不能拿 full_analysis(...).fit 冒充仅初始模型阶段。",
+            "原始基线 W 有 15 项变量；加入截距、展开 race 并标准化 age 后，实际基线设计矩阵有 17 列。",
+            "qa 使用实际 fit.a；对全体人的 q0/q1 预测则分别使用全 0/全 1 的 A 输入，W 均保持原值。"
+          ]
+        }
+      ]
+    }
+  }
+}

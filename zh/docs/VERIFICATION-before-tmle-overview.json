@@ -1,0 +1,75 @@
+{
+  "date": "2026-10-20",
+  "scope": "Short Chapter 0: doubly robust estimation and the role of EIF; preserve full earlier Chapter 0 as optional supplementary reading",
+  "entry": "http://127.0.0.1:4174/zh/?edition=concise-dr#chapter-0",
+  "supplement": "http://127.0.0.1:4174/zh/chapter-0-details.html#chapter-0",
+  "previous_verification": "zh/docs/VERIFICATION-before-concise-dr.json",
+  "source": {
+    "cohort": "SUPPORT/RHC",
+    "records": 5735,
+    "events30d": 1918,
+    "treated24h": 2184,
+    "source_sha256": "9ef4ab578be4b40ad5d97d3a7e08ffdc1f9f76aeeefee51b4996e4221556f8e8",
+    "source_bytes": 2320412,
+    "whole_source_retained": true,
+    "outcome_evidence": "Original study explicitly confirms death date or survival180 for every patient; publisheddth30 exactly agrees with dates on all5735",
+    "permission": "Vanderbilt repository use permission with original citation and acknowledgement, notCCBY"
+  },
+  "changes": [
+    "Main chapter now 64 lines, four sections, one display equation and three computed RHC figures",
+    "Earlier 766-line chapter preserved verbatim in zh/src/supplements/ch00-details.md; full interactive supplement built separately",
+    "Chapter 1 opening adjusted to avoid relying on supplementary material",
+    "Existing detailed-content tests follow the supplement; new intro tests validate scope, data values and row contributions"
+  ],
+  "preserved_supplement_sha256": "a1c253ec9210811766dd52830a70fc5be4147142b2afc056b67fe2f7aeaf50cb",
+  "mathematics_review": "zh/reviews/ch00-concise-dr.md",
+  "build": {
+    "command": "sh scripts/node.sh scripts/build.js",
+    "exit_code": 0
+  },
+  "full_tests": {
+    "command": "JULIA_BIN=/Users/xinyuejia/.julia/juliaup/julia-1.12.5+0.aarch64.apple.darwin14/Julia-1.12.app/Contents/Resources/julia/bin/julia JULIA_DEPOT_PATH=/private/tmp/eif-tutorial-julia-depot sh scripts/node.sh --test tests/*.test.js tests/zh/*.test.js",
+    "passed": 225,
+    "failed": 0,
+    "skipped": 0,
+    "exit_code": 0,
+    "actual_Julia_and_R_execution": true,
+    "log": "output/zh/verification/concise-dr/tests.log"
+  },
+  "browser": {
+    "browser": "Chrome",
+    "viewports": [
+      1360,
+      375
+    ],
+    "commands": [
+      "sh scripts/node.sh tests/zh/dr-intro-browser.cjs",
+      "sh scripts/node.sh tests/zh/rhc-browser.cjs",
+      "sh scripts/node.sh tests/zh/r-parallel-browser.cjs"
+    ],
+    "exit_codes": [
+      0,
+      0,
+      0
+    ],
+    "scope": [
+      "New main: three real-data figures, source row alignment, benchmark values, formula recall, keyboard scrolling, no page overflow or console errors",
+      "Supplement round trip and R workbook; all nine chapters render and existing chapter 1-8 experiments/reset/answers work",
+      "Main chapter 8 manual and automatic TMLE; supplemental page language panels and ten-step R linkage"
+    ]
+  },
+  "visual_inspection": [
+    "output/zh/playwright/concise-dr-models-375.png",
+    "output/zh/playwright/concise-dr-routes-1360.png"
+  ],
+  "not_rerun": [
+    "Every historical chapter-0-specific browser suite; relevant source/numerical assertions were run in the full suite, and supplemented language/route entry was verified in Chrome"
+  ],
+  "not_verified": [
+    "Learning outcomes with actual novice readers",
+    "Physical mobile devices, other browser engines, complete spoken screen-reader review",
+    "Causal identification, actual study representativeness/iid assumptions, finite-sample accuracy or confidence-interval coverage",
+    "Browser start from extracted release archive"
+  ],
+  "packaging_command": "python3 scripts/package.py; verifies CRC/SHA256, archived members versus workspace, and original materials"
+}

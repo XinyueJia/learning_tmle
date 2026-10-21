@@ -1,0 +1,70 @@
+{
+  "date": "2026-10-17",
+  "original_kernel_Julia_data_files_unchanged": 37,
+  "chapters": [
+    {
+      "chapter": 0,
+      "previous_display_equations": 10,
+      "current_display_equations": 13,
+      "old_equations_retained": true,
+      "full_source_unchanged": false
+    },
+    {
+      "chapter": 1,
+      "previous_display_equations": 11,
+      "current_display_equations": 11,
+      "old_equations_retained": true,
+      "full_source_unchanged": true
+    },
+    {
+      "chapter": 2,
+      "previous_display_equations": 5,
+      "current_display_equations": 5,
+      "old_equations_retained": true,
+      "full_source_unchanged": true
+    },
+    {
+      "chapter": 3,
+      "previous_display_equations": 3,
+      "current_display_equations": 3,
+      "old_equations_retained": true,
+      "full_source_unchanged": true
+    },
+    {
+      "chapter": 4,
+      "previous_display_equations": 5,
+      "current_display_equations": 5,
+      "old_equations_retained": true,
+      "full_source_unchanged": true
+    },
+    {
+      "chapter": 5,
+      "previous_display_equations": 5,
+      "current_display_equations": 5,
+      "old_equations_retained": true,
+      "full_source_unchanged": true
+    },
+    {
+      "chapter": 6,
+      "previous_display_equations": 4,
+      "current_display_equations": 4,
+      "old_equations_retained": true,
+      "full_source_unchanged": true
+    },
+    {
+      "chapter": 7,
+      "previous_display_equations": 7,
+      "current_display_equations": 7,
+      "old_equations_retained": true,
+      "full_source_unchanged": true
+    },
+    {
+      "chapter": 8,
+      "previous_display_equations": 8,
+      "current_display_equations": 8,
+      "old_equations_retained": true,
+      "full_source_unchanged": true
+    }
+  ],
+  "reference_article_sha256": "9892356b37eb476520b5f1c8b87a6dc65e3e62d5b933f706fec3790952d92a4f"
+}

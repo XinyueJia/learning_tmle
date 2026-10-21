@@ -1,0 +1,168 @@
+{
+  "date": "2026-10-17",
+  "scope": "Chapter 8 cumulative real RHC table: 10 steps, all 26 intermediate vectors, actual/two-arm offset-H-epsilon updates, formula-column-Julia linking",
+  "entry": "http://127.0.0.1:4174/zh/?edition=tmle-trace#chapter-8",
+  "previous_verification": "zh/docs/VERIFICATION-before-tmle-trace.json",
+  "source": {
+    "cohort": "SUPPORT/RHC",
+    "records": 5735,
+    "events30d": 1918,
+    "treated24h": 2184,
+    "source_sha256": "9ef4ab578be4b40ad5d97d3a7e08ffdc1f9f76aeeefee51b4996e4221556f8e8",
+    "source_bytes": 2320412,
+    "whole_source_retained": true,
+    "outcome_evidence": "Original study explicitly confirms death date or survival180 for every patient; publisheddth30 exactly agrees with dates on all5735",
+    "permission": "Vanderbilt repository use permission with original citation and acknowledgement, notCCBY"
+  },
+  "completed": [
+    "Persistent original-patient table and row DOM; 10 dependency-ordered cumulative steps",
+    "26 real vector columns; shared scalar epsilon and full-n reductions",
+    "Actual A/Y and W/g/initial Q fixed, both arm-specific offset/shift/eta/probability updates",
+    "Formula, data column and executable Julia token hover/focus/tap-lock/Escape linking; future-code column navigation",
+    "Original 8 display equations, chain-rule/cancellation, eight-cell exercise and old ch08 script retained",
+    "40 executable workbook lines with exact source, typed input/output dimensions, operation and editable maths",
+    "Ten displayed code panels have complete setup/dependencies and execute sequentially in a fresh Julia process"
+  ],
+  "build": {
+    "command": "sh scripts/node.sh scripts/build.js",
+    "chapters": 9,
+    "exit_code": 0
+  },
+  "javascript": {
+    "command": "JULIA_BIN=<installed Julia 1.12.5 binary> JULIA_DEPOT_PATH=/private/tmp/eif-tutorial-julia-depot sh scripts/node.sh --test tests/*.test.js tests/zh/*.test.js",
+    "passed": 144,
+    "failed": 0,
+    "skipped": 0,
+    "exit_code": 0,
+    "new_tests": "7 pure trace + 6 Julia trace/map + 7 expression/rendering/preservation/dependency/executable-panel tests; earlier current suites also run"
+  },
+  "julia": {
+    "version": "1.12.5",
+    "workbook": "zh/julia/tmle_trace.jl",
+    "source_lines": 56,
+    "executable_lines": 40,
+    "independent_reviewer_executions": 4,
+    "epsilon_values": [
+      0,
+      0.002,
+      -0.002,
+      0.003576966662876657
+    ],
+    "vector_columns": 26,
+    "records_per_vector": 5735,
+    "cross_language_every_element": true,
+    "includes": [
+      "default and ENV input",
+      "zero/positive/negative/solved epsilon",
+      "likelihood finite difference score and negative slope",
+      "prediction range and explicit nonfinite/extreme failures",
+      "A/Y/g/initial Q unchanged"
+    ],
+    "exit_code": 0,
+    "not_rerun": "Earlier 127-item Julia suite; no new pass claimed for it",
+    "displayed_step_panels_fresh_process_exit_code": 0
+  },
+  "browser": {
+    "runners": [
+      "tests/zh/tmle-trace-browser.cjs",
+      "tests/zh/rhc-browser.cjs"
+    ],
+    "engine": "real installed Chrome via Playwright",
+    "widths": [
+      1360,
+      375
+    ],
+    "exit_code": 0,
+    "checks": [
+      "same DOM table and original row persist as columns append",
+      "all26 source-driven visible values and both-arm/actual selection",
+      "formula-column-Julia hover focus tap-lock and Escape",
+      "input +/-epsilon, invalid input preserves prior state, score signs, bisection/solve/reset",
+      "six-row paging leaves full5735 estimates and score fixed",
+      "40 source lines and full code copy exactly, accessible MathML and editable TeX",
+      "existing all9chapters/18figures/interactions/recall/answers/manual+autoTMLE",
+      "no console errors, page overflow, duplicate chapter landmarks or external requests"
+    ],
+    "repairs": [
+      "control selector limited to button instead of data-bearing container",
+      "row-select selector limited to select",
+      "line-card div prevents spurious nested article landmarks",
+      "scientific notation readable without exponent wrapping"
+    ]
+  },
+  "numerical_outputs": {
+    "initial_estimate": 0.08649885590233014,
+    "initial_aipw": 0.08996799520909782,
+    "root_epsilon": 0.003576966662876657,
+    "tmle_estimate": 0.08997972473530443,
+    "root_score_approx": -3.4029e-13,
+    "meaning": "Reproducible observed-data statistical estimates under specified fits, not known clinical causal truth"
+  },
+  "independent_review": [
+    "zh/reviews/tmle-trace-ch08.md"
+  ],
+  "screenshots_inspected": [
+    "output/zh/playwright/trace-formula-1360.png",
+    "output/zh/playwright/trace-path-375.png",
+    "output/zh/playwright/trace-table-375.png",
+    "output/zh/playwright/trace-summary-1360.png"
+  ],
+  "protected_unchanged_files": {
+    "zh/src/chapters/ch05.md": "5e56ff564c3e604ad803d8f928fe76c141ef744855fff72dfaec7c967215474b",
+    "zh/src/chapters/ch01.md": "03e20e6a6fe15a15980d02343cab650277f52014aeef67e9918fdae81b32c7ea",
+    "zh/src/chapters/ch00.md": "0728209b3a8e48aa64f8341bf1167682ba78a7d72f6312ccc8ca1bef31c79b71",
+    "zh/src/chapters/ch04.md": "49111d4435a2e2b80572170dc08564b492df70a430e35acad0503320d113b0fd",
+    "zh/src/chapters/ch03.md": "9e57bea6e4b9c7a4e8d2d015c9b6c11d38cafed50f6d88354cdd56f5c28bf9fd",
+    "zh/src/chapters/ch07.md": "09eacc6855b710cc3b5b36e2a92b5bd749585994040fd6c79631d9b42eeb3c5b",
+    "zh/src/chapters/ch06.md": "7859032eb24d48b2218718d2580bc1615678402281deea146234fc7793ed18e1",
+    "zh/src/chapters/ch02.md": "83dae09c7cb640c46c4fb01de1f07544b11e9a688a538b2a18ad3839429540bb",
+    "shared/js/rhc.js": "ef1cdeeb37aeed14fb240a7b742b0bb4d800bd0d2c801d0f7eddf04795b8612b",
+    "shared/js/math.js": "f5112eb05b733a6a9e6a19528f91da9c3df140102a0168f6fb70d9afd8cff3a3",
+    "shared/js/case-study.js": "1e1965804318f9bc4721d6167b0d98bb56e3b5c9859315a1a44a4a2d4754ff6b",
+    "shared/js/object-data.js": "48ea38a49844ba1110dc04f07ed51a49d1c4198c1ffc72491873655601cb1432",
+    "shared/julia/RHCCase.jl": "3ddd436f06aa4ee53d5ac9155b5070e2cdae37bad4d83d5fc3dfbe27fcfa1cbd",
+    "shared/data/public/rhc/source.csv": "9ef4ab578be4b40ad5d97d3a7e08ffdc1f9f76aeeefee51b4996e4221556f8e8",
+    "zh/src/object-grammar.js": "1036d62ada548b140d4676aebbe9816d565d6013a5a64060a6ae4159f8fea51a",
+    "zh/src/object-visuals.js": "8a967ed9f9dcdfdb2fafaf943e6ee01b3650d15489fb3d8044aefa49203eb34d",
+    "zh/renderers/rhc-code.js": "565186a506b2ddb8c3710422201de6ec19c81e13d6d0b2fe1d24611458b4e152",
+    "zh/julia/rhc_lessons/ch04.jl": "b4245d18b88316391a6de80367b45aa1a57530c69abc35615e2e4c811b3a1929",
+    "zh/julia/rhc_lessons/ch01.jl": "40dd62fcf168d57cacbfa5e29cb3b0035efe70348c44b99b9bc7b4c8df017c18",
+    "zh/julia/rhc_lessons/ch05.jl": "db8fb1c1995089c499fd1e6d534902a47766d77fea0e01b6604ad6ccc894b584",
+    "zh/julia/rhc_lessons/ch08.jl": "ade11829156de18c6ac126e1f46fd2c7c9413935817f33ccd52eb790bfa44562",
+    "zh/julia/rhc_lessons/ch02.jl": "b351adee147534e69f8883d8f3015b7302a2637a3ba25f6b2b38873e9bf02dcd",
+    "zh/julia/rhc_lessons/ch06.jl": "94ab76282c34616579abc36d95b380ce23a3ebf775f929cdbce445e875f4cd18",
+    "zh/julia/rhc_lessons/ch07.jl": "be141b918ee9c2b4b0a29302cd097ba99f1440c9c9c80a9fb0322201c5a605df",
+    "zh/julia/rhc_lessons/ch03.jl": "b5c467119109a3b6ab00ae79a65834b2b39de9ca5e6b92cf6837574391be528b"
+  },
+  "original_ch08_display_equation_blocks_unchanged": 8,
+  "verified_source_sha256": {
+    "shared/js/tmle-trace.js": "3aea31703636a4a436a2e8fd2ce139adbca947a55516e43cc5ffd46a047acc8d",
+    "tests/tmle-trace.test.js": "ac0059ee16c2f3c7f1579930150ece39b6c62ff87d7e1050de022b3907a730ea",
+    "zh/src/tmle-trace-view.js": "33c63fdcc79f70096c6a1d6ae61be99a3eef9e92fcfeba3ea3b9adb423f1b7d6",
+    "zh/src/rhc-full.js": "92048f1e65d5b851ba0abad5391db48f05ede113719d55e6413c84e694b9cb8d",
+    "zh/src/tmle-trace.css": "cba90287d1b6a250af5cd82013bb2937bb18f8c4a12ca44e69ea9ba399c49dd3",
+    "zh/src/julia/ch08-trace.json": "0d5fc9b27bb48cd3968f8ed776a3b6d9123698aeda44f1c426c8d755a475bff1",
+    "zh/renderers/tmle-trace-maths.js": "ab65f48d0b72b90070fc6754a0ca052dcfe106b5a4b63f1d9bec5afd6ed79250",
+    "zh/renderers/course.js": "fa5a1999f7f9f4e49ed2a42cb6416f4a9c286ce05acff301f0d3138d3b2699af",
+    "zh/src/chapters/ch08.md": "f288d0b7b17443d308295e3cd6f8001bcd062c8073e36ac62eb4b8c8e78ee1f0",
+    "zh/julia/tmle_trace.jl": "b08ffc5d76c63cf98e1cd86824cd03af121c4de2a1fc450ba953b80ab366d27c",
+    "tests/zh/tmle-julia-trace.test.js": "dd296fc0f21905a9021381dc59b4d75762b73e2a82c321e8fd3c0279bfb516fe",
+    "tests/zh/tmle-trace-view.test.js": "a6acaf40fcb460ffd5d0b24fedd23beb04b64690c5f54e9832d83b266a1f5902",
+    "tests/zh/tmle-trace-browser.cjs": "5abd2fc3d7bec64bd946f16a7d355f796ac29f6adfb8f47af74151111c845afa"
+  },
+  "not_part_of_this_visual_migration": [
+    "Chapter2–7 visual migration",
+    "Adding triple-linking to Chapter0/1 existing symbol recalls"
+  ],
+  "unverified": [
+    "Sufficient clinical causal exchangeability or selection identification",
+    "Acute pre-treatment severity reconstruction",
+    "Nuisance rates/cross-fitting/inference coverage or multicentre dependence",
+    "Physical touch devices, other browser engines, full spoken screen-reader flow",
+    "Beginner learning outcomes",
+    "Fresh browser regression of separately extracted release"
+  ],
+  "open_implementation_issues": [],
+  "handoff": "zh/docs/PROGRESS.md; zh/docs/data/TMLE_TRACE_HANDOFF.md; zh/docs/data/TMLE_JULIA_HANDOFF.md",
+  "delivery": "releases/EIF_Tutorial_Complete.zip and .sha256; package.py verifies original materials, CRC/SHA and each member against workspace"
+}

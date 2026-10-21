@@ -1,0 +1,155 @@
+{
+  "date": "2026-10-16",
+  "scope": "Adopt genuine RHC cohort and migrate all9chapters/8Julia lessons to actual hand-constructed sex and multivariable TMLE",
+  "entry": "http://127.0.0.1:4174/zh/?edition=real-rhc#chapter-0",
+  "previous_verification": "zh/docs/VERIFICATION-before-rhc-migration.json",
+  "source": {
+    "cohort": "SUPPORT/RHC",
+    "records": 5735,
+    "events30d": 1918,
+    "treated24h": 2184,
+    "source_sha256": "9ef4ab578be4b40ad5d97d3a7e08ffdc1f9f76aeeefee51b4996e4221556f8e8",
+    "source_bytes": 2320412,
+    "whole_source_retained": true,
+    "outcome_evidence": "Original study explicitly confirms death date or survival180 for every patient; publisheddth30 exactly agrees with dates on all5735",
+    "permission": "Vanderbilt repository use permission with original citation and acknowledgement, notCCBY"
+  },
+  "completed_phases": [
+    "0 source/design audit, contract, raw-derived shared interfaces",
+    "1 chapter1 complete narrative18figures/32lineJulia thenchapter2",
+    "2 chapter3then4",
+    "3 chapter5then6",
+    "4 chapter7then8 incl same-source fullWfit and manualTMLE",
+    "5 consistency reviews, assertions, actual Chrome and release"
+  ],
+  "build": {
+    "command": "sh scripts/node.sh scripts/build.js",
+    "chapters": 9,
+    "exit_code": 0
+  },
+  "javascript": {
+    "command": "sh scripts/node.sh --test tests/*.test.js tests/zh/*.test.js",
+    "passed": 96,
+    "failed": 0,
+    "skipped": 0,
+    "exit_code": 0,
+    "scope": "Current rawRHC/fullfit7tests, empiricalreference4tests, real18figure7tests, preserved explicit synthetic algebra fixtures, markup/hierarchy/publicsource tests"
+  },
+  "julia": {
+    "command": "julia --startup-file=no --history-file=no tests/julia/rhc-tests.jl",
+    "version": "1.12.5",
+    "passed": 127,
+    "failed": 0,
+    "exit_code": 0,
+    "includes": "8actualRHC scripts run from outside repository; rawsource/CSV/finite-directions/features/logistic/targeting"
+  },
+  "cross_language": {
+    "command": "JULIA_BIN=julia sh scripts/node.sh tests/rhc-cross-language.cjs",
+    "matched_summary_values": 23,
+    "matched_observed_cells": 8,
+    "matched_logistic_coefficients": 35,
+    "matched_feature_names": 17,
+    "exit_code": 0
+  },
+  "browser": {
+    "command": "sh scripts/node.sh tests/zh/rhc-browser.cjs",
+    "engine": "installedChrome viaPlaywright",
+    "chapters": 9,
+    "viewports": [
+      [
+        1360,
+        900
+      ],
+      [
+        375,
+        900
+      ]
+    ],
+    "checks": [
+      "alllabs,realcaseworkbenches,math,answersandrecalls",
+      "keyboardsliderchangesandreset",
+      "all18ch1figurespresent/nofigureoverflow,schematictimelinepointswithinview",
+      "actual32lineRHCscriptandbeginnerexplanations",
+      "coarsemanualstep/solve",
+      "fullWmanualepsilonpositiveandnegativescores,step/solve/root/empiricalEIF/reset",
+      "originalsourceCSVbytes/courseandpublicpage",
+      "noexternalrequests,consoleerrorsorpageoverflow"
+    ],
+    "exit_code": 0,
+    "repairs": [
+      "testinitiallyselectedhiddenslider:changedvisiblelocator",
+      "actualmobilecenteringlongdecimaloverflow:tworowresponsivegrid",
+      "tinyresidualscientificnotationandreadableepsiloninput"
+    ]
+  },
+  "numerical_outputs": {
+    "sex_standardised_difference": 0.07369211904730705,
+    "full_initial_plugin": 0.08649885590233014,
+    "full_aipw": 0.08996799520909782,
+    "full_tmle": 0.08997972473530443,
+    "full_epsilon": 0.003576966662876657,
+    "full_score": -3.4027543932804515e-13,
+    "g_min": 0.07869797540624915,
+    "g_max": 0.6819050426722195,
+    "meaning": "Computed observed-data estimates under stated adjustment sets, not known clinical causal truth"
+  },
+  "independent_review": [
+    "zh/reviews/rhc-design.md",
+    "zh/reviews/rhc-ch00.md",
+    "zh/reviews/rhc-ch01.md",
+    "zh/reviews/rhc-ch02.md",
+    "zh/reviews/rhc-ch03.md",
+    "zh/reviews/rhc-ch04.md",
+    "zh/reviews/rhc-ch05.md",
+    "zh/reviews/rhc-ch06.md",
+    "zh/reviews/rhc-ch07.md",
+    "zh/reviews/rhc-ch08.md"
+  ],
+  "all9reviewed_chapter_hashes_match": true,
+  "screenshots_inspected": [
+    "output/zh/playwright/rhc-centering-375.png",
+    "output/zh/playwright/rhc-window-375.png",
+    "output/zh/playwright/rhc-full-solved-1360.png",
+    "output/zh/playwright/rhc-full-solved-375.png"
+  ],
+  "preserved": "User original materials and synthetic-course migration snapshots; sharedmath/oldCSV/EIFCase kept as explicit benchmarks",
+  "handoff": "zh/docs/data/PUBLIC_DATA_HANDOFF.md",
+  "unverified": [
+    "Sufficient clinical causal exchangeability or selection identification",
+    "Acute pre-treatment severity reconstruction",
+    "Nuisance rates/cross-fitting/inference coverage or multicentre dependence",
+    "Physical touch devices, other browser engines, full spoken screen-reader flow",
+    "Beginner learning outcomes",
+    "Fresh browser regression of separately extracted release"
+  ],
+  "open_implementation_issues": [],
+  "delivery": "releases/EIF_Tutorial_Complete.zip and .sha256; package.py validates original materials, CRC/SHA256 and each member against workspace",
+  "verified_source_sha256": {
+    "shared/data/public/rhc/source.csv": "9ef4ab578be4b40ad5d97d3a7e08ffdc1f9f76aeeefee51b4996e4221556f8e8",
+    "shared/data/public/rhc/provenance.json": "598088e27cd5ab14101163e2f9079c175f348ca97d53b5b2d82714f139987f0e",
+    "shared/js/rhc.js": "ef1cdeeb37aeed14fb240a7b742b0bb4d800bd0d2c801d0f7eddf04795b8612b",
+    "shared/js/rhc-config.js": "46e2fa37a0e3c92e207cd0a8f30dc3fc34a42c7af989be0c3f390bf98f1de829",
+    "shared/js/rhc-model.js": "b7c47cf1251b1bfc56364eb3c9efd1c876f59a9a549e18668a689e92ee0d7945",
+    "shared/js/case-study.js": "1e1965804318f9bc4721d6167b0d98bb56e3b5c9859315a1a44a4a2d4754ff6b",
+    "shared/julia/RHCCase.jl": "3ddd436f06aa4ee53d5ac9155b5070e2cdae37bad4d83d5fc3dfbe27fcfa1cbd",
+    "zh/src/rhc-full.js": "db80e112626b7a301f43a21e55a7ea8f4b674a89bba4f93978bac7b8bc41da15",
+    "zh/src/app.js": "dd63f8b84581f8a8958e7e107acdb5b03952be67e8a7f9629f82db8596e73af7",
+    "zh/src/style.css": "9e0da9bdd1d8aa13d7d7084e2ab1bacdca70290bbf330719a892d6a8303ac51a",
+    "zh/renderers/chapter1-visuals.js": "0f477a64266730eebbc5d949e4c8676c8dde99306ec0919eaf61056151b0e1ce",
+    "zh/renderers/rhc-code.js": "356d4f45f60d1c685f4e49b668dc839ee61e9c3482151bbc43264cc416080ce7",
+    "tests/rhc.test.js": "b2232a478d1784eadd2ebe1d9fc488b8d6fec73ba70378d584e20751b50b67e2",
+    "tests/rhc-reference.test.js": "03b0d53beea4d46d89d6f9c8340e51a5748434122ec50d15f577890d17afda63",
+    "tests/rhc-cross-language.cjs": "f2ae090f5b5b38c68023c9769150cfa82eb020a6d2b291f0e2011cf51e2a9536",
+    "tests/zh/rhc-browser.cjs": "57ed3a119f65c8edf308e2a7486b03f0192522d82cd8fbffe3dd0b2b0758893d",
+    "dist/zh/index.html": "f0d44687838b65d8c04e39c320ec3ecb667811bd886266473b213e2a9c08387f",
+    "zh/src/chapters/ch00.md": "185e336e33dd62e1ad5192015180828c0ea770d5e665d3645abdb69fe5bce535",
+    "zh/src/chapters/ch01.md": "7455e8ac4b9b246e2b765533b1dd40fd3b660f8cbb3e48f3b5d6a0be6bfeb38a",
+    "zh/src/chapters/ch02.md": "83dae09c7cb640c46c4fb01de1f07544b11e9a688a538b2a18ad3839429540bb",
+    "zh/src/chapters/ch03.md": "9e57bea6e4b9c7a4e8d2d015c9b6c11d38cafed50f6d88354cdd56f5c28bf9fd",
+    "zh/src/chapters/ch04.md": "49111d4435a2e2b80572170dc08564b492df70a430e35acad0503320d113b0fd",
+    "zh/src/chapters/ch05.md": "5e56ff564c3e604ad803d8f928fe76c141ef744855fff72dfaec7c967215474b",
+    "zh/src/chapters/ch06.md": "7859032eb24d48b2218718d2580bc1615678402281deea146234fc7793ed18e1",
+    "zh/src/chapters/ch07.md": "09eacc6855b710cc3b5b36e2a92b5bd749585994040fd6c79631d9b42eeb3c5b",
+    "zh/src/chapters/ch08.md": "9112c54bd9dc3c2a2c246ef8ec3592c2dfd2829f5d71fe058c992024bc0eb1a4"
+  }
+}

@@ -1,0 +1,89 @@
+{
+  "date": "2026-10-16",
+  "scope": "Chapter1 prose/visual/recall/ARIA/Julia explanation: replace bookkeeping analogies with direct algebra operations",
+  "entry": "http://127.0.0.1:4174/zh/?edition=direct-algebra#chapter-1",
+  "previous_verification": "zh/docs/VERIFICATION-before-direct-algebra.json",
+  "implemented": [
+    "Direct distribution, separate sums, extraction of common factors and cancellation",
+    "All18 figures and32 Julia line cards retained",
+    "Teaching preference added to COURSE_CONTRACT"
+  ],
+  "preserved": {
+    "chapter1_display_formula_groups_byte_identical": 33,
+    "julia_guide_display_formula_groups_byte_identical": 2,
+    "existing_inline_formulae": "unchanged; one explanatory index j added",
+    "protected_source_files_byte_identical_to_previous_release": 23,
+    "shared_maths_data_actual_Julia_app_and_other_chapters": "unchanged"
+  },
+  "build": {
+    "command": "sh scripts/node.sh scripts/build.js",
+    "exit_code": 0,
+    "chapters": 9
+  },
+  "javascript": {
+    "command": "sh scripts/node.sh --test tests/*.test.js tests/zh/*.test.js",
+    "passed": 86,
+    "failed": 0,
+    "exit_code": 0
+  },
+  "browser": {
+    "chapter1": {
+      "runner": "Lead inline Playwright runner using existing tests/zh/ch01-survival-checks.cjs",
+      "viewports": [
+        [
+          1360,
+          900
+        ],
+        [
+          375,
+          900
+        ]
+      ],
+      "exit_code": 0,
+      "checks": [
+        "All first-chapter text including hidden recalls contains no bookkeeping analogy",
+        "Full retained algebra and18 rendered figures",
+        "MathML, folded answers, symbol popovers, responsive layout, no console errors"
+      ]
+    },
+    "julia_guide": {
+      "command": "EIF_SCREENSHOT_DIR=output/zh/playwright/direct-algebra sh scripts/node.sh tests/zh/ch01-julia-browser.cjs",
+      "viewports": [
+        [
+          1360,
+          900
+        ],
+        [
+          375,
+          900
+        ]
+      ],
+      "exit_code": 0,
+      "code_cards": 32
+    },
+    "initial_failure": "Connection refused: previous local server no longer running; restarted PORT4174 and reran both checks successfully"
+  },
+  "independent_review": "zh/reviews/ch01-direct-algebra.md",
+  "visually_inspected": "output/zh/playwright/direct-algebra/centring-375.png",
+  "numerical_suite_scope": "Julia and cross-language suites were not repeated for unchanged calculations; previous execution remains in named historical record",
+  "not_repeated": [
+    "Full9-chapter browser regression",
+    "Julia numerical suite",
+    "Cross-language fixtures"
+  ],
+  "unverified": [
+    "Physical mobile devices",
+    "Full screen-reader speech",
+    "Browser engines other than Chrome"
+  ],
+  "open_issues": [],
+  "verified_source_sha256": {
+    "zh/src/chapters/ch01.md": "b12a92d20a071de46509ad4e482ce7b495d10336aafb97cf32f484fe40391d38",
+    "zh/renderers/chapter1-visuals.js": "9458e6ed9de7bad5e5fe7ec87063d3217680fa5eeaeb7a683cae35ad1a5e7c23",
+    "zh/src/julia/ch01-walkthrough.md": "c48b37dd6b276573a197685ba766e32e8dbad969662058594540db6a7191a443",
+    "shared/js/math.js": "f5112eb05b733a6a9e6a19528f91da9c3df140102a0168f6fb70d9afd8cff3a3",
+    "shared/julia/EIFCase.jl": "4f0db611995958b29c5dbbbc788289aaebd05c93b5195e41641caf3d5d40da4c",
+    "dist/zh/index.html": "bfc98a07c7706d2b25132bd936f17f805bc639acc03d123f58b7639fa4831f5b"
+  },
+  "delivery": "releases/EIF_Tutorial_Complete.zip and .sha256; package.py verifies CRC, SHA256, original materials and every member against current workspace"
+}

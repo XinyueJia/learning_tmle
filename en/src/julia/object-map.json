@@ -1,0 +1,771 @@
+{
+  "version": 1,
+  "cohort": {
+    "n": 5735,
+    "events": 1918,
+    "source": "shared/data/public/rhc/source.csv"
+  },
+  "allowedMathIds": [
+    "raw-cohort",
+    "binary-encoding",
+    "sample-size",
+    "outcomes",
+    "events",
+    "sample-mean",
+    "influence",
+    "mean-influence",
+    "eight-cell-summary",
+    "weighted-mean",
+    "numerical-check",
+    "baseline-design",
+    "initial-models",
+    "factual-prediction"
+  ],
+  "objects": {
+    "rhc-module": {
+      "id": "rhc-module",
+      "label": "Module for reading data and calculating results",
+      "julia": "RHCCase",
+      "type": "Module",
+      "dimensions": [],
+      "role": "setup",
+      "dimensionText": "Modules, not patient data"
+    },
+    "rhc-exports": {
+      "id": "rhc-exports",
+      "label": "Exported functions and constants available to this script",
+      "julia": "using .RHCCase",
+      "type": "export name binding",
+      "dimensions": [],
+      "role": "setup",
+      "dimensionText": "A collection of names"
+    },
+    "source-path": {
+      "id": "source-path",
+      "label": "Location of the frozen original CSV",
+      "julia": "DEFAULT_SOURCE",
+      "type": "String",
+      "dimensions": [],
+      "role": "input",
+      "dimensionText": "a file path string"
+    },
+    "raw-records": {
+      "id": "raw-records",
+      "label": "Original patient records",
+      "julia": "rows",
+      "type": "Vector{Dict{String,String}}",
+      "dimensions": [
+        "n"
+      ],
+      "role": "input",
+      "dimensionText": "n dictionaries, each retaining 63 original fields",
+      "tableDimensions": [
+        "n",
+        63
+      ],
+      "unit": "patient record"
+    },
+    "observations": {
+      "id": "observations",
+      "label": "Three binary labels for each patient",
+      "julia": "observations",
+      "type": "Vector{NamedTuple{(:x,:a,:y),Tuple{Int,Int,Int}}}",
+      "dimensions": [
+        "n"
+      ],
+      "role": "derived-data",
+      "dimensionText": "n (x,a,y) records; in the same order as the original rows"
+    },
+    "sample-size": {
+      "id": "sample-size",
+      "label": "total number of patients",
+      "julia": "n",
+      "type": "Int",
+      "dimensions": [],
+      "role": "summary",
+      "dimensionText": "One integer scalar",
+      "unit": "people"
+    },
+    "outcomes": {
+      "id": "outcomes",
+      "label": "Observed 30-day death indicators",
+      "julia": "y",
+      "type": "Vector{Int}",
+      "dimensions": [
+        "n"
+      ],
+      "role": "input",
+      "dimensionText": "n-element vector; one 0/1 indicator per patient",
+      "symbol": "Y_i",
+      "unit": "0/1 indicator"
+    },
+    "events": {
+      "id": "events",
+      "label": "Number of deaths within 30 days",
+      "julia": "events",
+      "type": "Int",
+      "dimensions": [],
+      "role": "summary",
+      "dimensionText": "One integer scalar",
+      "symbol": "M",
+      "unit": "people"
+    },
+    "risk": {
+      "id": "risk",
+      "label": "Sample mortality proportion in the full cohort",
+      "julia": "risk",
+      "type": "Float64",
+      "dimensions": [],
+      "role": "estimate",
+      "dimensionText": "One numeric scalar",
+      "symbol": "\\widehat\\mu",
+      "unit": "Probability"
+    },
+    "influence": {
+      "id": "influence",
+      "label": "Patient-level influence values for the mean",
+      "julia": "influence",
+      "type": "Vector{Float64}",
+      "dimensions": [
+        "n"
+      ],
+      "role": "derived-data",
+      "dimensionText": "n-element vector, negative numbers allowed",
+      "symbol": "D_i",
+      "unit": "Probability difference / unit replacement ratio"
+    },
+    "mean-influence": {
+      "id": "mean-influence",
+      "label": "Mean patient-level influence value",
+      "julia": "mean_influence",
+      "type": "Float64",
+      "dimensions": [],
+      "role": "summary",
+      "dimensionText": "One numeric scalar",
+      "symbol": "\\overline D",
+      "unit": "Probability difference / unit replacement ratio"
+    },
+    "coarse-data": {
+      "id": "coarse-data",
+      "label": "Counts for the same patients, grouped into eight cells",
+      "julia": "data",
+      "type": "NamedTuple",
+      "dimensions": [],
+      "role": "derived-data",
+      "dimensionText": "Record with named fields; data.cells has eight entries",
+      "nestedDimensions": {
+        "cells": [
+          8
+        ]
+      },
+      "unit": "The number of people in a cell is still measured in people"
+    },
+    "mean-check": {
+      "id": "mean-check",
+      "label": "Grouped mean calculation returned by mean_if",
+      "julia": "check",
+      "type": "NamedTuple{(:risk,:values,:mean)}",
+      "dimensions": [],
+      "role": "validation",
+      "dimensionText": "Record containing two scalars and an eight-element vector"
+    },
+    "check-risk": {
+      "id": "check-risk",
+      "label": "Mortality proportion weighted by cell counts",
+      "julia": "check.risk",
+      "type": "Float64",
+      "dimensions": [],
+      "role": "validation",
+      "dimensionText": "One numeric scalar",
+      "unit": "Probability"
+    },
+    "check-values": {
+      "id": "check-values",
+      "label": "Mean influence value for each (x,a,y) cell",
+      "julia": "check.values",
+      "type": "Vector{Float64}",
+      "dimensions": [
+        8
+      ],
+      "role": "validation",
+      "dimensionText": "Eight-element vector; one value per cell",
+      "unit": "Probability difference / unit replacement ratio"
+    },
+    "check-mean": {
+      "id": "check-mean",
+      "label": "Mean influence value weighted by cell counts",
+      "julia": "check.mean",
+      "type": "Float64",
+      "dimensions": [],
+      "role": "validation",
+      "dimensionText": "One numeric scalar",
+      "unit": "Probability difference / unit replacement ratio"
+    },
+    "assertion-result": {
+      "id": "assertion-result",
+      "label": "Check that must pass before execution continues",
+      "julia": "@assert",
+      "type": "Nothing (throws an AssertionError if the condition fails)",
+      "dimensions": [],
+      "role": "validation",
+      "dimensionText": "No new statistical value"
+    },
+    "terminal-output": {
+      "id": "terminal-output",
+      "label": "Display of previously calculated results",
+      "julia": "println(...)",
+      "type": "Nothing (side effect is writing to the terminal)",
+      "dimensions": [],
+      "role": "display",
+      "dimensionText": "Terminal text"
+    },
+    "baseline-w": {
+      "id": "baseline-w",
+      "label": "Specified original baseline variables",
+      "julia": "sex, age, race, HISTORY_FIELDS",
+      "type": "Conceptual table of original fields",
+      "dimensions": [
+        "n",
+        15
+      ],
+      "role": "input",
+      "dimensionText": "n × 15 original baseline variables; race remains one categorical column",
+      "sourceFields": [
+        "sex",
+        "age",
+        "race",
+        "cardiohx",
+        "chfhx",
+        "dementhx",
+        "psychhx",
+        "chrpulhx",
+        "renalhx",
+        "liverhx",
+        "gibledhx",
+        "malighx",
+        "immunhx",
+        "transhx",
+        "amihx"
+      ]
+    },
+    "design-matrix": {
+      "id": "design-matrix",
+      "label": "The actual baseline design matrix used by the initial model",
+      "julia": "fit.design",
+      "type": "Matrix{Float64}",
+      "dimensions": [
+        "n",
+        17
+      ],
+      "role": "derived-data",
+      "dimensionText": "n × 17: intercept, male, age_z, two race indicator columns, 12 medical histories",
+      "featureNames": [
+        "intercept",
+        "male",
+        "age_z",
+        "race_black",
+        "race_other",
+        "cardiohx",
+        "chfhx",
+        "dementhx",
+        "psychhx",
+        "chrpulhx",
+        "renalhx",
+        "liverhx",
+        "gibledhx",
+        "malighx",
+        "immunhx",
+        "transhx",
+        "amihx"
+      ]
+    },
+    "treatment-vector": {
+      "id": "treatment-vector",
+      "label": "Indicator of actual RHC treatment",
+      "julia": "fit.a",
+      "type": "Vector{Float64}",
+      "dimensions": [
+        "n"
+      ],
+      "role": "input",
+      "dimensionText": "n-element vector, one actual A per person; takes values 0.0 or 1.0",
+      "symbol": "A_i"
+    },
+    "outcome-vector": {
+      "id": "outcome-vector",
+      "label": "Observed death indicators used to fit Q",
+      "julia": "fit.y",
+      "type": "Vector{Float64}",
+      "dimensions": [
+        "n"
+      ],
+      "role": "input",
+      "dimensionText": "n-element floating-point vector; the same outcomes as y in Chapter 1",
+      "symbol": "Y_i",
+      "sameValuesAs": "outcomes"
+    },
+    "initial-fit": {
+      "id": "initial-fit",
+      "label": "Initial fitted regressions and their inputs",
+      "julia": "fit",
+      "type": "NamedTuple",
+      "dimensions": [],
+      "role": "fitted-model",
+      "dimensionText": "Record containing the design matrix, observed A/Y, initial g/Q and diagnostics"
+    },
+    "propensity": {
+      "id": "propensity",
+      "label": "Fitted treatment probability for each patient",
+      "julia": "g / fit.g",
+      "type": "Vector{Float64}",
+      "dimensions": [
+        "n"
+      ],
+      "role": "prediction",
+      "dimensionText": "n-element vector of initial probabilities",
+      "symbol": "\\widehat g(W_i)",
+      "unit": "Probability"
+    },
+    "q0": {
+      "id": "q0",
+      "label": "Initial risk predictions for the same patients with prediction input A set to 0",
+      "julia": "q0 / fit.q0",
+      "type": "Vector{Float64}",
+      "dimensions": [
+        "n"
+      ],
+      "role": "prediction",
+      "dimensionText": "n-element vector of initial probabilities, the baseline W remains at its original value",
+      "symbol": "\\widehat Q(0,W_i)",
+      "unit": "Probability"
+    },
+    "q1": {
+      "id": "q1",
+      "label": "Initial risk predictions for the same patients with prediction input A set to 1",
+      "julia": "q1 / fit.q1",
+      "type": "Vector{Float64}",
+      "dimensions": [
+        "n"
+      ],
+      "role": "prediction",
+      "dimensionText": "n-element vector of initial probabilities, the baseline W remains at its original value",
+      "symbol": "\\widehat Q(1,W_i)",
+      "unit": "Probability"
+    },
+    "qa": {
+      "id": "qa",
+      "label": "Initial predicted risk selected by actual A",
+      "julia": "qa",
+      "type": "Vector{Float64}",
+      "dimensions": [
+        "n"
+      ],
+      "role": "prediction",
+      "dimensionText": "n-element vector; each row selects the prediction for the treatment actually received",
+      "symbol": "\\widehat Q(A_i,W_i)",
+      "unit": "Probability"
+    },
+    "risk-difference": {
+      "id": "risk-difference",
+      "label": "Difference between each patient’s two predicted risks",
+      "julia": "q1 - q0",
+      "type": "Vector{Float64}",
+      "dimensions": [
+        "n"
+      ],
+      "role": "derived-data",
+      "dimensionText": "n-element contrast vector; its mean is the standardised risk difference",
+      "symbol": "\\widehat Q(1,W_i)-\\widehat Q(0,W_i)",
+      "unit": "Probability difference"
+    }
+  },
+  "chapters": {
+    "ch01": {
+      "source": "en/julia/rhc_lessons/ch01.jl",
+      "lineCount": 32,
+      "lines": [
+        {
+          "line": 3,
+          "code": "include(joinpath(@__DIR__, \"..\", \"..\", \"..\", \"shared\", \"julia\", \"RHCCase.jl\"))",
+          "kind": "setup",
+          "inputs": [],
+          "outputs": [
+            "rhc-module"
+          ],
+          "mathIds": [],
+          "formulaTex": null,
+          "operation": "include reads and executes another Julia file. joinpath joins path components; @__DIR__ identifies the current script directory. Three .. components move up three levels to shared RHCCase.jl. This loads function definitions without calculating patient means."
+        },
+        {
+          "line": 5,
+          "code": "using .RHCCase",
+          "kind": "setup",
+          "inputs": [
+            "rhc-module"
+          ],
+          "outputs": [
+            "rhc-exports",
+            "source-path"
+          ],
+          "mathIds": [],
+          "formulaTex": null,
+          "operation": "using brings the loaded RHCCase module’s exported names and DEFAULT_SOURCE into the current script. The leading dot identifies a local module. DEFAULT_SOURCE is a CSV path, not patient data."
+        },
+        {
+          "line": 7,
+          "code": "rows = read_rhc_rows(DEFAULT_SOURCE)",
+          "kind": "read",
+          "inputs": [
+            "source-path",
+            "rhc-exports"
+          ],
+          "outputs": [
+            "raw-records"
+          ],
+          "mathIds": [
+            "raw-cohort"
+          ],
+          "formulaTex": "\\mathrm{rows}=(r_1,\\ldots,r_n)",
+          "operation": "read_rhc_rows reads the original CSV; = stores the returned records as rows. Each entry is one patient’s field dictionary, with original values initially stored as strings. The path and records are separate objects. The reader checks fields and patient identifiers and preserves every original row."
+        },
+        {
+          "line": 9,
+          "code": "observations = rhc_observations(rows)",
+          "kind": "encode",
+          "inputs": [
+            "raw-records"
+          ],
+          "outputs": [
+            "observations"
+          ],
+          "mathIds": [
+            "binary-encoding"
+          ],
+          "formulaTex": "O_i=(X_i,A_i,Y_i),\\quad Y_i=\\mathbf1\\{\\mathrm{dth30}_i=\\mathrm{Yes}\\}",
+          "operation": "Pass rows to rhc_observations. In original row order, encode sex, swang1 and dth30 as integers x, a and y. Each result is a named (x,a,y) record; these are observed labels, not model predictions, and no patients are removed."
+        },
+        {
+          "line": 11,
+          "code": "n = length(observations)",
+          "kind": "reduce",
+          "inputs": [
+            "observations"
+          ],
+          "outputs": [
+            "sample-size"
+          ],
+          "mathIds": [
+            "sample-size"
+          ],
+          "formulaTex": "n=\\operatorname{length}(O_1,\\ldots,O_n)",
+          "operation": "length counts the patient records in observations and assigns the integer count to n. The container has n records; n itself is one scalar."
+        },
+        {
+          "line": 13,
+          "code": "y = [person.y for person in observations]",
+          "kind": "extract",
+          "inputs": [
+            "observations"
+          ],
+          "outputs": [
+            "outcomes"
+          ],
+          "mathIds": [
+            "outcomes"
+          ],
+          "formulaTex": "\\mathbf Y=(Y_1,\\ldots,Y_n)^\\mathsf T",
+          "operation": "Square brackets create a vector. for person in observations visits each patient; person.y reads that record’s y field. The resulting y vector preserves patient order and has length n. Y=0/1 are outcome labels, not array indices."
+        },
+        {
+          "line": 15,
+          "code": "events = sum(y)",
+          "kind": "reduce",
+          "inputs": [
+            "outcomes"
+          ],
+          "outputs": [
+            "events"
+          ],
+          "mathIds": [
+            "events"
+          ],
+          "formulaTex": "M=\\sum_{i=1}^nY_i",
+          "operation": "sum adds all n binary entries in y: a death contributes 1 and survival contributes 0. events is one integer scalar containing the total death count."
+        },
+        {
+          "line": 17,
+          "code": "risk = events / n",
+          "kind": "divide",
+          "inputs": [
+            "events",
+            "sample-size"
+          ],
+          "outputs": [
+            "risk"
+          ],
+          "mathIds": [
+            "sample-mean"
+          ],
+          "formulaTex": "\\widehat\\mu=\\frac{M}{n}=\\frac1n\\sum_{i=1}^nY_i",
+          "operation": "Divide the death count events by the cohort size n and assign the scalar result to risk. This is the observed mortality proportion for the full cohort."
+        },
+        {
+          "line": 19,
+          "code": "influence = y .- risk",
+          "kind": "broadcast",
+          "inputs": [
+            "outcomes",
+            "risk"
+          ],
+          "outputs": [
+            "influence"
+          ],
+          "mathIds": [
+            "influence"
+          ],
+          "formulaTex": "D_i=Y_i-\\widehat\\mu,\\quad\\mathbf D=\\mathbf Y-\\widehat\\mu\\mathbf1_n",
+          "operation": "The dot in .- means elementwise subtraction (broadcasting): subtract the same scalar risk from every entry of y. influence retains n entries: Y=0 gives -risk and Y=1 gives 1-risk. No averaging occurs here.",
+          "broadcast": {
+            "operator": ".-",
+            "vector": "outcomes",
+            "scalar": "risk",
+            "output": "influence"
+          }
+        },
+        {
+          "line": 21,
+          "code": "mean_influence = sum(influence) / n",
+          "kind": "reduce",
+          "inputs": [
+            "influence",
+            "sample-size"
+          ],
+          "outputs": [
+            "mean-influence"
+          ],
+          "mathIds": [
+            "mean-influence"
+          ],
+          "formulaTex": "\\overline D=\\frac1n\\sum_{i=1}^nD_i=\\frac1n\\sum_{i=1}^n(Y_i-\\widehat\\mu)\\approx0",
+          "operation": "sum adds all n influence values and / n divides by the cohort size, producing scalar mean_influence. Positive and negative contributions cancel in the mean. It is exactly 0 in real arithmetic, allowing small floating-point errors; individual influence values need not be 0."
+        },
+        {
+          "line": 23,
+          "code": "data = rhc_data(DEFAULT_SOURCE)",
+          "kind": "aggregate",
+          "inputs": [
+            "source-path"
+          ],
+          "outputs": [
+            "coarse-data"
+          ],
+          "mathIds": [
+            "eight-cell-summary"
+          ],
+          "formulaTex": "n_j=\\#\\{i:(X_i,A_i,Y_i)=(x_j,a_j,y_j)\\},\\quad\\sum_{j=1}^8n_j=n",
+          "operation": "rhc_data rereads the original CSV and counts patients in each (x,a,y) cell. It returns a record whose data.cells field contains eight cell counts; data.n is the total patient count, 5735."
+        },
+        {
+          "line": 25,
+          "code": "check = mean_if(data)",
+          "kind": "validate",
+          "inputs": [
+            "coarse-data"
+          ],
+          "outputs": [
+            "mean-check",
+            "check-risk",
+            "check-values",
+            "check-mean"
+          ],
+          "mathIds": [
+            "weighted-mean"
+          ],
+          "formulaTex": "\\mathrm{check.risk}=\\sum_{j=1}^8\\frac{n_j}{n}y_j,\\quad\\mathrm{check.mean}=\\sum_{j=1}^8\\frac{n_j}{n}(y_j-\\widehat\\mu)",
+          "operation": "mean_if(data) calculates the mortality proportion and mean influence value from the cell counts, storing the returned record in check. check.risk is a scalar mortality proportion; check.values contains eight cell-specific influence values; check.mean is their count-weighted mean."
+        },
+        {
+          "line": 27,
+          "code": "@assert isapprox(check.risk, risk) && abs(mean_influence) < 1e-12",
+          "kind": "assert",
+          "inputs": [
+            "check-risk",
+            "risk",
+            "mean-influence"
+          ],
+          "outputs": [
+            "assertion-result"
+          ],
+          "mathIds": [
+            "numerical-check"
+          ],
+          "formulaTex": "\\mathrm{check.risk}\\approx\\widehat\\mu\\quad\\land\\quad|\\overline D|<10^{-12}",
+          "operation": "@assert requires both conditions joined by && to be true. isapprox compares the grouped and patient-level risks using its default tolerance; abs checks that the patient influence mean is below 1e-12. Failure stops execution. This line does not directly check check.mean."
+        },
+        {
+          "line": 28,
+          "code": "println(\"Original patient count n = \", n, \"; 30-day deaths = \", events)",
+          "kind": "print",
+          "inputs": [
+            "sample-size",
+            "events"
+          ],
+          "outputs": [
+            "terminal-output"
+          ],
+          "mathIds": [
+            "sample-size",
+            "events"
+          ],
+          "formulaTex": "n,\\quad M",
+          "operation": "println displays the quoted labels followed by existing n and events, then starts a new line. Commas separate display arguments without summing them. These are the existing cohort and death counts; no new estimate is computed."
+        },
+        {
+          "line": 29,
+          "code": "println(\"Sample death risk μ̂ = \", risk)",
+          "kind": "print",
+          "inputs": [
+            "risk"
+          ],
+          "outputs": [
+            "terminal-output"
+          ],
+          "mathIds": [
+            "sample-mean"
+          ],
+          "formulaTex": "\\widehat\\mu",
+          "operation": "println displays the existing scalar risk after its label and starts a new line. It does not recalculate the mean."
+        },
+        {
+          "line": 30,
+          "code": "println(\"IF for Y=0 = \", -risk, \"; IF for Y=1 = \", 1-risk)",
+          "kind": "print",
+          "inputs": [
+            "risk"
+          ],
+          "outputs": [
+            "terminal-output"
+          ],
+          "mathIds": [
+            "influence"
+          ],
+          "formulaTex": "D(0)=-\\widehat\\mu,\\quad D(1)=1-\\widehat\\mu",
+          "operation": "println displays the mean-target influence value for each possible outcome: -risk means 0-risk, while 1-risk subtracts the same centre from 1. These are the two function values at Y=0 and Y=1, rather than patient-level predictions or a recalculated n-element vector."
+        },
+        {
+          "line": 31,
+          "code": "println(\"Patient-level IF mean = \", mean_influence, \"; IF mean weighted by group counts = \", check.mean)",
+          "kind": "print",
+          "inputs": [
+            "mean-influence",
+            "check-mean"
+          ],
+          "outputs": [
+            "terminal-output"
+          ],
+          "mathIds": [
+            "mean-influence",
+            "weighted-mean"
+          ],
+          "formulaTex": "\\overline D,\\quad\\sum_{j=1}^8(n_j/n)D_j",
+          "operation": "println displays mean_influence and check.mean under separate labels. The first averages patient-level influence values; the second uses group-count weights. The dot reads the check.mean field; commas separate text and values. No further averaging or equality assertion occurs here."
+        }
+      ]
+    },
+    "ch00": {
+      "excerpts": [
+        {
+          "id": "read-raw",
+          "kind": "source-excerpt",
+          "source": "en/julia/rhc_lessons/ch01.jl",
+          "startLine": 7,
+          "endLine": 7,
+          "code": "rows = read_rhc_rows(DEFAULT_SOURCE)",
+          "inputs": [
+            "source-path"
+          ],
+          "outputs": [
+            "raw-records"
+          ],
+          "mathIds": [
+            "raw-cohort"
+          ],
+          "formulaTex": "\\mathrm{rows}=(r_1,\\ldots,r_n)",
+          "operation": "Read the original CSV and return the patient records. This excerpt is line 7 of the Chapter 1 workbook."
+        },
+        {
+          "id": "aggregate-eight-cells",
+          "kind": "source-excerpt",
+          "source": "en/julia/rhc_lessons/ch01.jl",
+          "startLine": 23,
+          "endLine": 23,
+          "code": "data = rhc_data(DEFAULT_SOURCE)",
+          "inputs": [
+            "source-path"
+          ],
+          "outputs": [
+            "coarse-data"
+          ],
+          "mathIds": [
+            "eight-cell-summary"
+          ],
+          "formulaTex": "\\sum_{j=1}^8n_j=n",
+          "operation": "Count patients in each combination of sex, RHC treatment and 30-day outcome, then return the grouped data. This excerpt is line 23 of the Chapter 1 workbook."
+        },
+        {
+          "id": "initial-models",
+          "kind": "runnable-api-example",
+          "source": null,
+          "code": "fit = prepare_full(rows)\ng = fit.g\nq0 = fit.q0\nq1 = fit.q1\nqa = fit.a .* q1 + (1 .- fit.a) .* q0",
+          "inputs": [
+            "raw-records"
+          ],
+          "outputs": [
+            "initial-fit",
+            "design-matrix",
+            "treatment-vector",
+            "outcome-vector",
+            "propensity",
+            "q0",
+            "q1",
+            "qa"
+          ],
+          "mathIds": [
+            "baseline-design",
+            "initial-models",
+            "factual-prediction"
+          ],
+          "formulaTex": "\\widehat g_i=\\widehat g(W_i),\\quad\\widehat q_{ai}=\\widehat Q(a,W_i),\\quad\\widehat q_{Ai}=A_i\\widehat q_{1i}+(1-A_i)\\widehat q_{0i}",
+          "operation": "Pass original rows to exported prepare_full, fitting only initial g and Q. fit.design is n×17; adding actual A gives the n×18 Q design. Read saved g, q0 and q1 fields from fit. Multiplying by actual A and 1-A selects each patient’s actual-arm prediction, giving n-element qa. No TMLE update has occurred.",
+          "prerequisite": "Run the Chapter 1 include, using and read-raw fragments first to load the module and create rows.",
+          "sourceReferences": [
+            {
+              "source": "shared/julia/RHCCase.jl",
+              "startLine": 193,
+              "endLine": 194,
+              "code": "function prepare_full(rows)\n    observations = rhc_observations(rows)"
+            },
+            {
+              "source": "shared/julia/RHCCase.jl",
+              "startLine": 208,
+              "endLine": 223,
+              "code": "    design = zeros(n, length(FULL_FEATURES))\n    for (i, (row, person)) in enumerate(zip(rows, observations))\n        design[i,:] = [1.0, person.x, (age[i]-age_mean)/age_sd,\n            Float64(row[\"race\"] == \"black\"), Float64(row[\"race\"] == \"other\"),\n            [parse(Float64,row[k]) for k in HISTORY_FIELDS]...]\n    end\n    a = Float64[p.a for p in observations]\n    y = Float64[p.y for p in observations]\n    g_fit = fit_logistic(design, a)\n    q_fit = fit_logistic(hcat(design, a), y)\n    q0 = expit.(hcat(design, zeros(n)) * q_fit.coefficients)\n    q1 = expit.(hcat(design, ones(n)) * q_fit.coefficients)\n    g = g_fit.probabilities\n    h = a ./ g - (1 .- a) ./ (1 .- g)\n    (; n, feature_names=copy(FULL_FEATURES), q_feature_names=[FULL_FEATURES..., \"A\"],\n       age_mean, age_sd, design, a, y, g_fit, q_fit, g, q0, q1, h)"
+            },
+            {
+              "source": "shared/julia/RHCCase.jl",
+              "startLine": 234,
+              "endLine": 234,
+              "code": "    q_observed = fit.a .* q1 + (1 .- fit.a) .* q0"
+            }
+          ],
+          "notes": [
+            "This runnable example uses the public API; its lines are shown together rather than extracted as one contiguous source block.",
+            "Use prepare_full for the initial fits alone. full_analysis also calls solve_full and performs targeting.",
+            "The 15 baseline variables produce 17 design columns after adding an intercept, dummy-coding race and standardising age.",
+            "qa selects predictions using each patient’s observed fit.a. q0 and q1 instead set A to 0 or 1 for every patient, keeping W fixed."
+          ]
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,107 @@
+{
+  "date": "2026-10-16",
+  "scope": "Chapter0§5.1 estimator diagram: locate AIPW/TMLE corrections and show EIF guidance without full formulas",
+  "entry": "http://127.0.0.1:4174/zh/?edition=method-routes#chapter-0",
+  "previous_verification": "zh/docs/VERIFICATION-before-method-routes.json",
+  "implemented": [
+    "Purple TMLE marker on outcome fitting component; orange AIPW marker on output",
+    "Shared observed-minus-predicted residuals, baseline-conditioned treatment probability and empirical X composition",
+    "EIF guidance hub branching into output correction versus risk-model targeting and re-plug-in",
+    "First-use bilingual AIPW/TMLE/EIF/propensity terminology and matching§5.5 callback",
+    "Method routes remain graphical/qualitative with no full EIF or targeting equation"
+  ],
+  "mathematical_boundaries": [
+    "Residual is only part of the EIF",
+    "AIPW residual correction explained under same-sample empirical X standardisation",
+    "TMLE residual equation corresponds to full fitted EIF mean under the stated empirical X weights",
+    "Theoretical D_P distinguished from fitted EIF-based algorithm construction",
+    "No individual causal effect or per-person zero-residual claim",
+    "No finite-sample unbiasedness from empirical equation solving",
+    "No corrected numerical results, guaranteed21→20pp recovery or finite-sample ranking"
+  ],
+  "preserved": {
+    "chapter0_original_display_formula_groups_byte_identical": 4,
+    "protected_chapter_numerical_data_Julia_app_source_files_byte_identical": 24
+  },
+  "build": {
+    "command": "sh scripts/node.sh scripts/build.js",
+    "chapters": 9,
+    "exit_code": 0
+  },
+  "javascript": {
+    "command": "sh scripts/node.sh --test tests/*.test.js tests/zh/*.test.js",
+    "passed": 86,
+    "failed": 0,
+    "exit_code": 0
+  },
+  "browser": {
+    "estimator_methods": {
+      "command": "sh scripts/node.sh tests/zh/ch00-estimator-browser.cjs",
+      "viewports": [
+        [
+          1360,
+          900
+        ],
+        [
+          375,
+          900
+        ]
+      ],
+      "exit_code": 0,
+      "checks": [
+        "Correction anchor positions and separate method routes",
+        "Shared treatment probability and empirical target weights",
+        "EIF residual structure and conditional remainder",
+        "No numeric corrected output or full targeting formula",
+        "Graphics, folded arithmetic, keyboard, MathML and recall popover",
+        "Desktop/mobile flow and no overflow, console errors or external requests"
+      ]
+    },
+    "full_course": {
+      "command": "sh scripts/node.sh tests/zh/browser.cjs",
+      "chapters": 9,
+      "viewports": [
+        [
+          1360,
+          900
+        ],
+        [
+          375,
+          900
+        ]
+      ],
+      "exit_code": 0,
+      "checks": [
+        "Interactions/reset/details",
+        "Rendered formulae and keyboard access",
+        "Chapter layouts and console",
+        "Normal browser cleanup"
+      ]
+    }
+  },
+  "independent_review": "zh/reviews/ch00-method-routes.md",
+  "screenshots_inspected": [
+    "output/zh/playwright/ch00-method-positions-1360.png",
+    "output/zh/playwright/ch00-method-routes-1360.png",
+    "output/zh/playwright/ch00-method-routes-375.png"
+  ],
+  "numerical_scope": "Unchanged core, observed data and Julia compared to prior release; Julia and cross-language suites not repeated for this diagram change",
+  "unverified": [
+    "Physical touch devices",
+    "Full screen-reader speech",
+    "Browser engines other than Chrome",
+    "Beginner learning outcomes",
+    "Fresh Chrome regression from a separately extracted release"
+  ],
+  "open_issues": [],
+  "verified_source_sha256": {
+    "zh/src/chapters/ch00.md": "96b3b0cf1c0ee0b24c22184cde3f2c303c1d2de6edf5670889429184b43def70",
+    "zh/renderers/chapter0-visuals.js": "998cdc3ac905aa8d81d6d699330506a1b2f97ae525aeccf6d822777ebf4ff30f",
+    "zh/src/style.css": "5463357efb5e04d5bf6eb9f6adc8654d209b49c60baa6ec791eb03de4c746a5e",
+    "tests/zh/ch00-estimator-browser.cjs": "f558950f202e4797853a0c5a32b521e3a9e29f24122933c0fa0a7295f14682e5",
+    "shared/js/math.js": "f5112eb05b733a6a9e6a19528f91da9c3df140102a0168f6fb70d9afd8cff3a3",
+    "shared/js/case-study.js": "a9bd518a4022a07e28a5905efdecaa3a7324510b7b6076502e69938cb54ccf76",
+    "dist/zh/index.html": "9b04cd3098e5f3d8e6e4dcdcfdb31ea405f449baa38b16e90cd9d56561cf8d73"
+  },
+  "delivery": "releases/EIF_Tutorial_Complete.zip and .sha256; package.py validates original materials, CRC, SHA256 and every member against the workspace"
+}

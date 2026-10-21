@@ -1,0 +1,50 @@
+{
+  "date": "2026-10-20",
+  "scope": "Clarify targeting as updating the conditional-mean function estimate: fixed initial beta and g, fitted new epsilon, then evaluating Qstar for both arms",
+  "entry": "http://127.0.0.1:4174/zh/?edition=tmle-overview#chapter-0",
+  "source": {
+    "cohort": "SUPPORT/RHC",
+    "records": 5735,
+    "events30d": 1918,
+    "treated24h": 2184,
+    "source_sha256": "9ef4ab578be4b40ad5d97d3a7e08ffdc1f9f76aeeefee51b4996e4221556f8e8",
+    "source_bytes": 2320412,
+    "whole_source_retained": true,
+    "outcome_evidence": "Original study explicitly confirms death date or survival180 for every patient; publisheddth30 exactly agrees with dates on all5735",
+    "permission": "Vanderbilt repository use permission with original citation and acknowledgement, notCCBY"
+  },
+  "previous_verification": "zh/docs/VERIFICATION-before-q-update-meaning.json",
+  "mathematics_review": "zh/reviews/ch00-tmle-overview.md (appended clarification review)",
+  "build": {
+    "command": "sh scripts/node.sh scripts/build.js",
+    "exit_code": 0
+  },
+  "tests": {
+    "command": "sh scripts/node.sh --test tests/zh/tmle-overview.test.js tests/zh/dr-intro.test.js",
+    "passed": 4,
+    "failed": 0,
+    "skipped": 0,
+    "exit_code": 0,
+    "log": "output/zh/verification/q-update-meaning/tests.log"
+  },
+  "browser": {
+    "command": "sh scripts/node.sh tests/zh/tmle-overview-browser.cjs",
+    "browser": "Chrome",
+    "viewports": [
+      1360,
+      375
+    ],
+    "exit_code": 0,
+    "log": "output/zh/verification/q-update-meaning/browser.log",
+    "scope": "Six-step navigation, formula recalls, source rows, initial/fitted predictions, target/SE, reset, scrolling and no overflow/console errors"
+  },
+  "not_rerun": [
+    "Full 227-test suite and Julia/R programmes; numerical implementation unchanged; previous full run retained in prior verification"
+  ],
+  "not_verified": [
+    "Learning outcomes with actual novice readers",
+    "Physical mobile devices, other browser engines, complete spoken screen-reader review",
+    "Causal identification, actual study representativeness/iid assumptions, finite-sample accuracy or confidence-interval coverage",
+    "Browser start from extracted release archive"
+  ]
+}

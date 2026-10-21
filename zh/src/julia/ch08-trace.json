@@ -1,0 +1,1101 @@
+{
+  "version": 1,
+  "source": "zh/julia/tmle_trace.jl",
+  "lineCount": 56,
+  "cohort": {
+    "n": 5735,
+    "events": 1918
+  },
+  "columns": {
+    "rows": {
+      "key": "rows",
+      "label": "原始患者记录",
+      "symbol": "r_1,\\ldots,r_n",
+      "type": "Vector{Dict{String,String}}",
+      "dimensions": [
+        "n"
+      ]
+    },
+    "fit": {
+      "key": "fit",
+      "label": "初始拟合返回容器",
+      "symbol": "\\widehat Q,\\widehat g",
+      "type": "NamedTuple",
+      "dimensions": []
+    },
+    "n": {
+      "key": "n",
+      "label": "总人数",
+      "symbol": "n",
+      "type": "Int",
+      "dimensions": []
+    },
+    "epsilon": {
+      "key": "epsilon",
+      "label": "全体共用的更新幅度",
+      "symbol": "\\epsilon",
+      "type": "Float64",
+      "dimensions": []
+    },
+    "a": {
+      "key": "a",
+      "label": "实际RHC指标",
+      "symbol": "A_i",
+      "type": "Vector{Float64}",
+      "dimensions": [
+        "n"
+      ]
+    },
+    "y": {
+      "key": "y",
+      "label": "实际30日死亡指标",
+      "symbol": "Y_i",
+      "type": "Vector{Float64}",
+      "dimensions": [
+        "n"
+      ]
+    },
+    "g": {
+      "key": "g",
+      "label": "初始倾向得分",
+      "symbol": "\\widehat g(W_i)",
+      "type": "Vector{Float64}",
+      "dimensions": [
+        "n"
+      ]
+    },
+    "q0": {
+      "key": "q0",
+      "label": "初始未RHC预测",
+      "symbol": "\\widehat Q_{0,i}",
+      "type": "Vector{Float64}",
+      "dimensions": [
+        "n"
+      ]
+    },
+    "q1": {
+      "key": "q1",
+      "label": "初始RHC预测",
+      "symbol": "\\widehat Q_{1,i}",
+      "type": "Vector{Float64}",
+      "dimensions": [
+        "n"
+      ]
+    },
+    "qa": {
+      "key": "qa",
+      "label": "按实际A选出的初始预测",
+      "symbol": "\\widehat Q_{A,i}",
+      "type": "Vector{Float64}",
+      "dimensions": [
+        "n"
+      ]
+    },
+    "offset": {
+      "key": "offset",
+      "label": "实际A的固定初始对数优势",
+      "symbol": "o_{A,i}",
+      "type": "Vector{Float64}",
+      "dimensions": [
+        "n"
+      ]
+    },
+    "offset0": {
+      "key": "offset0",
+      "label": "A=0的固定初始对数优势",
+      "symbol": "o_{0,i}",
+      "type": "Vector{Float64}",
+      "dimensions": [
+        "n"
+      ]
+    },
+    "offset1": {
+      "key": "offset1",
+      "label": "A=1的固定初始对数优势",
+      "symbol": "o_{1,i}",
+      "type": "Vector{Float64}",
+      "dimensions": [
+        "n"
+      ]
+    },
+    "h": {
+      "key": "h",
+      "label": "实际A的更新方向",
+      "symbol": "H_{A,i}",
+      "type": "Vector{Float64}",
+      "dimensions": [
+        "n"
+      ]
+    },
+    "h0": {
+      "key": "h0",
+      "label": "A=0的更新方向",
+      "symbol": "H_{0,i}",
+      "type": "Vector{Float64}",
+      "dimensions": [
+        "n"
+      ]
+    },
+    "h1": {
+      "key": "h1",
+      "label": "A=1的更新方向",
+      "symbol": "H_{1,i}",
+      "type": "Vector{Float64}",
+      "dimensions": [
+        "n"
+      ]
+    },
+    "shift": {
+      "key": "shift",
+      "label": "实际A的逐人位移",
+      "symbol": "b_{A,i}",
+      "type": "Vector{Float64}",
+      "dimensions": [
+        "n"
+      ]
+    },
+    "shift0": {
+      "key": "shift0",
+      "label": "A=0的逐人位移",
+      "symbol": "b_{0,i}",
+      "type": "Vector{Float64}",
+      "dimensions": [
+        "n"
+      ]
+    },
+    "shift1": {
+      "key": "shift1",
+      "label": "A=1的逐人位移",
+      "symbol": "b_{1,i}",
+      "type": "Vector{Float64}",
+      "dimensions": [
+        "n"
+      ]
+    },
+    "eta": {
+      "key": "eta",
+      "label": "实际A的更新线性预测",
+      "symbol": "\\eta_{A,i}",
+      "type": "Vector{Float64}",
+      "dimensions": [
+        "n"
+      ]
+    },
+    "eta0": {
+      "key": "eta0",
+      "label": "A=0的更新线性预测",
+      "symbol": "\\eta_{0,i}",
+      "type": "Vector{Float64}",
+      "dimensions": [
+        "n"
+      ]
+    },
+    "eta1": {
+      "key": "eta1",
+      "label": "A=1的更新线性预测",
+      "symbol": "\\eta_{1,i}",
+      "type": "Vector{Float64}",
+      "dimensions": [
+        "n"
+      ]
+    },
+    "qstar_a": {
+      "key": "qstar_a",
+      "label": "实际A的更新风险",
+      "symbol": "Q_{\\epsilon,A,i}",
+      "type": "Vector{Float64}",
+      "dimensions": [
+        "n"
+      ]
+    },
+    "residual": {
+      "key": "residual",
+      "label": "实际死亡减更新风险",
+      "symbol": "r_i",
+      "type": "Vector{Float64}",
+      "dimensions": [
+        "n"
+      ]
+    },
+    "score_contribution": {
+      "key": "score_contribution",
+      "label": "逐人分数贡献",
+      "symbol": "c_i",
+      "type": "Vector{Float64}",
+      "dimensions": [
+        "n"
+      ]
+    },
+    "qstar0": {
+      "key": "qstar0",
+      "label": "更新后的未RHC风险",
+      "symbol": "Q_{\\epsilon,0,i}",
+      "type": "Vector{Float64}",
+      "dimensions": [
+        "n"
+      ]
+    },
+    "qstar1": {
+      "key": "qstar1",
+      "label": "更新后的RHC风险",
+      "symbol": "Q_{\\epsilon,1,i}",
+      "type": "Vector{Float64}",
+      "dimensions": [
+        "n"
+      ]
+    },
+    "contrast": {
+      "key": "contrast",
+      "label": "逐人更新风险差",
+      "symbol": "\\Delta_{\\epsilon,i}",
+      "type": "Vector{Float64}",
+      "dimensions": [
+        "n"
+      ]
+    },
+    "centred": {
+      "key": "centred",
+      "label": "中心化的更新风险差",
+      "symbol": "\\Delta_{\\epsilon,i}-\\widehat\\psi_\\epsilon",
+      "type": "Vector{Float64}",
+      "dimensions": [
+        "n"
+      ]
+    },
+    "eif": {
+      "key": "eif",
+      "label": "逐人经验EIF",
+      "symbol": "\\widehat D_{\\epsilon,i}",
+      "type": "Vector{Float64}",
+      "dimensions": [
+        "n"
+      ]
+    },
+    "psi": {
+      "key": "psi",
+      "label": "更新预测差的全体平均",
+      "symbol": "\\widehat\\psi_\\epsilon",
+      "type": "Float64",
+      "dimensions": []
+    },
+    "score_mean": {
+      "key": "score_mean",
+      "label": "全体分数平均",
+      "symbol": "s_n(\\epsilon)",
+      "type": "Float64",
+      "dimensions": []
+    },
+    "eif_mean": {
+      "key": "eif_mean",
+      "label": "全体经验EIF平均",
+      "symbol": "\\overline D_\\epsilon",
+      "type": "Float64",
+      "dimensions": []
+    }
+  },
+  "lines": [
+    {
+      "line": 3,
+      "code": "include(joinpath(@__DIR__, \"..\", \"..\", \"shared\", \"julia\", \"RHCCase.jl\"))",
+      "inputs": [],
+      "outputs": [],
+      "operation": "include读取并执行共享Julia定义；@__DIR__是当前脚本目录，joinpath拼接路径，两个..返回项目根目录。这里只载入函数定义，没有读取患者或运行TMLE。",
+      "formulaTex": null,
+      "dimensions": {}
+    },
+    {
+      "line": 5,
+      "code": "using .RHCCase",
+      "inputs": [],
+      "outputs": [],
+      "operation": "using让当前脚本能直接调用本地RHCCase模块导出的函数；模块名前的点表示本地模块，不是乘法或逐元素运算。",
+      "formulaTex": null,
+      "dimensions": {}
+    },
+    {
+      "line": 7,
+      "code": "rows = read_rhc_rows(DEFAULT_SOURCE)",
+      "inputs": [],
+      "outputs": [
+        "rows"
+      ],
+      "operation": "读取冻结的原始CSV，=先算右侧再存入左侧。rows是长度n的字典向量，每项保留一位患者的63个原始字符串字段与原行序，不是已拟合的设计矩阵。",
+      "formulaTex": "\\mathrm{rows}=(r_1,\\ldots,r_n)",
+      "dimensions": {
+        "rows": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 8,
+      "code": "fit = prepare_full(rows)",
+      "inputs": [
+        "rows"
+      ],
+      "outputs": [
+        "fit"
+      ],
+      "operation": "prepare_full只拟合初始g与Q，返回带字段的命名元组（named tuple）fit；内部基线设计n×17，Q模型再加实际A为n×18，没有执行targeting或求epsilon。",
+      "formulaTex": "\\widehat g,\\widehat Q\\leftarrow\\operatorname{fit}(\\mathrm{rows})",
+      "dimensions": {
+        "rows": [
+          "n"
+        ],
+        "fit": []
+      }
+    },
+    {
+      "line": 10,
+      "code": "n = fit.n",
+      "inputs": [
+        "fit"
+      ],
+      "outputs": [
+        "n"
+      ],
+      "operation": "点号从fit容器取n字段，存为一个人数整数标量（scalar）。n不是n项向量，也不是网页上正在显示的几行记录。",
+      "formulaTex": "n=\\#\\{\\text{原始患者}\\}",
+      "dimensions": {
+        "fit": [],
+        "n": []
+      }
+    },
+    {
+      "line": 11,
+      "code": "a = copy(fit.a)",
+      "inputs": [
+        "fit"
+      ],
+      "outputs": [
+        "a"
+      ],
+      "operation": "从fit.a读取实际接受RHC的0/1指标。copy建立独立副本，输出长度n的浮点向量（vector）；第i项仍对应同一原始患者，后续运算不会覆盖初始容器。",
+      "formulaTex": "A_i",
+      "dimensions": {
+        "fit": [],
+        "a": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 12,
+      "code": "y = copy(fit.y)",
+      "inputs": [
+        "fit"
+      ],
+      "outputs": [
+        "y"
+      ],
+      "operation": "从fit.y读取实际30日死亡的0/1指标。copy建立独立副本，输出长度n的浮点向量（vector）；第i项仍对应同一原始患者，后续运算不会覆盖初始容器。",
+      "formulaTex": "Y_i",
+      "dimensions": {
+        "fit": [],
+        "y": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 13,
+      "code": "g = copy(fit.g)",
+      "inputs": [
+        "fit"
+      ],
+      "outputs": [
+        "g"
+      ],
+      "operation": "从fit.g读取初始接受RHC的拟合概率。copy建立独立副本，输出长度n的浮点向量（vector）；第i项仍对应同一原始患者，后续运算不会覆盖初始容器。",
+      "formulaTex": "\\widehat g(W_i)",
+      "dimensions": {
+        "fit": [],
+        "g": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 14,
+      "code": "q0 = copy(fit.q0)",
+      "inputs": [
+        "fit"
+      ],
+      "outputs": [
+        "q0"
+      ],
+      "operation": "从fit.q0读取保持W不变、预测输入A全0的初始风险。copy建立独立副本，输出长度n的浮点向量（vector）；第i项仍对应同一原始患者，后续运算不会覆盖初始容器。",
+      "formulaTex": "\\widehat Q_{0,i}",
+      "dimensions": {
+        "fit": [],
+        "q0": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 15,
+      "code": "q1 = copy(fit.q1)",
+      "inputs": [
+        "fit"
+      ],
+      "outputs": [
+        "q1"
+      ],
+      "operation": "从fit.q1读取保持W不变、预测输入A全1的初始风险。copy建立独立副本，输出长度n的浮点向量（vector）；第i项仍对应同一原始患者，后续运算不会覆盖初始容器。",
+      "formulaTex": "\\widehat Q_{1,i}",
+      "dimensions": {
+        "fit": [],
+        "q1": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 17,
+      "code": "qa = a .* q1 .+ (1 .- a) .* q0",
+      "inputs": [
+        "a",
+        "q1",
+        "q0"
+      ],
+      "outputs": [
+        "qa"
+      ],
+      "operation": "点乘.*与点加.+都按同一行逐元素运算（broadcast）；A为1的行留下q1，A为0的行留下q0。输出qa仍有n项，不是两列的平均，也没有改写实际a或y。",
+      "formulaTex": "\\widehat Q_{A,i}=A_i\\widehat Q_{1,i}+(1-A_i)\\widehat Q_{0,i}",
+      "dimensions": {
+        "a": [
+          "n"
+        ],
+        "q1": [
+          "n"
+        ],
+        "q0": [
+          "n"
+        ],
+        "qa": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 19,
+      "code": "offset = logit.(qa)",
+      "inputs": [
+        "qa"
+      ],
+      "outputs": [
+        "offset"
+      ],
+      "operation": "logit.的点表示对qa每项调用logit(p)=log(p/(1-p))。这列是实际A对应的固定初始对数优势（log-odds），有n项；不是Y，也不随epsilon重新拟合。",
+      "formulaTex": "o_{A,i}=\\operatorname{logit}(\\widehat Q_{A,i})",
+      "dimensions": {
+        "qa": [
+          "n"
+        ],
+        "offset": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 20,
+      "code": "offset0 = logit.(q0)",
+      "inputs": [
+        "q0"
+      ],
+      "outputs": [
+        "offset0"
+      ],
+      "operation": "logit.的点表示对q0每项调用logit(p)=log(p/(1-p))。这列是预测输入A=0对应的固定初始对数优势（log-odds），有n项；不是Y，也不随epsilon重新拟合。",
+      "formulaTex": "o_{0,i}=\\operatorname{logit}(\\widehat Q_{0,i})",
+      "dimensions": {
+        "q0": [
+          "n"
+        ],
+        "offset0": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 21,
+      "code": "offset1 = logit.(q1)",
+      "inputs": [
+        "q1"
+      ],
+      "outputs": [
+        "offset1"
+      ],
+      "operation": "logit.的点表示对q1每项调用logit(p)=log(p/(1-p))。这列是预测输入A=1对应的固定初始对数优势（log-odds），有n项；不是Y，也不随epsilon重新拟合。",
+      "formulaTex": "o_{1,i}=\\operatorname{logit}(\\widehat Q_{1,i})",
+      "dimensions": {
+        "q1": [
+          "n"
+        ],
+        "offset1": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 23,
+      "code": "h = a ./ g .- (1 .- a) ./ (1 .- g)",
+      "inputs": [
+        "a",
+        "g"
+      ],
+      "outputs": [
+        "h"
+      ],
+      "operation": "./是逐元素除法，.-是逐元素减法。每行用实际a与对应g计算聪明协变量（clever covariate）：a=1为1/g，a=0为-1/(1-g)；允许负方向，不涉及矩阵求逆。",
+      "formulaTex": "H_{A,i}=\\frac{A_i}{\\widehat g_i}-\\frac{1-A_i}{1-\\widehat g_i}",
+      "dimensions": {
+        "a": [
+          "n"
+        ],
+        "g": [
+          "n"
+        ],
+        "h": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 24,
+      "code": "h0 = -1.0 ./ (1 .- g)",
+      "inputs": [
+        "g"
+      ],
+      "outputs": [
+        "h0"
+      ],
+      "operation": "预测输入A=0时方向为-1/(1-g)。标量-1.0逐项除以向量1-g，输出n项；负号表示更新方向，不是负概率，也未重新估计g。",
+      "formulaTex": "H_{0,i}=-\\frac1{1-\\widehat g_i}",
+      "dimensions": {
+        "g": [
+          "n"
+        ],
+        "h0": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 25,
+      "code": "h1 = 1.0 ./ g",
+      "inputs": [
+        "g"
+      ],
+      "outputs": [
+        "h1"
+      ],
+      "operation": "预测输入A=1时方向为1/g。标量1.0逐项除以g，输出n项；与h0使用同一个固定初始g，输入基线W不变。",
+      "formulaTex": "H_{1,i}=\\frac1{\\widehat g_i}",
+      "dimensions": {
+        "g": [
+          "n"
+        ],
+        "h1": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 27,
+      "code": "epsilon = parse(Float64, get(ENV, \"TMLE_EPSILON\", \"0\"))",
+      "inputs": [],
+      "outputs": [
+        "epsilon"
+      ],
+      "operation": "ENV读取环境变量TMLE_EPSILON；未提供时get返回字符串0。parse将字符串转为一个Float64标量；全体患者共用同一epsilon，默认0只是初始试探，不是已求出的最优根。",
+      "formulaTex": "\\epsilon\\in\\mathbb R\\quad(\\text{默认 }0)",
+      "dimensions": {
+        "epsilon": []
+      }
+    },
+    {
+      "line": 28,
+      "code": "isfinite(epsilon) || throw(ArgumentError(\"TMLE_EPSILON must be finite\"))",
+      "inputs": [
+        "epsilon"
+      ],
+      "outputs": [],
+      "operation": "isfinite检查epsilon有限；||表示左边不成立才执行右边。NaN或无穷大触发throw报错停止，不能悄悄进入更新。",
+      "formulaTex": "|\\epsilon|<\\infty",
+      "dimensions": {
+        "epsilon": []
+      }
+    },
+    {
+      "line": 30,
+      "code": "shift = epsilon .* h",
+      "inputs": [
+        "epsilon",
+        "h"
+      ],
+      "outputs": [
+        "shift"
+      ],
+      "operation": "一个epsilon标量逐项乘整列h，输出n项shift位移。每行的位移随其方向不同；没有先平均方向，也没有做矩阵乘法，单位仍为对数优势。",
+      "formulaTex": "b_{A,i}=\\epsilon H_{A,i}",
+      "dimensions": {
+        "epsilon": [],
+        "h": [
+          "n"
+        ],
+        "shift": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 31,
+      "code": "shift0 = epsilon .* h0",
+      "inputs": [
+        "epsilon",
+        "h0"
+      ],
+      "outputs": [
+        "shift0"
+      ],
+      "operation": "一个epsilon标量逐项乘整列h0，输出n项shift0位移。每行的位移随其方向不同；没有先平均方向，也没有做矩阵乘法，单位仍为对数优势。",
+      "formulaTex": "b_{0,i}=\\epsilon H_{0,i}",
+      "dimensions": {
+        "epsilon": [],
+        "h0": [
+          "n"
+        ],
+        "shift0": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 32,
+      "code": "shift1 = epsilon .* h1",
+      "inputs": [
+        "epsilon",
+        "h1"
+      ],
+      "outputs": [
+        "shift1"
+      ],
+      "operation": "一个epsilon标量逐项乘整列h1，输出n项shift1位移。每行的位移随其方向不同；没有先平均方向，也没有做矩阵乘法，单位仍为对数优势。",
+      "formulaTex": "b_{1,i}=\\epsilon H_{1,i}",
+      "dimensions": {
+        "epsilon": [],
+        "h1": [
+          "n"
+        ],
+        "shift1": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 33,
+      "code": "eta = offset .+ shift",
+      "inputs": [
+        "offset",
+        "shift"
+      ],
+      "outputs": [
+        "eta"
+      ],
+      "operation": "将同一行的固定offset与更新位移shift相加，输出n项eta线性预测；加法在对数优势尺度进行，没有把epsilon直接加到概率上。",
+      "formulaTex": "\\eta_{A,i}=o_{A,i}+b_{A,i}",
+      "dimensions": {
+        "offset": [
+          "n"
+        ],
+        "shift": [
+          "n"
+        ],
+        "eta": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 34,
+      "code": "eta0 = offset0 .+ shift0",
+      "inputs": [
+        "offset0",
+        "shift0"
+      ],
+      "outputs": [
+        "eta0"
+      ],
+      "operation": "将同一行的固定offset0与更新位移shift0相加，输出n项eta0线性预测；加法在对数优势尺度进行，没有把epsilon直接加到概率上。",
+      "formulaTex": "\\eta_{0,i}=o_{0,i}+b_{0,i}",
+      "dimensions": {
+        "offset0": [
+          "n"
+        ],
+        "shift0": [
+          "n"
+        ],
+        "eta0": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 35,
+      "code": "eta1 = offset1 .+ shift1",
+      "inputs": [
+        "offset1",
+        "shift1"
+      ],
+      "outputs": [
+        "eta1"
+      ],
+      "operation": "将同一行的固定offset1与更新位移shift1相加，输出n项eta1线性预测；加法在对数优势尺度进行，没有把epsilon直接加到概率上。",
+      "formulaTex": "\\eta_{1,i}=o_{1,i}+b_{1,i}",
+      "dimensions": {
+        "offset1": [
+          "n"
+        ],
+        "shift1": [
+          "n"
+        ],
+        "eta1": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 37,
+      "code": "qstar_a = expit.(eta)",
+      "inputs": [
+        "eta"
+      ],
+      "outputs": [
+        "qstar_a"
+      ],
+      "operation": "expit.将eta每项按expit(u)=1/(1+exp(-u))转回概率，得到n项qstar_a。两臂更新共用同一个epsilon和同一批W；稍后显式检查概率端点，不用截断掩盖失败。",
+      "formulaTex": "Q_{\\epsilon,A,i}=\\operatorname{expit}(\\eta_{A,i})",
+      "dimensions": {
+        "eta": [
+          "n"
+        ],
+        "qstar_a": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 38,
+      "code": "residual = y .- qstar_a",
+      "inputs": [
+        "y",
+        "qstar_a"
+      ],
+      "outputs": [
+        "residual"
+      ],
+      "operation": "实际死亡y逐项减更新风险qstar_a，得到残差（residual）向量。y仍是原始观察，没有被预测覆盖；残差允许正负，不是概率。",
+      "formulaTex": "r_i=Y_i-Q_{\\epsilon,A,i}",
+      "dimensions": {
+        "y": [
+          "n"
+        ],
+        "qstar_a": [
+          "n"
+        ],
+        "residual": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 39,
+      "code": "score_contribution = h .* residual",
+      "inputs": [
+        "h",
+        "residual"
+      ],
+      "outputs": [
+        "score_contribution"
+      ],
+      "operation": "将同一位患者的h乘其残差，得到n项分数贡献（score contribution）。此处只逐行相乘，尚未跨患者平均；分数不是倾向得分g。",
+      "formulaTex": "c_i=H_{A,i}r_i",
+      "dimensions": {
+        "h": [
+          "n"
+        ],
+        "residual": [
+          "n"
+        ],
+        "score_contribution": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 41,
+      "code": "qstar0 = expit.(eta0)",
+      "inputs": [
+        "eta0"
+      ],
+      "outputs": [
+        "qstar0"
+      ],
+      "operation": "expit.将eta0每项按expit(u)=1/(1+exp(-u))转回概率，得到n项qstar0。两臂更新共用同一个epsilon和同一批W；稍后显式检查概率端点，不用截断掩盖失败。",
+      "formulaTex": "Q_{\\epsilon,0,i}=\\operatorname{expit}(\\eta_{0,i})",
+      "dimensions": {
+        "eta0": [
+          "n"
+        ],
+        "qstar0": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 42,
+      "code": "qstar1 = expit.(eta1)",
+      "inputs": [
+        "eta1"
+      ],
+      "outputs": [
+        "qstar1"
+      ],
+      "operation": "expit.将eta1每项按expit(u)=1/(1+exp(-u))转回概率，得到n项qstar1。两臂更新共用同一个epsilon和同一批W；稍后显式检查概率端点，不用截断掩盖失败。",
+      "formulaTex": "Q_{\\epsilon,1,i}=\\operatorname{expit}(\\eta_{1,i})",
+      "dimensions": {
+        "eta1": [
+          "n"
+        ],
+        "qstar1": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 44,
+      "code": "contrast = qstar1 .- qstar0",
+      "inputs": [
+        "qstar1",
+        "qstar0"
+      ],
+      "outputs": [
+        "contrast"
+      ],
+      "operation": "同一行的两臂更新预测相减，得到n项contrast。两列都是模型预测，不是每人同时观察的两个潜在结局，也不能直接解释为个人因果效应。",
+      "formulaTex": "\\Delta_{\\epsilon,i}=Q_{\\epsilon,1,i}-Q_{\\epsilon,0,i}",
+      "dimensions": {
+        "qstar1": [
+          "n"
+        ],
+        "qstar0": [
+          "n"
+        ],
+        "contrast": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 45,
+      "code": "psi = sum(contrast) / n",
+      "inputs": [
+        "contrast",
+        "n"
+      ],
+      "outputs": [
+        "psi"
+      ],
+      "operation": "sum先把完整n项contrast相加，再除以总人数n，才收缩为一个标准化风险差标量psi。这里平均全部5735人，不只平均网页显示的行。",
+      "formulaTex": "\\widehat\\psi_\\epsilon=\\frac1n\\sum_{i=1}^n\\Delta_{\\epsilon,i}",
+      "dimensions": {
+        "contrast": [
+          "n"
+        ],
+        "n": [],
+        "psi": []
+      }
+    },
+    {
+      "line": 46,
+      "code": "centred = contrast .- psi",
+      "inputs": [
+        "contrast",
+        "psi"
+      ],
+      "outputs": [
+        "centred"
+      ],
+      "operation": "每项contrast减去同一个标量psi，得到中心化（centred）向量。实数下这列的经验平均为0，浮点求和可有微小误差；不是每一项都为0。",
+      "formulaTex": "\\Delta_{\\epsilon,i}-\\widehat\\psi_\\epsilon",
+      "dimensions": {
+        "contrast": [
+          "n"
+        ],
+        "psi": [],
+        "centred": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 47,
+      "code": "eif = score_contribution .+ centred",
+      "inputs": [
+        "score_contribution",
+        "centred"
+      ],
+      "outputs": [
+        "eif"
+      ],
+      "operation": "将同行的分数贡献与中心化风险差相加，得到n项经验EIF。此处没有跨患者汇总；经验平均是否接近0由epsilon决定，不能要求每个人的残差都为0。",
+      "formulaTex": "\\widehat D_{\\epsilon,i}=c_i+(\\Delta_{\\epsilon,i}-\\widehat\\psi_\\epsilon)=H_{A,i}(Y_i-Q_{\\epsilon,A,i})+\\Delta_{\\epsilon,i}-\\widehat\\psi_\\epsilon",
+      "dimensions": {
+        "score_contribution": [
+          "n"
+        ],
+        "centred": [
+          "n"
+        ],
+        "eif": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 49,
+      "code": "score_mean = sum(score_contribution) / n",
+      "inputs": [
+        "score_contribution",
+        "n"
+      ],
+      "outputs": [
+        "score_mean"
+      ],
+      "operation": "sum对全部分数贡献求和，再除以n得到一个标量。该平均是Bernoulli平均对数似然对epsilon的导数；求根要使它接近0，不是要求每项分数为0。",
+      "formulaTex": "s_n(\\epsilon)=\\frac1n\\sum_{i=1}^nc_i",
+      "dimensions": {
+        "score_contribution": [
+          "n"
+        ],
+        "n": [],
+        "score_mean": []
+      }
+    },
+    {
+      "line": 50,
+      "code": "eif_mean = sum(eif) / n",
+      "inputs": [
+        "eif",
+        "n"
+      ],
+      "outputs": [
+        "eif_mean"
+      ],
+      "operation": "对全部经验EIF值求和再除以n，得到一个标量。centred列平均约为0，所以eif_mean与score_mean应在浮点误差内一致；默认epsilon=0时未必接近0。",
+      "formulaTex": "\\overline D_\\epsilon=\\frac1n\\sum_{i=1}^n\\widehat D_{\\epsilon,i}\\approx s_n(\\epsilon)",
+      "dimensions": {
+        "eif": [
+          "n"
+        ],
+        "n": [],
+        "eif_mean": []
+      }
+    },
+    {
+      "line": 52,
+      "code": "@assert all(p -> 0 < p < 1, [g; q0; q1; qa; qstar_a; qstar0; qstar1])",
+      "inputs": [
+        "g",
+        "q0",
+        "q1",
+        "qa",
+        "qstar_a",
+        "qstar0",
+        "qstar1"
+      ],
+      "outputs": [],
+      "operation": "@assert要求所有初始与更新预测严格在0与1之间；方括号内分号仅将向量上下拼接用于检查。达到浮点端点则失败，不删人、不截断概率、不伪造收敛。",
+      "formulaTex": "0<\\widehat g_i,\\widehat Q_{0,i},\\widehat Q_{1,i},\\widehat Q_{A,i},Q_{\\epsilon,A,i},Q_{\\epsilon,0,i},Q_{\\epsilon,1,i}<1",
+      "dimensions": {
+        "g": [
+          "n"
+        ],
+        "q0": [
+          "n"
+        ],
+        "q1": [
+          "n"
+        ],
+        "qa": [
+          "n"
+        ],
+        "qstar_a": [
+          "n"
+        ],
+        "qstar0": [
+          "n"
+        ],
+        "qstar1": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 53,
+      "code": "@assert a == fit.a && y == fit.y",
+      "inputs": [
+        "a",
+        "y",
+        "fit"
+      ],
+      "outputs": [],
+      "operation": "==检查a与fit.a、y与fit.y两个向量完全相同；&&要求两个条件同时成立。通过表示更新没有覆盖真实处理与死亡指标，失败立即停止。",
+      "formulaTex": "\\mathbf a=\\mathrm{fit.a},\\quad\\mathbf y=\\mathrm{fit.y}",
+      "dimensions": {
+        "a": [
+          "n"
+        ],
+        "y": [
+          "n"
+        ],
+        "fit": []
+      }
+    },
+    {
+      "line": 54,
+      "code": "println(\"n = \", n, \"；epsilon = \", epsilon, \"；风险差 psi = \", psi)",
+      "inputs": [
+        "n",
+        "epsilon",
+        "psi"
+      ],
+      "outputs": [],
+      "operation": "println按顺序显示已有n、epsilon与psi，再换行；逗号仅分隔标签和值，不求和也不再拟合。psi单位为概率差，乘100才是百分点。",
+      "formulaTex": "n,\\epsilon,\\widehat\\psi_\\epsilon",
+      "dimensions": {
+        "n": [],
+        "epsilon": [],
+        "psi": []
+      }
+    },
+    {
+      "line": 55,
+      "code": "println(\"score_mean = \", score_mean, \"；eif_mean = \", eif_mean)",
+      "inputs": [
+        "score_mean",
+        "eif_mean"
+      ],
+      "outputs": [],
+      "operation": "println分开显示全体分数平均与经验EIF平均。两者接近不能证明有限样本无偏或临床因果识别；显示不会改写任何向量。",
+      "formulaTex": "s_n(\\epsilon),\\overline D_\\epsilon",
+      "dimensions": {
+        "score_mean": [],
+        "eif_mean": []
+      }
+    }
+  ]
+}

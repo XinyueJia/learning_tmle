@@ -1,0 +1,70 @@
+{
+  "date": "2026-10-17",
+  "protected_original_files_unchanged": 37,
+  "chapters": [
+    {
+      "chapter": 0,
+      "previous_display_maths": 6,
+      "current_display_maths": 10,
+      "original_formulae_preserved_in_order": true,
+      "full_source_unchanged": false
+    },
+    {
+      "chapter": 1,
+      "previous_display_maths": 11,
+      "current_display_maths": 11,
+      "original_formulae_preserved_in_order": true,
+      "full_source_unchanged": true
+    },
+    {
+      "chapter": 2,
+      "previous_display_maths": 5,
+      "current_display_maths": 5,
+      "original_formulae_preserved_in_order": true,
+      "full_source_unchanged": true
+    },
+    {
+      "chapter": 3,
+      "previous_display_maths": 3,
+      "current_display_maths": 3,
+      "original_formulae_preserved_in_order": true,
+      "full_source_unchanged": true
+    },
+    {
+      "chapter": 4,
+      "previous_display_maths": 5,
+      "current_display_maths": 5,
+      "original_formulae_preserved_in_order": true,
+      "full_source_unchanged": true
+    },
+    {
+      "chapter": 5,
+      "previous_display_maths": 5,
+      "current_display_maths": 5,
+      "original_formulae_preserved_in_order": true,
+      "full_source_unchanged": true
+    },
+    {
+      "chapter": 6,
+      "previous_display_maths": 4,
+      "current_display_maths": 4,
+      "original_formulae_preserved_in_order": true,
+      "full_source_unchanged": true
+    },
+    {
+      "chapter": 7,
+      "previous_display_maths": 7,
+      "current_display_maths": 7,
+      "original_formulae_preserved_in_order": true,
+      "full_source_unchanged": true
+    },
+    {
+      "chapter": 8,
+      "previous_display_maths": 8,
+      "current_display_maths": 8,
+      "original_formulae_preserved_in_order": true,
+      "full_source_unchanged": true
+    }
+  ],
+  "reference_article_unchanged": true
+}

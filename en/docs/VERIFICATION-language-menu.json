@@ -1,0 +1,35 @@
+{
+  "date": "2026-10-21",
+  "scope": "Language selector and root default",
+  "build": "Both editions succeeded",
+  "assertion_tests": {
+    "passed": 8,
+    "failed": 0,
+    "command": "sh scripts/node.sh --test tests/hierarchy.test.js tests/reader-pages.test.js"
+  },
+  "browser": {
+    "command": "sh scripts/node.sh tests/language-switch-browser.cjs",
+    "engine": "Chrome",
+    "widths": [
+      1360,
+      790,
+      375
+    ],
+    "result": "passed",
+    "checks": [
+      "Root defaults to English with query and chapter preserved",
+      "Chapter changes update language URLs and preserve current-language marker",
+      "Keyboard opening, Escape and outside dismissal",
+      "Chinese and English switching",
+      "Supporting-page switching",
+      "GitHub Pages repository prefix",
+      "No overflow or console errors"
+    ],
+    "screenshot_inspected": "output/en/verification/language-menu/en-375.png"
+  },
+  "not_rerun": [
+    "Full numerical suite",
+    "Julia/R programmes"
+  ],
+  "deployment": "Not performed"
+}

@@ -1,0 +1,1599 @@
+{
+  "version": 1,
+  "source": "en/R/tmle_trace.R",
+  "lineCount": 93,
+  "cohort": {
+    "n": 5735,
+    "events": 1918
+  },
+  "lines": [
+    {
+      "line": 4,
+      "code": "script_argument <- grep(\"^--file=\", commandArgs(FALSE), value = TRUE)",
+      "inputs": [],
+      "outputs": [
+        "script_argument"
+      ],
+      "operation": "commandArgs(FALSE) reads the startup arguments. grep matches the start of a string using ^, and value=TRUE retains the matched strings. The result is a character vector of length zero or one locating the file run by Rscript.",
+      "formulaTex": null,
+      "step": 0,
+      "dimensions": {
+        "script_argument": []
+      }
+    },
+    {
+      "line": 6,
+      "code": "source_files <- vapply(sys.frames(), function(frame) if (is.null(frame$ofile)) \"\" else frame$ofile, character(1))",
+      "inputs": [],
+      "outputs": [
+        "source_files"
+      ],
+      "operation": "sys.frames() reads the call frames. vapply applies a function to each frame, requiring one character string per result. When source() runs a script, ofile records its path; frames without a path return an empty string.",
+      "formulaTex": null,
+      "step": 0,
+      "dimensions": {
+        "source_files": []
+      }
+    },
+    {
+      "line": 8,
+      "code": "script_path <- if (any(nzchar(source_files))) tail(source_files[nzchar(source_files)], 1) else if (length(script_argument)) sub(\"^--file=\", \"\", script_argument[1]) else file.path(\"en\", \"R\", \"tmle_trace.R\")",
+      "inputs": [
+        "source_files",
+        "script_argument"
+      ],
+      "outputs": [
+        "script_path"
+      ],
+      "operation": "if selects the source path: use the last non-empty ofile when called through source(); otherwise remove the --file= prefix. Code pasted into the R console at the project root defaults to this lesson’s script path. The output is one path string; [] indexing starts at 1.",
+      "formulaTex": null,
+      "step": 0,
+      "dimensions": {
+        "source_files": [],
+        "script_argument": [],
+        "script_path": []
+      }
+    },
+    {
+      "line": 10,
+      "code": "stopifnot(length(script_path) == 1L, !is.na(script_path))",
+      "inputs": [
+        "script_path"
+      ],
+      "outputs": [],
+      "operation": "length checks that the path has one element. 1L is integer 1, and !is.na excludes missing values. stopifnot requires every condition to be TRUE and stops otherwise.",
+      "formulaTex": null,
+      "step": 0,
+      "dimensions": {
+        "script_path": []
+      }
+    },
+    {
+      "line": 12,
+      "code": "project_root <- normalizePath(file.path(dirname(script_path), \"..\", \"..\"), mustWork = TRUE)",
+      "inputs": [
+        "script_path"
+      ],
+      "outputs": [
+        "project_root"
+      ],
+      "operation": "dirname extracts the script directory. file.path joins the path two levels up to the project root; normalizePath requires that directory to exist. The result is independent of the current working directory.",
+      "formulaTex": null,
+      "step": 0,
+      "dimensions": {
+        "script_path": [],
+        "project_root": []
+      }
+    },
+    {
+      "line": 14,
+      "code": "source(file.path(project_root, \"shared\", \"R\", \"RHCCase.R\"))",
+      "inputs": [
+        "project_root"
+      ],
+      "outputs": [],
+      "operation": "source reads and executes the shared R definitions for reading the CSV, mathematical functions and manual model fitting. Only base R is used; no TMLE package is required.",
+      "formulaTex": null,
+      "step": 0,
+      "dimensions": {
+        "project_root": []
+      }
+    },
+    {
+      "line": 16,
+      "code": "rows <- read_rhc_rows(DEFAULT_SOURCE)",
+      "inputs": [],
+      "outputs": [
+        "rows"
+      ],
+      "operation": "Read the original 5735×63 data.frame, preserving patient row order.",
+      "formulaTex": null,
+      "step": 0,
+      "dimensions": {
+        "rows": [
+          "n",
+          63
+        ]
+      }
+    },
+    {
+      "line": 18,
+      "code": "fit <- prepare_full(rows)",
+      "inputs": [
+        "rows"
+      ],
+      "outputs": [
+        "fit"
+      ],
+      "operation": "Fit the initial outcome and treatment regressions and return their results in a list. Chapter 8 subsequently updates the outcome predictions.",
+      "formulaTex": null,
+      "step": 0,
+      "dimensions": {
+        "rows": [
+          "n",
+          63
+        ],
+        "fit": []
+      }
+    },
+    {
+      "line": 20,
+      "code": "n <- fit$n",
+      "inputs": [
+        "fit"
+      ],
+      "outputs": [
+        "n"
+      ],
+      "operation": "Read the cohort size as one integer scalar. Pagination does not change n.",
+      "formulaTex": "n=5735",
+      "step": 0,
+      "dimensions": {
+        "fit": [],
+        "n": []
+      }
+    },
+    {
+      "line": 22,
+      "code": "a <- fit$a",
+      "inputs": [
+        "fit"
+      ],
+      "outputs": [
+        "a"
+      ],
+      "operation": "Extract a length-n numeric vector from fit$a. R’s copy-on-modify semantics preserve the initial object; index i still identifies the same original CSV patient.",
+      "formulaTex": "A_i",
+      "step": 0,
+      "dimensions": {
+        "fit": [],
+        "a": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 24,
+      "code": "y <- fit$y",
+      "inputs": [
+        "fit"
+      ],
+      "outputs": [
+        "y"
+      ],
+      "operation": "Extract a length-n numeric vector from fit$y. R’s copy-on-modify semantics preserve the initial object; index i still identifies the same original CSV patient.",
+      "formulaTex": "Y_i",
+      "step": 0,
+      "dimensions": {
+        "fit": [],
+        "y": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 26,
+      "code": "g <- fit$g",
+      "inputs": [
+        "fit"
+      ],
+      "outputs": [
+        "g"
+      ],
+      "operation": "Extract a length-n numeric vector from fit$g. R’s copy-on-modify semantics preserve the initial object; index i still identifies the same original CSV patient.",
+      "formulaTex": "\\widehat g(W_i)",
+      "step": 2,
+      "dimensions": {
+        "fit": [],
+        "g": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 28,
+      "code": "q0 <- fit$q0",
+      "inputs": [
+        "fit"
+      ],
+      "outputs": [
+        "q0"
+      ],
+      "operation": "Extract a length-n numeric vector from fit$q0. R’s copy-on-modify semantics preserve the initial object; index i still identifies the same original CSV patient.",
+      "formulaTex": "\\widehat Q_{0,i}",
+      "step": 1,
+      "dimensions": {
+        "fit": [],
+        "q0": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 30,
+      "code": "q1 <- fit$q1",
+      "inputs": [
+        "fit"
+      ],
+      "outputs": [
+        "q1"
+      ],
+      "operation": "Extract a length-n numeric vector from fit$q1. R’s copy-on-modify semantics preserve the initial object; index i still identifies the same original CSV patient.",
+      "formulaTex": "\\widehat Q_{1,i}",
+      "step": 1,
+      "dimensions": {
+        "fit": [],
+        "q1": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 32,
+      "code": "qa <- a * q1 + (1 - a) * q0",
+      "inputs": [
+        "a",
+        "q1",
+        "q0"
+      ],
+      "outputs": [
+        "qa"
+      ],
+      "operation": "*, + and - operate element by element by default. Actual a selects q1 or q0 for each patient, producing n entries.",
+      "formulaTex": "\\widehat Q_{A,i}=A_i\\widehat Q_{1,i}+(1-A_i)\\widehat Q_{0,i}",
+      "step": 1,
+      "dimensions": {
+        "a": [
+          "n"
+        ],
+        "q1": [
+          "n"
+        ],
+        "q0": [
+          "n"
+        ],
+        "qa": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 34,
+      "code": "offset <- logit(qa)",
+      "inputs": [
+        "qa"
+      ],
+      "outputs": [
+        "offset"
+      ],
+      "operation": "Apply logit(p)=log(p/(1-p)) to each entry of qa. The n resulting log-odds values are the fixed observed-arm offsets.",
+      "formulaTex": "o_{A,i}=\\operatorname{logit}(\\widehat Q_{A,i})",
+      "step": 3,
+      "dimensions": {
+        "qa": [
+          "n"
+        ],
+        "offset": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 36,
+      "code": "offset0 <- logit(q0)",
+      "inputs": [
+        "q0"
+      ],
+      "outputs": [
+        "offset0"
+      ],
+      "operation": "Apply logit to each initial A=0 prediction, returning n fixed offsets for the same baseline records.",
+      "formulaTex": "o_{0,i}=\\operatorname{logit}(\\widehat Q_{0,i})",
+      "step": 6,
+      "dimensions": {
+        "q0": [
+          "n"
+        ],
+        "offset0": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 38,
+      "code": "offset1 <- logit(q1)",
+      "inputs": [
+        "q1"
+      ],
+      "outputs": [
+        "offset1"
+      ],
+      "operation": "Apply logit to each initial A=1 prediction, returning n fixed offsets from the same fitted outcome regression.",
+      "formulaTex": "o_{1,i}=\\operatorname{logit}(\\widehat Q_{1,i})",
+      "step": 7,
+      "dimensions": {
+        "q1": [
+          "n"
+        ],
+        "offset1": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 40,
+      "code": "h <- a / g - (1 - a) / (1 - g)",
+      "inputs": [
+        "a",
+        "g"
+      ],
+      "outputs": [
+        "h"
+      ],
+      "operation": "/ and - operate element by element by default. Actual A and corresponding g produce n signed clever-covariate values.",
+      "formulaTex": "H_{A,i}=\\frac{A_i}{\\widehat g_i}-\\frac{1-A_i}{1-\\widehat g_i}",
+      "step": 2,
+      "dimensions": {
+        "a": [
+          "n"
+        ],
+        "g": [
+          "n"
+        ],
+        "h": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 42,
+      "code": "h0 <- -1 / (1 - g)",
+      "inputs": [
+        "g"
+      ],
+      "outputs": [
+        "h0"
+      ],
+      "operation": "Divide the scalar −1 by each entry of 1−g, producing n negative update weights for prediction input A=0.",
+      "formulaTex": "H_{0,i}=-\\frac1{1-\\widehat g_i}",
+      "step": 2,
+      "dimensions": {
+        "g": [
+          "n"
+        ],
+        "h0": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 44,
+      "code": "h1 <- 1 / g",
+      "inputs": [
+        "g"
+      ],
+      "outputs": [
+        "h1"
+      ],
+      "operation": "Divide the scalar 1 by each entry of g, producing n positive update weights for prediction input A=1. The fitted treatment probabilities remain fixed.",
+      "formulaTex": "H_{1,i}=\\frac1{\\widehat g_i}",
+      "step": 2,
+      "dimensions": {
+        "g": [
+          "n"
+        ],
+        "h1": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 46,
+      "code": "epsilon <- as.numeric(Sys.getenv(\"TMLE_EPSILON\", \"0\"))",
+      "inputs": [],
+      "outputs": [
+        "epsilon"
+      ],
+      "operation": "Sys.getenv reads an environment-variable string, defaulting to \"0\". as.numeric converts it to one double scalar shared by all patients. The default 0 is a trial, not a solved root.",
+      "formulaTex": "\\epsilon\\in\\mathbb R\\quad(\\text{default }0)",
+      "step": 4,
+      "dimensions": {
+        "epsilon": []
+      }
+    },
+    {
+      "line": 48,
+      "code": "stopifnot(length(epsilon) == 1L, is.finite(epsilon))",
+      "inputs": [
+        "epsilon"
+      ],
+      "outputs": [],
+      "operation": "Require epsilon to be finite. Converting an invalid string produces NA, which makes this check stop with an error.",
+      "formulaTex": "|\\epsilon|<\\infty",
+      "step": 4,
+      "dimensions": {
+        "epsilon": []
+      }
+    },
+    {
+      "line": 50,
+      "code": "shift <- epsilon * h",
+      "inputs": [
+        "epsilon",
+        "h"
+      ],
+      "outputs": [
+        "shift"
+      ],
+      "operation": "Multiply the same scalar epsilon by every entry in the direction vector. Elementwise * produces n shifts on the log-odds scale.",
+      "formulaTex": "b_{A,i}=\\epsilon H_{A,i}",
+      "step": 4,
+      "dimensions": {
+        "epsilon": [],
+        "h": [
+          "n"
+        ],
+        "shift": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 52,
+      "code": "shift0 <- epsilon * h0",
+      "inputs": [
+        "epsilon",
+        "h0"
+      ],
+      "outputs": [
+        "shift0"
+      ],
+      "operation": "Multiply the same scalar epsilon by every entry in the direction vector. Elementwise * produces n shifts on the log-odds scale.",
+      "formulaTex": "b_{0,i}=\\epsilon H_{0,i}",
+      "step": 6,
+      "dimensions": {
+        "epsilon": [],
+        "h0": [
+          "n"
+        ],
+        "shift0": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 54,
+      "code": "shift1 <- epsilon * h1",
+      "inputs": [
+        "epsilon",
+        "h1"
+      ],
+      "outputs": [
+        "shift1"
+      ],
+      "operation": "Multiply the same scalar epsilon by every entry in the direction vector. Elementwise * produces n shifts on the log-odds scale.",
+      "formulaTex": "b_{1,i}=\\epsilon H_{1,i}",
+      "step": 7,
+      "dimensions": {
+        "epsilon": [],
+        "h1": [
+          "n"
+        ],
+        "shift1": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 56,
+      "code": "eta <- offset + shift",
+      "inputs": [
+        "offset",
+        "shift"
+      ],
+      "outputs": [
+        "eta"
+      ],
+      "operation": "Add each fixed offset to the shift in the same row. Elementwise + produces n linear predictors on the log-odds scale.",
+      "formulaTex": "\\eta_{A,i}=o_{A,i}+b_{A,i}",
+      "step": 4,
+      "dimensions": {
+        "offset": [
+          "n"
+        ],
+        "shift": [
+          "n"
+        ],
+        "eta": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 58,
+      "code": "eta0 <- offset0 + shift0",
+      "inputs": [
+        "offset0",
+        "shift0"
+      ],
+      "outputs": [
+        "eta0"
+      ],
+      "operation": "Add each fixed offset to the shift in the same row. Elementwise + produces n linear predictors on the log-odds scale.",
+      "formulaTex": "\\eta_{0,i}=o_{0,i}+b_{0,i}",
+      "step": 6,
+      "dimensions": {
+        "offset0": [
+          "n"
+        ],
+        "shift0": [
+          "n"
+        ],
+        "eta0": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 60,
+      "code": "eta1 <- offset1 + shift1",
+      "inputs": [
+        "offset1",
+        "shift1"
+      ],
+      "outputs": [
+        "eta1"
+      ],
+      "operation": "Add each fixed offset to the shift in the same row. Elementwise + produces n linear predictors on the log-odds scale.",
+      "formulaTex": "\\eta_{1,i}=o_{1,i}+b_{1,i}",
+      "step": 7,
+      "dimensions": {
+        "offset1": [
+          "n"
+        ],
+        "shift1": [
+          "n"
+        ],
+        "eta1": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 62,
+      "code": "qstar_a <- expit(eta)",
+      "inputs": [
+        "eta"
+      ],
+      "outputs": [
+        "qstar_a"
+      ],
+      "operation": "expit applies 1/(1+exp(−u)) to each linear predictor, giving n risk predictions at the current epsilon. Call these targeted only after solving for the root.",
+      "formulaTex": "Q_{\\epsilon,A,i}=\\operatorname{expit}(\\eta_{A,i})",
+      "step": 4,
+      "dimensions": {
+        "eta": [
+          "n"
+        ],
+        "qstar_a": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 64,
+      "code": "residual <- y - qstar_a",
+      "inputs": [
+        "y",
+        "qstar_a"
+      ],
+      "outputs": [
+        "residual"
+      ],
+      "operation": "Subtract the current risk under actual treatment from each observed death indicator, producing n residuals. Actual y remains unchanged.",
+      "formulaTex": "r_i=Y_i-Q_{\\epsilon,A,i}",
+      "step": 5,
+      "dimensions": {
+        "y": [
+          "n"
+        ],
+        "qstar_a": [
+          "n"
+        ],
+        "residual": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 66,
+      "code": "score_contribution <- h * residual",
+      "inputs": [
+        "h",
+        "residual"
+      ],
+      "outputs": [
+        "score_contribution"
+      ],
+      "operation": "Multiply H by the residual in the same row to obtain n score contributions. Later, sum and divide by n to average the whole column.",
+      "formulaTex": "c_i=H_{A,i}r_i",
+      "step": 5,
+      "dimensions": {
+        "h": [
+          "n"
+        ],
+        "residual": [
+          "n"
+        ],
+        "score_contribution": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 68,
+      "code": "qstar0 <- expit(eta0)",
+      "inputs": [
+        "eta0"
+      ],
+      "outputs": [
+        "qstar0"
+      ],
+      "operation": "expit applies 1/(1+exp(−u)) to each linear predictor, giving n risk predictions at the current epsilon. Call these targeted only after solving for the root.",
+      "formulaTex": "Q_{\\epsilon,0,i}=\\operatorname{expit}(\\eta_{0,i})",
+      "step": 6,
+      "dimensions": {
+        "eta0": [
+          "n"
+        ],
+        "qstar0": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 70,
+      "code": "qstar1 <- expit(eta1)",
+      "inputs": [
+        "eta1"
+      ],
+      "outputs": [
+        "qstar1"
+      ],
+      "operation": "expit applies 1/(1+exp(−u)) to each linear predictor, giving n risk predictions at the current epsilon. Call these targeted only after solving for the root.",
+      "formulaTex": "Q_{\\epsilon,1,i}=\\operatorname{expit}(\\eta_{1,i})",
+      "step": 7,
+      "dimensions": {
+        "eta1": [
+          "n"
+        ],
+        "qstar1": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 72,
+      "code": "contrast <- qstar1 - qstar0",
+      "inputs": [
+        "qstar1",
+        "qstar0"
+      ],
+      "outputs": [
+        "contrast"
+      ],
+      "operation": "Subtract qstar0 from qstar1 in each patient row, producing n contrasts. Both predictions use the same baseline W for that patient.",
+      "formulaTex": "\\Delta_{\\epsilon,i}=Q_{\\epsilon,1,i}-Q_{\\epsilon,0,i}",
+      "step": 8,
+      "dimensions": {
+        "qstar1": [
+          "n"
+        ],
+        "qstar0": [
+          "n"
+        ],
+        "contrast": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 74,
+      "code": "psi <- sum(contrast) / n",
+      "inputs": [
+        "contrast",
+        "n"
+      ],
+      "outputs": [
+        "psi"
+      ],
+      "operation": "Sum all 5735 prediction contrasts and divide by n to obtain one standardised risk difference. The denominator is the full cohort size.",
+      "formulaTex": "\\widehat\\psi_\\epsilon=\\frac1n\\sum_{i=1}^n\\Delta_{\\epsilon,i}",
+      "step": 8,
+      "dimensions": {
+        "contrast": [
+          "n"
+        ],
+        "n": [],
+        "psi": []
+      }
+    },
+    {
+      "line": 76,
+      "code": "centred <- contrast - psi",
+      "inputs": [
+        "contrast",
+        "psi"
+      ],
+      "outputs": [
+        "centred"
+      ],
+      "operation": "Subtract the same scalar psi from each predicted risk difference, producing n centred values. A mean near 0 does not imply that each entry is 0.",
+      "formulaTex": "\\Delta_{\\epsilon,i}-\\widehat\\psi_\\epsilon",
+      "step": 9,
+      "dimensions": {
+        "contrast": [
+          "n"
+        ],
+        "psi": [],
+        "centred": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 78,
+      "code": "eif <- score_contribution + centred",
+      "inputs": [
+        "score_contribution",
+        "centred"
+      ],
+      "outputs": [
+        "eif"
+      ],
+      "operation": "Add the score contribution and centred predicted risk difference in each row to obtain n complete empirical EIF values. The complete EIF includes both terms.",
+      "formulaTex": "\\widehat D_{\\epsilon,i}=c_i+(\\Delta_{\\epsilon,i}-\\widehat\\psi_\\epsilon)=H_{A,i}(Y_i-Q_{\\epsilon,A,i})+\\Delta_{\\epsilon,i}-\\widehat\\psi_\\epsilon",
+      "step": 9,
+      "dimensions": {
+        "score_contribution": [
+          "n"
+        ],
+        "centred": [
+          "n"
+        ],
+        "eif": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 80,
+      "code": "score_mean <- sum(score_contribution) / n",
+      "inputs": [
+        "score_contribution",
+        "n"
+      ],
+      "outputs": [
+        "score_mean"
+      ],
+      "operation": "Sum all n score contributions and divide by n, giving one likelihood score. Root finding targets this mean rather than individual contributions.",
+      "formulaTex": "s_n(\\epsilon)=\\frac1n\\sum_{i=1}^nc_i",
+      "step": 5,
+      "dimensions": {
+        "score_contribution": [
+          "n"
+        ],
+        "n": [],
+        "score_mean": []
+      }
+    },
+    {
+      "line": 82,
+      "code": "eif_mean <- sum(eif) / n",
+      "inputs": [
+        "eif",
+        "n"
+      ],
+      "outputs": [
+        "eif_mean"
+      ],
+      "operation": "Sum all n EIF values and divide by n. This scalar agrees with score_mean within floating-point error because the centred contrast averages to zero. At epsilon=0 it is the empirical mean of the initial fitted EIF.",
+      "formulaTex": "\\overline D_\\epsilon=\\frac1n\\sum_{i=1}^n\\widehat D_{\\epsilon,i}\\approx s_n(\\epsilon)",
+      "step": 9,
+      "dimensions": {
+        "eif": [
+          "n"
+        ],
+        "n": [],
+        "eif_mean": []
+      }
+    },
+    {
+      "line": 84,
+      "code": "probabilities <- c(g, q0, q1, qa, qstar_a, qstar0, qstar1)",
+      "inputs": [
+        "g",
+        "q0",
+        "q1",
+        "qa",
+        "qstar_a",
+        "qstar0",
+        "qstar1"
+      ],
+      "outputs": [
+        "probabilities"
+      ],
+      "operation": "c joins seven length-n probability vectors only for checking bounds; the original objects remain unchanged.",
+      "formulaTex": null,
+      "step": 9,
+      "dimensions": {
+        "g": [
+          "n"
+        ],
+        "q0": [
+          "n"
+        ],
+        "q1": [
+          "n"
+        ],
+        "qa": [
+          "n"
+        ],
+        "qstar_a": [
+          "n"
+        ],
+        "qstar0": [
+          "n"
+        ],
+        "qstar1": [
+          "n"
+        ],
+        "probabilities": [
+          "7n"
+        ]
+      }
+    },
+    {
+      "line": 86,
+      "code": "stopifnot(all(is.finite(probabilities)), all(probabilities > 0), all(probabilities < 1))",
+      "inputs": [
+        "probabilities"
+      ],
+      "outputs": [],
+      "operation": "Check that every probability is finite and strictly between 0 and 1. Floating-point endpoints cause immediate failure; probabilities are not truncated.",
+      "formulaTex": null,
+      "step": 9,
+      "dimensions": {
+        "probabilities": [
+          "7n"
+        ]
+      }
+    },
+    {
+      "line": 88,
+      "code": "stopifnot(identical(a, fit$a), identical(y, fit$y))",
+      "inputs": [
+        "a",
+        "y",
+        "fit"
+      ],
+      "outputs": [],
+      "operation": "identical checks that both the values and types of observed A and Y remain unchanged.",
+      "formulaTex": null,
+      "step": 9,
+      "dimensions": {
+        "a": [
+          "n"
+        ],
+        "y": [
+          "n"
+        ],
+        "fit": []
+      }
+    },
+    {
+      "line": 90,
+      "code": "cat(\"n =\", n, \"; epsilon =\", epsilon, \"; risk difference psi =\", psi, \"\\n\")",
+      "inputs": [
+        "n",
+        "epsilon",
+        "psi"
+      ],
+      "outputs": [],
+      "operation": "Display the cohort size, trial epsilon and risk difference. Chapter 8 provides the root-finding steps.",
+      "formulaTex": null,
+      "step": 9,
+      "dimensions": {
+        "n": [],
+        "epsilon": [],
+        "psi": []
+      }
+    },
+    {
+      "line": 92,
+      "code": "cat(\"score_mean =\", score_mean, \"; eif_mean =\", eif_mean, \"\\n\")",
+      "inputs": [
+        "score_mean",
+        "eif_mean"
+      ],
+      "outputs": [],
+      "operation": "Display the score mean and complete EIF mean over all n patients separately, retaining the explanation of numerical tolerance.",
+      "formulaTex": null,
+      "step": 9,
+      "dimensions": {
+        "score_mean": [],
+        "eif_mean": []
+      }
+    }
+  ],
+  "columns": {
+    "rows": {
+      "key": "rows",
+      "label": "Original patient records",
+      "symbol": "r_1,\\ldots,r_n",
+      "type": "data.frame",
+      "dimensions": [
+        "n",
+        63
+      ]
+    },
+    "fit": {
+      "key": "fit",
+      "label": "Initial fitted regressions and inputs",
+      "symbol": "\\widehat Q,\\widehat g",
+      "type": "list",
+      "dimensions": []
+    },
+    "n": {
+      "key": "n",
+      "label": "Total patient count",
+      "symbol": "n",
+      "type": "integer",
+      "dimensions": []
+    },
+    "epsilon": {
+      "key": "epsilon",
+      "label": "Common update coefficient",
+      "symbol": "\\epsilon",
+      "type": "numeric scalar (double)",
+      "dimensions": []
+    },
+    "a": {
+      "key": "a",
+      "label": "Observed RHC indicators",
+      "symbol": "A_i",
+      "type": "numeric vector (double)",
+      "dimensions": [
+        "n"
+      ]
+    },
+    "y": {
+      "key": "y",
+      "label": "Observed 30-day death indicators",
+      "symbol": "Y_i",
+      "type": "numeric vector (double)",
+      "dimensions": [
+        "n"
+      ]
+    },
+    "g": {
+      "key": "g",
+      "label": "Initial fitted treatment probabilities",
+      "symbol": "\\widehat g(W_i)",
+      "type": "numeric vector (double)",
+      "dimensions": [
+        "n"
+      ]
+    },
+    "q0": {
+      "key": "q0",
+      "label": "Initial non-RHC prediction",
+      "symbol": "\\widehat Q_{0,i}",
+      "type": "numeric vector (double)",
+      "dimensions": [
+        "n"
+      ]
+    },
+    "q1": {
+      "key": "q1",
+      "label": "Initial RHC prediction",
+      "symbol": "\\widehat Q_{1,i}",
+      "type": "numeric vector (double)",
+      "dimensions": [
+        "n"
+      ]
+    },
+    "qa": {
+      "key": "qa",
+      "label": "Initial predictions selected by observed A",
+      "symbol": "\\widehat Q_{A,i}",
+      "type": "numeric vector (double)",
+      "dimensions": [
+        "n"
+      ]
+    },
+    "offset": {
+      "key": "offset",
+      "label": "Fixed observed-arm log-odds offsets",
+      "symbol": "o_{A,i}",
+      "type": "numeric vector (double)",
+      "dimensions": [
+        "n"
+      ]
+    },
+    "offset0": {
+      "key": "offset0",
+      "label": "Fixed initial log odds for A=0",
+      "symbol": "o_{0,i}",
+      "type": "numeric vector (double)",
+      "dimensions": [
+        "n"
+      ]
+    },
+    "offset1": {
+      "key": "offset1",
+      "label": "Fixed initial log odds for A=1",
+      "symbol": "o_{1,i}",
+      "type": "numeric vector (double)",
+      "dimensions": [
+        "n"
+      ]
+    },
+    "h": {
+      "key": "h",
+      "label": "Observed-arm update weights",
+      "symbol": "H_{A,i}",
+      "type": "numeric vector (double)",
+      "dimensions": [
+        "n"
+      ]
+    },
+    "h0": {
+      "key": "h0",
+      "label": "Update weights for prediction input A=0",
+      "symbol": "H_{0,i}",
+      "type": "numeric vector (double)",
+      "dimensions": [
+        "n"
+      ]
+    },
+    "h1": {
+      "key": "h1",
+      "label": "Update weights for prediction input A=1",
+      "symbol": "H_{1,i}",
+      "type": "numeric vector (double)",
+      "dimensions": [
+        "n"
+      ]
+    },
+    "shift": {
+      "key": "shift",
+      "label": "Observed-arm log-odds increments",
+      "symbol": "b_{A,i}",
+      "type": "numeric vector (double)",
+      "dimensions": [
+        "n"
+      ]
+    },
+    "shift0": {
+      "key": "shift0",
+      "label": "Log-odds increments for prediction input A=0",
+      "symbol": "b_{0,i}",
+      "type": "numeric vector (double)",
+      "dimensions": [
+        "n"
+      ]
+    },
+    "shift1": {
+      "key": "shift1",
+      "label": "Log-odds increments for prediction input A=1",
+      "symbol": "b_{1,i}",
+      "type": "numeric vector (double)",
+      "dimensions": [
+        "n"
+      ]
+    },
+    "eta": {
+      "key": "eta",
+      "label": "Updated linear predictor under actual A",
+      "symbol": "\\eta_{A,i}",
+      "type": "numeric vector (double)",
+      "dimensions": [
+        "n"
+      ]
+    },
+    "eta0": {
+      "key": "eta0",
+      "label": "Updated linear predictor for A=0",
+      "symbol": "\\eta_{0,i}",
+      "type": "numeric vector (double)",
+      "dimensions": [
+        "n"
+      ]
+    },
+    "eta1": {
+      "key": "eta1",
+      "label": "Updated linear predictor for A=1",
+      "symbol": "\\eta_{1,i}",
+      "type": "numeric vector (double)",
+      "dimensions": [
+        "n"
+      ]
+    },
+    "qstar_a": {
+      "key": "qstar_a",
+      "label": "Current predictions under observed A",
+      "symbol": "Q_{\\epsilon,A,i}",
+      "type": "numeric vector (double)",
+      "dimensions": [
+        "n"
+      ]
+    },
+    "residual": {
+      "key": "residual",
+      "label": "Observed death indicator minus updated risk",
+      "symbol": "r_i",
+      "type": "numeric vector (double)",
+      "dimensions": [
+        "n"
+      ]
+    },
+    "score_contribution": {
+      "key": "score_contribution",
+      "label": "Patient-level score contribution",
+      "symbol": "c_i",
+      "type": "numeric vector (double)",
+      "dimensions": [
+        "n"
+      ]
+    },
+    "qstar0": {
+      "key": "qstar0",
+      "label": "Current risk predictions with input A=0",
+      "symbol": "Q_{\\epsilon,0,i}",
+      "type": "numeric vector (double)",
+      "dimensions": [
+        "n"
+      ]
+    },
+    "qstar1": {
+      "key": "qstar1",
+      "label": "Current risk predictions with input A=1",
+      "symbol": "Q_{\\epsilon,1,i}",
+      "type": "numeric vector (double)",
+      "dimensions": [
+        "n"
+      ]
+    },
+    "contrast": {
+      "key": "contrast",
+      "label": "Contrasts between updated predictions",
+      "symbol": "\\Delta_{\\epsilon,i}",
+      "type": "numeric vector (double)",
+      "dimensions": [
+        "n"
+      ]
+    },
+    "centred": {
+      "key": "centred",
+      "label": "Centred contrasts between updated predictions",
+      "symbol": "\\Delta_{\\epsilon,i}-\\widehat\\psi_\\epsilon",
+      "type": "numeric vector (double)",
+      "dimensions": [
+        "n"
+      ]
+    },
+    "eif": {
+      "key": "eif",
+      "label": "Fitted EIF value for each patient",
+      "symbol": "\\widehat D_{\\epsilon,i}",
+      "type": "numeric vector (double)",
+      "dimensions": [
+        "n"
+      ]
+    },
+    "psi": {
+      "key": "psi",
+      "label": "Mean updated prediction difference over all patients",
+      "symbol": "\\widehat\\psi_\\epsilon",
+      "type": "numeric scalar (double)",
+      "dimensions": []
+    },
+    "score_mean": {
+      "key": "score_mean",
+      "label": "Score mean over all patients",
+      "symbol": "s_n(\\epsilon)",
+      "type": "numeric scalar (double)",
+      "dimensions": []
+    },
+    "eif_mean": {
+      "key": "eif_mean",
+      "label": "Empirical EIF mean over all patients",
+      "symbol": "\\overline D_\\epsilon",
+      "type": "numeric scalar (double)",
+      "dimensions": []
+    },
+    "probabilities": {
+      "key": "probabilities",
+      "label": "Joined vector for checking probability bounds",
+      "symbol": "",
+      "type": "numeric vector (double)",
+      "dimensions": [
+        "7n"
+      ]
+    },
+    "script_argument": {
+      "key": "script_argument",
+      "label": "Program location information",
+      "symbol": "",
+      "type": "character vector",
+      "dimensions": []
+    },
+    "source_files": {
+      "key": "source_files",
+      "label": "Program location information",
+      "symbol": "",
+      "type": "character vector",
+      "dimensions": []
+    },
+    "script_path": {
+      "key": "script_path",
+      "label": "Program location information",
+      "symbol": "",
+      "type": "character vector",
+      "dimensions": []
+    },
+    "project_root": {
+      "key": "project_root",
+      "label": "Program location information",
+      "symbol": "",
+      "type": "character vector",
+      "dimensions": []
+    }
+  },
+  "objects": {
+    "project_root": {
+      "key": "project_root",
+      "label": "project_root",
+      "type": "character vector",
+      "dimensions": [],
+      "dimensionText": "path or parameter string"
+    },
+    "eta": {
+      "key": "eta",
+      "label": "eta",
+      "type": "numeric vector",
+      "dimensions": [
+        "n"
+      ],
+      "dimensionText": "Length n; dim is NULL"
+    },
+    "eta0": {
+      "key": "eta0",
+      "label": "eta0",
+      "type": "numeric vector",
+      "dimensions": [
+        "n"
+      ],
+      "dimensionText": "Length n; dim is NULL"
+    },
+    "score_mean": {
+      "key": "score_mean",
+      "label": "score_mean",
+      "type": "numeric scalar (double)",
+      "dimensions": [],
+      "dimensionText": "Length 1"
+    },
+    "q1": {
+      "key": "q1",
+      "label": "q1",
+      "type": "numeric vector",
+      "dimensions": [
+        "n"
+      ],
+      "dimensionText": "Length n; dim is NULL"
+    },
+    "eif_mean": {
+      "key": "eif_mean",
+      "label": "eif_mean",
+      "type": "numeric scalar (double)",
+      "dimensions": [],
+      "dimensionText": "Length 1"
+    },
+    "shift0": {
+      "key": "shift0",
+      "label": "shift0",
+      "type": "numeric vector",
+      "dimensions": [
+        "n"
+      ],
+      "dimensionText": "Length n; dim is NULL"
+    },
+    "q0": {
+      "key": "q0",
+      "label": "q0",
+      "type": "numeric vector",
+      "dimensions": [
+        "n"
+      ],
+      "dimensionText": "Length n; dim is NULL"
+    },
+    "eta1": {
+      "key": "eta1",
+      "label": "eta1",
+      "type": "numeric vector",
+      "dimensions": [
+        "n"
+      ],
+      "dimensionText": "Length n; dim is NULL"
+    },
+    "source_files": {
+      "key": "source_files",
+      "label": "source_files",
+      "type": "character vector",
+      "dimensions": [],
+      "dimensionText": "path or parameter string"
+    },
+    "shift": {
+      "key": "shift",
+      "label": "shift",
+      "type": "numeric vector",
+      "dimensions": [
+        "n"
+      ],
+      "dimensionText": "Length n; dim is NULL"
+    },
+    "centred": {
+      "key": "centred",
+      "label": "centred",
+      "type": "numeric vector",
+      "dimensions": [
+        "n"
+      ],
+      "dimensionText": "Length n; dim is NULL"
+    },
+    "offset0": {
+      "key": "offset0",
+      "label": "offset0",
+      "type": "numeric vector",
+      "dimensions": [
+        "n"
+      ],
+      "dimensionText": "Length n; dim is NULL"
+    },
+    "script_path": {
+      "key": "script_path",
+      "label": "script_path",
+      "type": "character vector",
+      "dimensions": [],
+      "dimensionText": "path or parameter string"
+    },
+    "eif": {
+      "key": "eif",
+      "label": "eif",
+      "type": "numeric vector",
+      "dimensions": [
+        "n"
+      ],
+      "dimensionText": "Length n; dim is NULL"
+    },
+    "probabilities": {
+      "key": "probabilities",
+      "label": "probabilities",
+      "type": "numeric vector",
+      "dimensions": [
+        "7n"
+      ],
+      "dimensionText": "Length 7n; used for probabilistic bounds checking"
+    },
+    "offset": {
+      "key": "offset",
+      "label": "offset",
+      "type": "numeric vector",
+      "dimensions": [
+        "n"
+      ],
+      "dimensionText": "Length n; dim is NULL"
+    },
+    "n": {
+      "key": "n",
+      "label": "n",
+      "type": "integer scalar",
+      "dimensions": [],
+      "dimensionText": "Length 1"
+    },
+    "qstar1": {
+      "key": "qstar1",
+      "label": "qstar1",
+      "type": "numeric vector",
+      "dimensions": [
+        "n"
+      ],
+      "dimensionText": "Length n; dim is NULL"
+    },
+    "qa": {
+      "key": "qa",
+      "label": "qa",
+      "type": "numeric vector",
+      "dimensions": [
+        "n"
+      ],
+      "dimensionText": "Length n; dim is NULL"
+    },
+    "offset1": {
+      "key": "offset1",
+      "label": "offset1",
+      "type": "numeric vector",
+      "dimensions": [
+        "n"
+      ],
+      "dimensionText": "Length n; dim is NULL"
+    },
+    "h1": {
+      "key": "h1",
+      "label": "h1",
+      "type": "numeric vector",
+      "dimensions": [
+        "n"
+      ],
+      "dimensionText": "Length n; dim is NULL"
+    },
+    "qstar0": {
+      "key": "qstar0",
+      "label": "qstar0",
+      "type": "numeric vector",
+      "dimensions": [
+        "n"
+      ],
+      "dimensionText": "Length n; dim is NULL"
+    },
+    "fit": {
+      "key": "fit",
+      "label": "fit",
+      "type": "list",
+      "dimensions": [],
+      "dimensionText": "Named container; each member has its own dimensions"
+    },
+    "score_contribution": {
+      "key": "score_contribution",
+      "label": "score_contribution",
+      "type": "numeric vector",
+      "dimensions": [
+        "n"
+      ],
+      "dimensionText": "Length n; dim is NULL"
+    },
+    "shift1": {
+      "key": "shift1",
+      "label": "shift1",
+      "type": "numeric vector",
+      "dimensions": [
+        "n"
+      ],
+      "dimensionText": "Length n; dim is NULL"
+    },
+    "y": {
+      "key": "y",
+      "label": "y",
+      "type": "numeric vector",
+      "dimensions": [
+        "n"
+      ],
+      "dimensionText": "Length n; dim is NULL"
+    },
+    "contrast": {
+      "key": "contrast",
+      "label": "contrast",
+      "type": "numeric vector",
+      "dimensions": [
+        "n"
+      ],
+      "dimensionText": "Length n; dim is NULL"
+    },
+    "h0": {
+      "key": "h0",
+      "label": "h0",
+      "type": "numeric vector",
+      "dimensions": [
+        "n"
+      ],
+      "dimensionText": "Length n; dim is NULL"
+    },
+    "epsilon": {
+      "key": "epsilon",
+      "label": "epsilon",
+      "type": "numeric scalar (double)",
+      "dimensions": [],
+      "dimensionText": "Length 1"
+    },
+    "script_argument": {
+      "key": "script_argument",
+      "label": "script_argument",
+      "type": "character vector",
+      "dimensions": [],
+      "dimensionText": "path or parameter string"
+    },
+    "qstar_a": {
+      "key": "qstar_a",
+      "label": "qstar_a",
+      "type": "numeric vector",
+      "dimensions": [
+        "n"
+      ],
+      "dimensionText": "Length n; dim is NULL"
+    },
+    "psi": {
+      "key": "psi",
+      "label": "psi",
+      "type": "numeric scalar (double)",
+      "dimensions": [],
+      "dimensionText": "Length 1"
+    },
+    "a": {
+      "key": "a",
+      "label": "a",
+      "type": "numeric vector",
+      "dimensions": [
+        "n"
+      ],
+      "dimensionText": "Length n; dim is NULL"
+    },
+    "residual": {
+      "key": "residual",
+      "label": "residual",
+      "type": "numeric vector",
+      "dimensions": [
+        "n"
+      ],
+      "dimensionText": "Length n; dim is NULL"
+    },
+    "h": {
+      "key": "h",
+      "label": "h",
+      "type": "numeric vector",
+      "dimensions": [
+        "n"
+      ],
+      "dimensionText": "Length n; dim is NULL"
+    },
+    "g": {
+      "key": "g",
+      "label": "g",
+      "type": "numeric vector",
+      "dimensions": [
+        "n"
+      ],
+      "dimensionText": "Length n; dim is NULL"
+    },
+    "rows": {
+      "key": "rows",
+      "label": "rows",
+      "type": "data.frame",
+      "dimensions": [
+        "n",
+        63
+      ],
+      "dimensionText": "5735 rows × 63 columns"
+    }
+  }
+}

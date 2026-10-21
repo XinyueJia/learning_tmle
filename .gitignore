@@ -1,0 +1,13 @@
+node_modules/
+.pnpm-store/
+.DS_Store
+*.log
+
+# Generated site, release bundles and local verification evidence
+dist/
+releases/
+output/
+
+# Local Python bytecode
+__pycache__/
+*.py[cod]

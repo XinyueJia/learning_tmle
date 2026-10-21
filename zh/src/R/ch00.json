@@ -1,0 +1,767 @@
+{
+  "version": 1,
+  "source": "zh/R/ch00.R",
+  "lineCount": 63,
+  "cohort": {
+    "n": 5735,
+    "events": 1918
+  },
+  "lines": [
+    {
+      "line": 4,
+      "code": "script_argument <- grep(\"^--file=\", commandArgs(FALSE), value = TRUE)",
+      "inputs": [],
+      "outputs": [
+        "script_argument"
+      ],
+      "operation": "commandArgs(FALSE)读取启动参数，grep按^匹配开头，value=TRUE保留字符串。输出零项或一项字符向量，定位Rscript当前文件。",
+      "formulaTex": null,
+      "dimensions": {
+        "script_argument": []
+      }
+    },
+    {
+      "line": 6,
+      "code": "source_files <- vapply(sys.frames(), function(frame) if (is.null(frame$ofile)) \"\" else frame$ofile, character(1))",
+      "inputs": [],
+      "outputs": [
+        "source_files"
+      ],
+      "operation": "sys.frames()读取调用环境；vapply逐个返回长度1字符。被source()调用时ofile记录当前脚本路径；没有路径的环境返回空串。",
+      "formulaTex": null,
+      "dimensions": {
+        "source_files": []
+      }
+    },
+    {
+      "line": 8,
+      "code": "script_path <- if (any(nzchar(source_files))) tail(source_files[nzchar(source_files)], 1) else if (length(script_argument)) sub(\"^--file=\", \"\", script_argument[1]) else file.path(\"zh\", \"R\", \"ch00.R\")",
+      "inputs": [
+        "source_files",
+        "script_argument"
+      ],
+      "outputs": [
+        "script_path"
+      ],
+      "operation": "if选择来源：source()时取最后一个非空ofile，否则去掉--file=前缀。在项目根R控制台直接运行时，默认使用本讲脚本位置；输出一个路径字符串，[]索引从1开始。",
+      "formulaTex": null,
+      "dimensions": {
+        "source_files": [],
+        "script_argument": [],
+        "script_path": []
+      }
+    },
+    {
+      "line": 10,
+      "code": "stopifnot(length(script_path) == 1L, !is.na(script_path))",
+      "inputs": [
+        "script_path"
+      ],
+      "outputs": [],
+      "operation": "length检查路径只有一项；1L是整数1，!is.na排除缺失。stopifnot要求所有条件为TRUE，否则停止。",
+      "formulaTex": null,
+      "dimensions": {
+        "script_path": []
+      }
+    },
+    {
+      "line": 12,
+      "code": "project_root <- normalizePath(file.path(dirname(script_path), \"..\", \"..\"), mustWork = TRUE)",
+      "inputs": [
+        "script_path"
+      ],
+      "outputs": [
+        "project_root"
+      ],
+      "operation": "dirname取脚本目录；file.path向上两层拼接项目根，normalizePath要求目录存在。路径不依赖当前工作目录。",
+      "formulaTex": null,
+      "dimensions": {
+        "script_path": [],
+        "project_root": []
+      }
+    },
+    {
+      "line": 14,
+      "code": "source(file.path(project_root, \"shared\", \"R\", \"RHCCase.R\"))",
+      "inputs": [
+        "project_root"
+      ],
+      "outputs": [],
+      "operation": "source读取并执行共享R定义，提供实际CSV读取、纯数学函数与手动拟合器。仅使用base R，无需安装TMLE软件包。",
+      "formulaTex": null,
+      "dimensions": {
+        "project_root": []
+      }
+    },
+    {
+      "line": 16,
+      "code": "rows <- read_rhc_rows(DEFAULT_SOURCE)",
+      "inputs": [],
+      "outputs": [
+        "rows"
+      ],
+      "operation": "read_rhc_rows读取官方原CSV；DEFAULT_SOURCE由共享文件定位。rows为5735×63 data.frame；每行仍是同一患者。",
+      "formulaTex": null,
+      "dimensions": {
+        "rows": [
+          "n",
+          63
+        ]
+      }
+    },
+    {
+      "line": 18,
+      "code": "observations <- rhc_observations(rows)",
+      "inputs": [
+        "rows"
+      ],
+      "outputs": [
+        "observations"
+      ],
+      "operation": "将原字段sex、swang1、dth30编码为x、a、y三列0/1；输出n×3 data.frame，保留原始行序。",
+      "formulaTex": null,
+      "dimensions": {
+        "rows": [
+          "n",
+          63
+        ],
+        "observations": [
+          "n",
+          3
+        ]
+      }
+    },
+    {
+      "line": 20,
+      "code": "y <- observations$y",
+      "inputs": [
+        "observations"
+      ],
+      "outputs": [
+        "y"
+      ],
+      "operation": "$按名称取出y列。y是长度n的数值向量，1表示30日死亡，0表示未死亡；长度为n，dim为NULL。",
+      "formulaTex": "\\mathbf y=(Y_1,\\ldots,Y_n)",
+      "dimensions": {
+        "observations": [
+          "n",
+          3
+        ],
+        "y": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 22,
+      "code": "n <- length(y)",
+      "inputs": [
+        "y"
+      ],
+      "outputs": [
+        "n"
+      ],
+      "operation": "length数向量元素，返回一个整数人数n=5735。nrow数data.frame的患者行，length数其变量列。",
+      "formulaTex": "n=5735",
+      "dimensions": {
+        "y": [
+          "n"
+        ],
+        "n": []
+      }
+    },
+    {
+      "line": 24,
+      "code": "fit <- prepare_full(rows)",
+      "inputs": [
+        "rows"
+      ],
+      "outputs": [
+        "fit"
+      ],
+      "operation": "prepare_full以15项原始基线构建17列含截距设计并拟合g和Q，返回list；本行输出初始模型。",
+      "formulaTex": null,
+      "dimensions": {
+        "rows": [
+          "n",
+          63
+        ],
+        "fit": []
+      }
+    },
+    {
+      "line": 26,
+      "code": "design <- fit$design",
+      "inputs": [
+        "fit"
+      ],
+      "outputs": [
+        "design"
+      ],
+      "operation": "从list提取n×17数值矩阵design；年龄使用分母n的标准差，race以white为参考。",
+      "formulaTex": "Z\\in\\mathbb R^{n\\times17}",
+      "dimensions": {
+        "fit": [],
+        "design": [
+          "n",
+          17
+        ]
+      }
+    },
+    {
+      "line": 28,
+      "code": "a <- fit$a",
+      "inputs": [
+        "fit"
+      ],
+      "outputs": [
+        "a"
+      ],
+      "operation": "提取实际RHC的长度n数值向量a；后面只替换新建预测输入列。",
+      "formulaTex": "\\mathbf a=(A_1,\\ldots,A_n)",
+      "dimensions": {
+        "fit": [],
+        "a": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 30,
+      "code": "y <- fit$y",
+      "inputs": [
+        "fit"
+      ],
+      "outputs": [
+        "y"
+      ],
+      "operation": "提取拟合器保存的长度n死亡向量，与原observations$y逐项一致。",
+      "formulaTex": "\\mathbf y=(Y_1,\\ldots,Y_n)",
+      "dimensions": {
+        "fit": [],
+        "y": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 32,
+      "code": "q_fit <- fit$q_fit",
+      "inputs": [
+        "fit"
+      ],
+      "outputs": [
+        "q_fit"
+      ],
+      "operation": "提取Q模型list；coefficients是18项数值向量，对应设计列。",
+      "formulaTex": null,
+      "dimensions": {
+        "fit": [],
+        "q_fit": []
+      }
+    },
+    {
+      "line": 34,
+      "code": "g_fit <- fit$g_fit",
+      "inputs": [
+        "fit"
+      ],
+      "outputs": [
+        "g_fit"
+      ],
+      "operation": "提取g模型list；coefficients是17项，probabilities是n项。",
+      "formulaTex": null,
+      "dimensions": {
+        "fit": [],
+        "g_fit": []
+      }
+    },
+    {
+      "line": 36,
+      "code": "g_fit <- fit_logistic(design, a)",
+      "inputs": [
+        "design",
+        "a"
+      ],
+      "outputs": [
+        "g_fit"
+      ],
+      "operation": "展示prepare_full内部真实拟合：n×17矩阵与n项实际A输入Newton及似然回溯，输出g拟合list。",
+      "formulaTex": "\\widehat\\beta_g=\\arg\\max_\\beta\\sum_i\\ell(A_i,\\operatorname{expit}(Z_i\\beta))",
+      "dimensions": {
+        "design": [
+          "n",
+          17
+        ],
+        "a": [
+          "n"
+        ],
+        "g_fit": []
+      }
+    },
+    {
+      "line": 38,
+      "code": "q_fit <- fit_logistic(cbind(design, a), y)",
+      "inputs": [
+        "design",
+        "a",
+        "y"
+      ],
+      "outputs": [
+        "q_fit"
+      ],
+      "operation": "cbind按列拼接n×17与n项a成为n×18，fit_logistic以y为结局，输出同一套18项Q系数。",
+      "formulaTex": "\\widehat\\beta_Q=\\arg\\max_\\beta\\sum_i\\ell(Y_i,\\operatorname{expit}([Z_i,A_i]\\beta))",
+      "dimensions": {
+        "design": [
+          "n",
+          17
+        ],
+        "a": [
+          "n"
+        ],
+        "y": [
+          "n"
+        ],
+        "q_fit": []
+      }
+    },
+    {
+      "line": 40,
+      "code": "g <- g_fit$probabilities",
+      "inputs": [
+        "g_fit"
+      ],
+      "outputs": [
+        "g"
+      ],
+      "operation": "读取拟合的n项RHC概率；g与死亡风险Q预测不同事件。",
+      "formulaTex": "\\widehat g_i=\\operatorname{expit}(Z_i\\widehat\\beta_g)",
+      "dimensions": {
+        "g_fit": [],
+        "g": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 42,
+      "code": "q1 <- expit(drop(cbind(design, rep(1, n)) %*% q_fit$coefficients))",
+      "inputs": [
+        "design",
+        "n",
+        "q_fit"
+      ],
+      "outputs": [
+        "q1"
+      ],
+      "operation": "rep(1,n)新建n项全1输入；cbind成为n×18，%*%为矩阵乘法，drop把n×1矩阵变成向量，expit逐项转为风险。",
+      "formulaTex": "\\widehat Q_{1,i}=\\operatorname{expit}([Z_i,1]\\widehat\\beta_Q)",
+      "dimensions": {
+        "design": [
+          "n",
+          17
+        ],
+        "n": [],
+        "q_fit": [],
+        "q1": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 44,
+      "code": "q0 <- expit(drop(cbind(design, rep(0, n)) %*% q_fit$coefficients))",
+      "inputs": [
+        "design",
+        "n",
+        "q_fit"
+      ],
+      "outputs": [
+        "q0"
+      ],
+      "operation": "同一套系数和W，新建A输入全0；输出n项q0，不覆盖实际a。",
+      "formulaTex": "\\widehat Q_{0,i}=\\operatorname{expit}([Z_i,0]\\widehat\\beta_Q)",
+      "dimensions": {
+        "design": [
+          "n",
+          17
+        ],
+        "n": [],
+        "q_fit": [],
+        "q0": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 46,
+      "code": "qa <- a * q1 + (1 - a) * q0",
+      "inputs": [
+        "a",
+        "q1",
+        "q0"
+      ],
+      "outputs": [
+        "qa"
+      ],
+      "operation": "R的*、+、-默认逐元素运算；每行实际A=1选q1、A=0选q0，输出n项。",
+      "formulaTex": "\\widehat Q_{A,i}=A_i\\widehat Q_{1,i}+(1-A_i)\\widehat Q_{0,i}",
+      "dimensions": {
+        "a": [
+          "n"
+        ],
+        "q1": [
+          "n"
+        ],
+        "q0": [
+          "n"
+        ],
+        "qa": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 48,
+      "code": "qa_selected <- qa",
+      "inputs": [
+        "qa"
+      ],
+      "outputs": [
+        "qa_selected"
+      ],
+      "operation": "保存选择结果；R复制修改语义让后续重新赋值qa保留此值，用于独立核对。",
+      "formulaTex": null,
+      "dimensions": {
+        "qa": [
+          "n"
+        ],
+        "qa_selected": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 50,
+      "code": "qa <- expit(drop(cbind(design, a) %*% q_fit$coefficients))",
+      "inputs": [
+        "design",
+        "a",
+        "q_fit"
+      ],
+      "outputs": [
+        "qa"
+      ],
+      "operation": "以实际a拼接同一design，直接计算实际臂风险；应与逐行选择相同。",
+      "formulaTex": "\\widehat Q_{A,i}=\\operatorname{expit}([Z_i,A_i]\\widehat\\beta_Q)",
+      "dimensions": {
+        "design": [
+          "n",
+          17
+        ],
+        "a": [
+          "n"
+        ],
+        "q_fit": [],
+        "qa": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 52,
+      "code": "initial_estimate <- sum(q1 - q0) / n",
+      "inputs": [
+        "q1",
+        "q0",
+        "n"
+      ],
+      "outputs": [
+        "initial_estimate"
+      ],
+      "operation": "先逐人相减得到n项，再sum并除总人数得到一个初始标准化风险差。",
+      "formulaTex": "\\widehat\\psi_{\\rm init}=n^{-1}\\sum_i(\\widehat Q_{1,i}-\\widehat Q_{0,i})",
+      "dimensions": {
+        "q1": [
+          "n"
+        ],
+        "q0": [
+          "n"
+        ],
+        "n": [],
+        "initial_estimate": []
+      }
+    },
+    {
+      "line": 54,
+      "code": "stopifnot(n == 5735L, sum(y) == 1918, sum(a) == 2184)",
+      "inputs": [
+        "n",
+        "y",
+        "a"
+      ],
+      "outputs": [],
+      "operation": "同时核对总人数、死亡人数及RHC人数；失败立即退出。",
+      "formulaTex": null,
+      "dimensions": {
+        "n": [],
+        "y": [
+          "n"
+        ],
+        "a": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 56,
+      "code": "stopifnot(identical(dim(design), c(n, 17L)), length(q_fit$coefficients) == 18L)",
+      "inputs": [
+        "design",
+        "n",
+        "q_fit"
+      ],
+      "outputs": [],
+      "operation": "dim返回矩阵的两个整数维度，identical逐项及类型核对；Q系数必须有18项。",
+      "formulaTex": "\\dim Z=(5735,17),\\quad\\dim\\widehat\\beta_Q=18",
+      "dimensions": {
+        "design": [
+          "n",
+          17
+        ],
+        "n": [],
+        "q_fit": []
+      }
+    },
+    {
+      "line": 58,
+      "code": "stopifnot(all(abs(qa - qa_selected) < 1e-14), all(a == observations$a))",
+      "inputs": [
+        "qa",
+        "qa_selected",
+        "a",
+        "observations"
+      ],
+      "outputs": [],
+      "operation": "all把逐项判断汇总为一个逻辑值：直接预测与选择差异须小于容差；实际A保持不变。",
+      "formulaTex": null,
+      "dimensions": {
+        "qa": [
+          "n"
+        ],
+        "qa_selected": [
+          "n"
+        ],
+        "a": [
+          "n"
+        ],
+        "observations": [
+          "n",
+          3
+        ]
+      }
+    },
+    {
+      "line": 60,
+      "code": "stopifnot(all(c(g, q0, q1) > 0), all(c(g, q0, q1) < 1))",
+      "inputs": [
+        "g",
+        "q0",
+        "q1"
+      ],
+      "outputs": [],
+      "operation": "c拼接三列只为检查严格概率边界；任何端点即失败，不截断。",
+      "formulaTex": null,
+      "dimensions": {
+        "g": [
+          "n"
+        ],
+        "q0": [
+          "n"
+        ],
+        "q1": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 62,
+      "code": "cat(\"n =\", n, \"; design =\", dim(design), \"; initial risk difference =\", initial_estimate, \"\\n\")",
+      "inputs": [
+        "n",
+        "design",
+        "initial_estimate"
+      ],
+      "outputs": [],
+      "operation": "cat显示已有标量与矩阵维度，\\n换行。概率差乘100才是百分点。",
+      "formulaTex": null,
+      "dimensions": {
+        "n": [],
+        "design": [
+          "n",
+          17
+        ],
+        "initial_estimate": []
+      }
+    }
+  ],
+  "objects": {
+    "project_root": {
+      "key": "project_root",
+      "label": "project_root",
+      "type": "character vector",
+      "dimensions": [],
+      "dimensionText": "路径或参数字符串"
+    },
+    "observations": {
+      "key": "observations",
+      "label": "observations",
+      "type": "data.frame",
+      "dimensions": [
+        "n",
+        3
+      ],
+      "dimensionText": "5735行×3列（x,a,y）"
+    },
+    "q_fit": {
+      "key": "q_fit",
+      "label": "q_fit",
+      "type": "list",
+      "dimensions": [],
+      "dimensionText": "命名容器；各成员按自身维度"
+    },
+    "q1": {
+      "key": "q1",
+      "label": "q1",
+      "type": "numeric vector",
+      "dimensions": [
+        "n"
+      ],
+      "dimensionText": "长度n；dim为NULL"
+    },
+    "qa_selected": {
+      "key": "qa_selected",
+      "label": "qa_selected",
+      "type": "numeric vector",
+      "dimensions": [
+        "n"
+      ],
+      "dimensionText": "长度n；dim为NULL"
+    },
+    "q0": {
+      "key": "q0",
+      "label": "q0",
+      "type": "numeric vector",
+      "dimensions": [
+        "n"
+      ],
+      "dimensionText": "长度n；dim为NULL"
+    },
+    "source_files": {
+      "key": "source_files",
+      "label": "source_files",
+      "type": "character vector",
+      "dimensions": [],
+      "dimensionText": "路径或参数字符串"
+    },
+    "script_path": {
+      "key": "script_path",
+      "label": "script_path",
+      "type": "character vector",
+      "dimensions": [],
+      "dimensionText": "路径或参数字符串"
+    },
+    "initial_estimate": {
+      "key": "initial_estimate",
+      "label": "initial_estimate",
+      "type": "numeric scalar (double)",
+      "dimensions": [],
+      "dimensionText": "长度1"
+    },
+    "design": {
+      "key": "design",
+      "label": "design",
+      "type": "numeric matrix",
+      "dimensions": [
+        "n",
+        17
+      ],
+      "dimensionText": "5735行×17列"
+    },
+    "n": {
+      "key": "n",
+      "label": "n",
+      "type": "integer scalar",
+      "dimensions": [],
+      "dimensionText": "长度1"
+    },
+    "qa": {
+      "key": "qa",
+      "label": "qa",
+      "type": "numeric vector",
+      "dimensions": [
+        "n"
+      ],
+      "dimensionText": "长度n；dim为NULL"
+    },
+    "fit": {
+      "key": "fit",
+      "label": "fit",
+      "type": "list",
+      "dimensions": [],
+      "dimensionText": "命名容器；各成员按自身维度"
+    },
+    "y": {
+      "key": "y",
+      "label": "y",
+      "type": "numeric vector",
+      "dimensions": [
+        "n"
+      ],
+      "dimensionText": "长度n；dim为NULL"
+    },
+    "script_argument": {
+      "key": "script_argument",
+      "label": "script_argument",
+      "type": "character vector",
+      "dimensions": [],
+      "dimensionText": "路径或参数字符串"
+    },
+    "a": {
+      "key": "a",
+      "label": "a",
+      "type": "numeric vector",
+      "dimensions": [
+        "n"
+      ],
+      "dimensionText": "长度n；dim为NULL"
+    },
+    "g": {
+      "key": "g",
+      "label": "g",
+      "type": "numeric vector",
+      "dimensions": [
+        "n"
+      ],
+      "dimensionText": "长度n；dim为NULL"
+    },
+    "g_fit": {
+      "key": "g_fit",
+      "label": "g_fit",
+      "type": "list",
+      "dimensions": [],
+      "dimensionText": "命名容器；各成员按自身维度"
+    },
+    "rows": {
+      "key": "rows",
+      "label": "rows",
+      "type": "data.frame",
+      "dimensions": [
+        "n",
+        63
+      ],
+      "dimensionText": "5735行×63列"
+    }
+  }
+}

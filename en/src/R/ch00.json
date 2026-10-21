@@ -1,0 +1,767 @@
+{
+  "version": 1,
+  "source": "en/R/ch00.R",
+  "lineCount": 63,
+  "cohort": {
+    "n": 5735,
+    "events": 1918
+  },
+  "lines": [
+    {
+      "line": 4,
+      "code": "script_argument <- grep(\"^--file=\", commandArgs(FALSE), value = TRUE)",
+      "inputs": [],
+      "outputs": [
+        "script_argument"
+      ],
+      "operation": "commandArgs(FALSE) reads the startup arguments. grep matches the start of a string using ^, and value=TRUE retains the matched strings. The result is a character vector of length zero or one locating the file run by Rscript.",
+      "formulaTex": null,
+      "dimensions": {
+        "script_argument": []
+      }
+    },
+    {
+      "line": 6,
+      "code": "source_files <- vapply(sys.frames(), function(frame) if (is.null(frame$ofile)) \"\" else frame$ofile, character(1))",
+      "inputs": [],
+      "outputs": [
+        "source_files"
+      ],
+      "operation": "sys.frames() reads the call frames. vapply applies a function to each frame, requiring one character string per result. When source() runs a script, ofile records its path; frames without a path return an empty string.",
+      "formulaTex": null,
+      "dimensions": {
+        "source_files": []
+      }
+    },
+    {
+      "line": 8,
+      "code": "script_path <- if (any(nzchar(source_files))) tail(source_files[nzchar(source_files)], 1) else if (length(script_argument)) sub(\"^--file=\", \"\", script_argument[1]) else file.path(\"en\", \"R\", \"ch00.R\")",
+      "inputs": [
+        "source_files",
+        "script_argument"
+      ],
+      "outputs": [
+        "script_path"
+      ],
+      "operation": "if selects the source path: use the last non-empty ofile when called through source(); otherwise remove the --file= prefix. Code pasted into the R console at the project root defaults to this lesson’s script path. The output is one path string; [] indexing starts at 1.",
+      "formulaTex": null,
+      "dimensions": {
+        "source_files": [],
+        "script_argument": [],
+        "script_path": []
+      }
+    },
+    {
+      "line": 10,
+      "code": "stopifnot(length(script_path) == 1L, !is.na(script_path))",
+      "inputs": [
+        "script_path"
+      ],
+      "outputs": [],
+      "operation": "length checks that the path has one element. 1L is integer 1, and !is.na excludes missing values. stopifnot requires every condition to be TRUE and stops otherwise.",
+      "formulaTex": null,
+      "dimensions": {
+        "script_path": []
+      }
+    },
+    {
+      "line": 12,
+      "code": "project_root <- normalizePath(file.path(dirname(script_path), \"..\", \"..\"), mustWork = TRUE)",
+      "inputs": [
+        "script_path"
+      ],
+      "outputs": [
+        "project_root"
+      ],
+      "operation": "dirname extracts the script directory. file.path joins the path two levels up to the project root; normalizePath requires that directory to exist. The result is independent of the current working directory.",
+      "formulaTex": null,
+      "dimensions": {
+        "script_path": [],
+        "project_root": []
+      }
+    },
+    {
+      "line": 14,
+      "code": "source(file.path(project_root, \"shared\", \"R\", \"RHCCase.R\"))",
+      "inputs": [
+        "project_root"
+      ],
+      "outputs": [],
+      "operation": "source reads and executes the shared R definitions for reading the CSV, mathematical functions and manual model fitting. Only base R is used; no TMLE package is required.",
+      "formulaTex": null,
+      "dimensions": {
+        "project_root": []
+      }
+    },
+    {
+      "line": 16,
+      "code": "rows <- read_rhc_rows(DEFAULT_SOURCE)",
+      "inputs": [],
+      "outputs": [
+        "rows"
+      ],
+      "operation": "read_rhc_rows reads the official original CSV. The shared file locates DEFAULT_SOURCE. rows is a 5735×63 data.frame; each row represents the same original patient.",
+      "formulaTex": null,
+      "dimensions": {
+        "rows": [
+          "n",
+          63
+        ]
+      }
+    },
+    {
+      "line": 18,
+      "code": "observations <- rhc_observations(rows)",
+      "inputs": [
+        "rows"
+      ],
+      "outputs": [
+        "observations"
+      ],
+      "operation": "Encode the original sex, swang1 and dth30 fields as the binary columns x, a and y. Return an n×3 data.frame in the original row order.",
+      "formulaTex": null,
+      "dimensions": {
+        "rows": [
+          "n",
+          63
+        ],
+        "observations": [
+          "n",
+          3
+        ]
+      }
+    },
+    {
+      "line": 20,
+      "code": "y <- observations$y",
+      "inputs": [
+        "observations"
+      ],
+      "outputs": [
+        "y"
+      ],
+      "operation": "$ selects column y by name. This numeric vector has length n: 1 means death within 30 days, and 0 means survival at 30 days. Its dim is NULL.",
+      "formulaTex": "\\mathbf y=(Y_1,\\ldots,Y_n)",
+      "dimensions": {
+        "observations": [
+          "n",
+          3
+        ],
+        "y": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 22,
+      "code": "n <- length(y)",
+      "inputs": [
+        "y"
+      ],
+      "outputs": [
+        "n"
+      ],
+      "operation": "length counts vector elements, returning the integer cohort size n=5735. For a data.frame, nrow counts patient rows while length counts variable columns.",
+      "formulaTex": "n=5735",
+      "dimensions": {
+        "y": [
+          "n"
+        ],
+        "n": []
+      }
+    },
+    {
+      "line": 24,
+      "code": "fit <- prepare_full(rows)",
+      "inputs": [
+        "rows"
+      ],
+      "outputs": [
+        "fit"
+      ],
+      "operation": "prepare_full constructs a 17-column design including an intercept from the 15 original baseline variables. It fits g and Q and returns a list containing the initial models.",
+      "formulaTex": null,
+      "dimensions": {
+        "rows": [
+          "n",
+          63
+        ],
+        "fit": []
+      }
+    },
+    {
+      "line": 26,
+      "code": "design <- fit$design",
+      "inputs": [
+        "fit"
+      ],
+      "outputs": [
+        "design"
+      ],
+      "operation": "Extract the n×17 numeric design matrix from the list. Age scaling uses a standard deviation calculated with denominator n; race uses white as its reference category.",
+      "formulaTex": "Z\\in\\mathbb R^{n\\times17}",
+      "dimensions": {
+        "fit": [],
+        "design": [
+          "n",
+          17
+        ]
+      }
+    },
+    {
+      "line": 28,
+      "code": "a <- fit$a",
+      "inputs": [
+        "fit"
+      ],
+      "outputs": [
+        "a"
+      ],
+      "operation": "Extract actual RHC treatment as a numeric vector a of length n. Later predictions change only a newly constructed treatment-input column.",
+      "formulaTex": "\\mathbf a=(A_1,\\ldots,A_n)",
+      "dimensions": {
+        "fit": [],
+        "a": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 30,
+      "code": "y <- fit$y",
+      "inputs": [
+        "fit"
+      ],
+      "outputs": [
+        "y"
+      ],
+      "operation": "Extract the fitted outcome vector, which has length n and agrees with observations$y in every patient row.",
+      "formulaTex": "\\mathbf y=(Y_1,\\ldots,Y_n)",
+      "dimensions": {
+        "fit": [],
+        "y": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 32,
+      "code": "q_fit <- fit$q_fit",
+      "inputs": [
+        "fit"
+      ],
+      "outputs": [
+        "q_fit"
+      ],
+      "operation": "Extract the fitted outcome regression as a list. Its coefficients vector has 18 entries, one for each column of the outcome design matrix.",
+      "formulaTex": null,
+      "dimensions": {
+        "fit": [],
+        "q_fit": []
+      }
+    },
+    {
+      "line": 34,
+      "code": "g_fit <- fit$g_fit",
+      "inputs": [
+        "fit"
+      ],
+      "outputs": [
+        "g_fit"
+      ],
+      "operation": "Extract the fitted treatment regression as a list. It contains 17 coefficients and n fitted treatment probabilities.",
+      "formulaTex": null,
+      "dimensions": {
+        "fit": [],
+        "g_fit": []
+      }
+    },
+    {
+      "line": 36,
+      "code": "g_fit <- fit_logistic(design, a)",
+      "inputs": [
+        "design",
+        "a"
+      ],
+      "outputs": [
+        "g_fit"
+      ],
+      "operation": "Show the fit performed inside prepare_full: use the n×17 matrix and n actual A values in Newton iteration with likelihood backtracking, returning the fitted g list.",
+      "formulaTex": "\\widehat\\beta_g=\\arg\\max_\\beta\\sum_i\\ell(A_i,\\operatorname{expit}(Z_i\\beta))",
+      "dimensions": {
+        "design": [
+          "n",
+          17
+        ],
+        "a": [
+          "n"
+        ],
+        "g_fit": []
+      }
+    },
+    {
+      "line": 38,
+      "code": "q_fit <- fit_logistic(cbind(design, a), y)",
+      "inputs": [
+        "design",
+        "a",
+        "y"
+      ],
+      "outputs": [
+        "q_fit"
+      ],
+      "operation": "cbind joins the n×17 baseline design and n-element a column to make an n×18 matrix. fit_logistic uses outcome y and returns the same 18 Q coefficients.",
+      "formulaTex": "\\widehat\\beta_Q=\\arg\\max_\\beta\\sum_i\\ell(Y_i,\\operatorname{expit}([Z_i,A_i]\\beta))",
+      "dimensions": {
+        "design": [
+          "n",
+          17
+        ],
+        "a": [
+          "n"
+        ],
+        "y": [
+          "n"
+        ],
+        "q_fit": []
+      }
+    },
+    {
+      "line": 40,
+      "code": "g <- g_fit$probabilities",
+      "inputs": [
+        "g_fit"
+      ],
+      "outputs": [
+        "g"
+      ],
+      "operation": "Read the fitted n-item RHC probabilities; g and mortality risk Q predict different events.",
+      "formulaTex": "\\widehat g_i=\\operatorname{expit}(Z_i\\widehat\\beta_g)",
+      "dimensions": {
+        "g_fit": [],
+        "g": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 42,
+      "code": "q1 <- expit(drop(cbind(design, rep(1, n)) %*% q_fit$coefficients))",
+      "inputs": [
+        "design",
+        "n",
+        "q_fit"
+      ],
+      "outputs": [
+        "q1"
+      ],
+      "operation": "rep(1,n) creates n ones. cbind forms an n×18 design; %*% performs matrix multiplication, drop converts the n×1 result to a vector, and expit converts each entry to a risk.",
+      "formulaTex": "\\widehat Q_{1,i}=\\operatorname{expit}([Z_i,1]\\widehat\\beta_Q)",
+      "dimensions": {
+        "design": [
+          "n",
+          17
+        ],
+        "n": [],
+        "q_fit": [],
+        "q1": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 44,
+      "code": "q0 <- expit(drop(cbind(design, rep(0, n)) %*% q_fit$coefficients))",
+      "inputs": [
+        "design",
+        "n",
+        "q_fit"
+      ],
+      "outputs": [
+        "q0"
+      ],
+      "operation": "Using the same coefficients and W, create a new prediction-input column with A=0 for everyone. Return n q0 values without overwriting actual a.",
+      "formulaTex": "\\widehat Q_{0,i}=\\operatorname{expit}([Z_i,0]\\widehat\\beta_Q)",
+      "dimensions": {
+        "design": [
+          "n",
+          17
+        ],
+        "n": [],
+        "q_fit": [],
+        "q0": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 46,
+      "code": "qa <- a * q1 + (1 - a) * q0",
+      "inputs": [
+        "a",
+        "q1",
+        "q0"
+      ],
+      "outputs": [
+        "qa"
+      ],
+      "operation": "R applies *, + and - elementwise. In each patient row, a=1 selects q1 and a=0 selects q0, producing an n-element vector of observed-arm predictions.",
+      "formulaTex": "\\widehat Q_{A,i}=A_i\\widehat Q_{1,i}+(1-A_i)\\widehat Q_{0,i}",
+      "dimensions": {
+        "a": [
+          "n"
+        ],
+        "q1": [
+          "n"
+        ],
+        "q0": [
+          "n"
+        ],
+        "qa": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 48,
+      "code": "qa_selected <- qa",
+      "inputs": [
+        "qa"
+      ],
+      "outputs": [
+        "qa_selected"
+      ],
+      "operation": "Save the selected predictions. R’s copy-on-modify semantics preserve this saved value when qa is reassigned later, enabling an independent check.",
+      "formulaTex": null,
+      "dimensions": {
+        "qa": [
+          "n"
+        ],
+        "qa_selected": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 50,
+      "code": "qa <- expit(drop(cbind(design, a) %*% q_fit$coefficients))",
+      "inputs": [
+        "design",
+        "a",
+        "q_fit"
+      ],
+      "outputs": [
+        "qa"
+      ],
+      "operation": "Join the same design with actual a and directly calculate risks under actual treatment. These should equal the row-by-row selected predictions.",
+      "formulaTex": "\\widehat Q_{A,i}=\\operatorname{expit}([Z_i,A_i]\\widehat\\beta_Q)",
+      "dimensions": {
+        "design": [
+          "n",
+          17
+        ],
+        "a": [
+          "n"
+        ],
+        "q_fit": [],
+        "qa": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 52,
+      "code": "initial_estimate <- sum(q1 - q0) / n",
+      "inputs": [
+        "q1",
+        "q0",
+        "n"
+      ],
+      "outputs": [
+        "initial_estimate"
+      ],
+      "operation": "Subtract the two predictions for each patient, then sum all n differences and divide by the full cohort size to obtain the initial standardised risk difference.",
+      "formulaTex": "\\widehat\\psi_{\\rm init}=n^{-1}\\sum_i(\\widehat Q_{1,i}-\\widehat Q_{0,i})",
+      "dimensions": {
+        "q1": [
+          "n"
+        ],
+        "q0": [
+          "n"
+        ],
+        "n": [],
+        "initial_estimate": []
+      }
+    },
+    {
+      "line": 54,
+      "code": "stopifnot(n == 5735L, sum(y) == 1918, sum(a) == 2184)",
+      "inputs": [
+        "n",
+        "y",
+        "a"
+      ],
+      "outputs": [],
+      "operation": "Check the patient, death and RHC-recipient counts against the original cohort totals. Stop immediately if any count differs.",
+      "formulaTex": null,
+      "dimensions": {
+        "n": [],
+        "y": [
+          "n"
+        ],
+        "a": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 56,
+      "code": "stopifnot(identical(dim(design), c(n, 17L)), length(q_fit$coefficients) == 18L)",
+      "inputs": [
+        "design",
+        "n",
+        "q_fit"
+      ],
+      "outputs": [],
+      "operation": "dim returns the matrix’s two integer dimensions; identical checks both values and types. The Q coefficient vector must have 18 entries.",
+      "formulaTex": "\\dim Z=(5735,17),\\quad\\dim\\widehat\\beta_Q=18",
+      "dimensions": {
+        "design": [
+          "n",
+          17
+        ],
+        "n": [],
+        "q_fit": []
+      }
+    },
+    {
+      "line": 58,
+      "code": "stopifnot(all(abs(qa - qa_selected) < 1e-14), all(a == observations$a))",
+      "inputs": [
+        "qa",
+        "qa_selected",
+        "a",
+        "observations"
+      ],
+      "outputs": [],
+      "operation": "all combines elementwise checks into one logical value. Direct and selected predictions must differ by less than tolerance; actual A must remain unchanged.",
+      "formulaTex": null,
+      "dimensions": {
+        "qa": [
+          "n"
+        ],
+        "qa_selected": [
+          "n"
+        ],
+        "a": [
+          "n"
+        ],
+        "observations": [
+          "n",
+          3
+        ]
+      }
+    },
+    {
+      "line": 60,
+      "code": "stopifnot(all(c(g, q0, q1) > 0), all(c(g, q0, q1) < 1))",
+      "inputs": [
+        "g",
+        "q0",
+        "q1"
+      ],
+      "outputs": [],
+      "operation": "c joins three vectors only for checking strict probability bounds. Any endpoint fails the check; no truncation is applied.",
+      "formulaTex": null,
+      "dimensions": {
+        "g": [
+          "n"
+        ],
+        "q0": [
+          "n"
+        ],
+        "q1": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 62,
+      "code": "cat(\"n =\", n, \"; design =\", dim(design), \"; initial risk difference =\", initial_estimate, \"\\n\")",
+      "inputs": [
+        "n",
+        "design",
+        "initial_estimate"
+      ],
+      "outputs": [],
+      "operation": "cat displays existing scalars and matrix dimensions; \\n starts a new line. Multiply a probability difference by 100 to express percentage points.",
+      "formulaTex": null,
+      "dimensions": {
+        "n": [],
+        "design": [
+          "n",
+          17
+        ],
+        "initial_estimate": []
+      }
+    }
+  ],
+  "objects": {
+    "project_root": {
+      "key": "project_root",
+      "label": "project_root",
+      "type": "character vector",
+      "dimensions": [],
+      "dimensionText": "path or parameter string"
+    },
+    "observations": {
+      "key": "observations",
+      "label": "observations",
+      "type": "data.frame",
+      "dimensions": [
+        "n",
+        3
+      ],
+      "dimensionText": "5735 rows × 3 columns (x, a, y)"
+    },
+    "q_fit": {
+      "key": "q_fit",
+      "label": "q_fit",
+      "type": "list",
+      "dimensions": [],
+      "dimensionText": "Named container; each member has its own dimensions"
+    },
+    "q1": {
+      "key": "q1",
+      "label": "q1",
+      "type": "numeric vector",
+      "dimensions": [
+        "n"
+      ],
+      "dimensionText": "Length n; dim is NULL"
+    },
+    "qa_selected": {
+      "key": "qa_selected",
+      "label": "qa_selected",
+      "type": "numeric vector",
+      "dimensions": [
+        "n"
+      ],
+      "dimensionText": "Length n; dim is NULL"
+    },
+    "q0": {
+      "key": "q0",
+      "label": "q0",
+      "type": "numeric vector",
+      "dimensions": [
+        "n"
+      ],
+      "dimensionText": "Length n; dim is NULL"
+    },
+    "source_files": {
+      "key": "source_files",
+      "label": "source_files",
+      "type": "character vector",
+      "dimensions": [],
+      "dimensionText": "path or parameter string"
+    },
+    "script_path": {
+      "key": "script_path",
+      "label": "script_path",
+      "type": "character vector",
+      "dimensions": [],
+      "dimensionText": "path or parameter string"
+    },
+    "initial_estimate": {
+      "key": "initial_estimate",
+      "label": "initial_estimate",
+      "type": "numeric scalar (double)",
+      "dimensions": [],
+      "dimensionText": "Length 1"
+    },
+    "design": {
+      "key": "design",
+      "label": "design",
+      "type": "numeric matrix",
+      "dimensions": [
+        "n",
+        17
+      ],
+      "dimensionText": "5735 rows × 17 columns"
+    },
+    "n": {
+      "key": "n",
+      "label": "n",
+      "type": "integer scalar",
+      "dimensions": [],
+      "dimensionText": "Length 1"
+    },
+    "qa": {
+      "key": "qa",
+      "label": "qa",
+      "type": "numeric vector",
+      "dimensions": [
+        "n"
+      ],
+      "dimensionText": "Length n; dim is NULL"
+    },
+    "fit": {
+      "key": "fit",
+      "label": "fit",
+      "type": "list",
+      "dimensions": [],
+      "dimensionText": "Named container; each member has its own dimensions"
+    },
+    "y": {
+      "key": "y",
+      "label": "y",
+      "type": "numeric vector",
+      "dimensions": [
+        "n"
+      ],
+      "dimensionText": "Length n; dim is NULL"
+    },
+    "script_argument": {
+      "key": "script_argument",
+      "label": "script_argument",
+      "type": "character vector",
+      "dimensions": [],
+      "dimensionText": "path or parameter string"
+    },
+    "a": {
+      "key": "a",
+      "label": "a",
+      "type": "numeric vector",
+      "dimensions": [
+        "n"
+      ],
+      "dimensionText": "Length n; dim is NULL"
+    },
+    "g": {
+      "key": "g",
+      "label": "g",
+      "type": "numeric vector",
+      "dimensions": [
+        "n"
+      ],
+      "dimensionText": "Length n; dim is NULL"
+    },
+    "g_fit": {
+      "key": "g_fit",
+      "label": "g_fit",
+      "type": "list",
+      "dimensions": [],
+      "dimensionText": "Named container; each member has its own dimensions"
+    },
+    "rows": {
+      "key": "rows",
+      "label": "rows",
+      "type": "data.frame",
+      "dimensions": [
+        "n",
+        63
+      ],
+      "dimensionText": "5735 rows × 63 columns"
+    }
+  }
+}

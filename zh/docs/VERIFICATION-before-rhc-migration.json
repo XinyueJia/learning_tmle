@@ -1,0 +1,114 @@
+{
+  "date": "2026-10-16",
+  "scope": "Genuine public RWS source audit companion; not completed clinical migration",
+  "entry": "http://127.0.0.1:4174/zh/public-data.html",
+  "previous_verification": "zh/docs/VERIFICATION-before-public-data.json",
+  "implemented": [
+    "Unmodified107-record Ng2021 public supplement, CC BY attribution/provenance/hash",
+    "Real local-CSV page with drug/horizon controls, counts/reset/answers and Julia explanation",
+    "Independent JavaScript and Julia audit functions, strict validation and endpoint refusal",
+    "Course/sidebar/case-page notices separate public cohort from synthetic model",
+    "Focused extended source screen after permission to change disease/endpoint"
+  ],
+  "build": {
+    "command": "sh scripts/node.sh scripts/build.js",
+    "chapters": 9,
+    "exit_code": 0
+  },
+  "javascript": {
+    "command": "sh scripts/node.sh --test tests/*.test.js tests/zh/*.test.js",
+    "passed": 92,
+    "failed": 0,
+    "skipped": 0,
+    "exit_code": 0
+  },
+  "julia_public_data": {
+    "command": "julia --startup-file=no --history-file=no tests/julia/public-rws-tests.jl",
+    "version": "1.12.5",
+    "passed": 119,
+    "failed": 0,
+    "exit_code": 0
+  },
+  "public_cross_language": {
+    "command": "sh scripts/node.sh tests/public-data-cross-language.cjs",
+    "fixtures": [
+      "all/12 months n107 earlyalive2",
+      "Afatinib/12 months n47 earlyalive1",
+      "all/3 months n107 earlyalive0 endpoint still unverified"
+    ],
+    "exit_code": 0
+  },
+  "browser": {
+    "public_data": {
+      "command": "sh scripts/node.sh tests/zh/public-data-browser.cjs",
+      "viewports": [
+        [
+          1360,
+          900
+        ],
+        [
+          375,
+          900
+        ]
+      ],
+      "checks": [
+        "source facts and computed control changes",
+        "endpoint refusal at3months despite zero earlyalive count",
+        "reset/keyboard/answers/rules",
+        "MathML/original CSV bytes/course navigation",
+        "no overflow/console errors/external requests"
+      ],
+      "exit_code": 0
+    },
+    "full_course": {
+      "command": "sh scripts/node.sh tests/zh/browser.cjs",
+      "chapters": 9,
+      "viewports": [
+        [
+          1360,
+          900
+        ],
+        [
+          375,
+          900
+        ]
+      ],
+      "exit_code": 0
+    }
+  },
+  "preserved": {
+    "existing_chapter_core_synthetic_Julia_app_files_byte_identical": 24
+  },
+  "independent_review": "zh/reviews/public-data-design.md",
+  "handoff": "zh/docs/data/PUBLIC_DATA_HANDOFF.md",
+  "screenshots_inspected": [
+    "output/zh/playwright/public-data-1360.png",
+    "output/zh/playwright/public-data-375.png"
+  ],
+  "unverified": [
+    "Ng PFS time origin, event/time pairing and censoring",
+    "Clinical causal estimation using public records and full eight-lesson data migration",
+    "Physical mobile devices, other browser engines and full screen-reader speech",
+    "Learning outcomes",
+    "Fresh browser regression from separately extracted release"
+  ],
+  "open_issues": [
+    "Public-data clinical endpoint/design remains unresolved; endpoint preparation disabled"
+  ],
+  "delivery": "releases/EIF_Tutorial_Complete.zip and .sha256; package.py verifies original material, archive CRC/SHA256 and each member against workspace",
+  "verified_source_sha256": {
+    "shared/data/public/ng-2021-nsclc/source.csv": "5194dca457f8efac8cbd771f47dee06b3aabe3885923585cd8f0d452471fbd9d",
+    "shared/js/public-rws.js": "616897de40251ea33cbbbba995e9a00c86efdc86963b9ff8d765b9b7f541aa46",
+    "shared/julia/PublicRWS.jl": "0ffd9a43e767c32143519d94d54b3731749e3ddc73ee5ca0b61f039f865bad6d",
+    "zh/src/public-data.md": "1c1cb64caeaec7314a38f8ba84b310d8405e86d2946ddad69f63eddb6d5af212",
+    "zh/src/public-data.js": "1e9d0adee414cb7f671916229b31df8b60a651097e513cca23de5ed33c31b693",
+    "zh/renderers/course.js": "e20ef7b271ff4a9fdcfdaec5c88eb6bf1e6944847ba5486968be719d3b176dbf",
+    "zh/src/style.css": "7dc022a4a6885fa967abc1387c7c65a3c347c4fbaaaaae1beb654c576551806d",
+    "zh/julia/public_data_audit.jl": "91720804619a39031e6545b1e4f9fe668314372717b81080e8a867b2a7e06cb2",
+    "tests/public-rws.test.js": "d1365d985bbdfa562d7418d15f64d91acd20f86fc2f34408eb0abfbe147050dc",
+    "tests/public-data-cross-language.cjs": "9a5aa18b5a43f219c17fd3154d1ed603608393497b9136dc08a3a41ac0375308",
+    "tests/julia/public-rws-tests.jl": "609d5782a7e569a6af6322a949e6a4f1b72b2a97275cd8200d285b68aa0d324d",
+    "tests/zh/public-data-browser.cjs": "a9ad92395e7d1cace831219b51b3d809fff846ebbe2734a0fc5315153d19e53e",
+    "dist/zh/public-data.html": "16d672262c8e2bb45582c2d4b29d36b0428d83bbf3e8846cc9e70cd1d371c626"
+  }
+}

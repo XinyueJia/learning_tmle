@@ -1,0 +1,280 @@
+{
+  "version": 1,
+  "source": "en/R/ch03.R",
+  "lineCount": 29,
+  "cohort": {
+    "n": 5735,
+    "events": 1918
+  },
+  "lines": [
+    {
+      "line": 4,
+      "code": "script_argument <- grep(\"^--file=\", commandArgs(FALSE), value = TRUE)",
+      "inputs": [],
+      "outputs": [
+        "script_argument"
+      ],
+      "operation": "commandArgs(FALSE) reads the startup arguments. grep matches the start of a string using ^, and value=TRUE retains the matched strings. The result is a character vector of length zero or one locating the file run by Rscript.",
+      "formulaTex": null,
+      "dimensions": {
+        "script_argument": []
+      }
+    },
+    {
+      "line": 6,
+      "code": "source_files <- vapply(sys.frames(), function(frame) if (is.null(frame$ofile)) \"\" else frame$ofile, character(1))",
+      "inputs": [],
+      "outputs": [
+        "source_files"
+      ],
+      "operation": "sys.frames() reads the call frames. vapply applies a function to each frame, requiring one character string per result. When source() runs a script, ofile records its path; frames without a path return an empty string.",
+      "formulaTex": null,
+      "dimensions": {
+        "source_files": []
+      }
+    },
+    {
+      "line": 8,
+      "code": "script_path <- if (any(nzchar(source_files))) tail(source_files[nzchar(source_files)], 1) else if (length(script_argument)) sub(\"^--file=\", \"\", script_argument[1]) else file.path(\"en\", \"R\", \"ch03.R\")",
+      "inputs": [
+        "source_files",
+        "script_argument"
+      ],
+      "outputs": [
+        "script_path"
+      ],
+      "operation": "if selects the source path: use the last non-empty ofile when called through source(); otherwise remove the --file= prefix. Code pasted into the R console at the project root defaults to this lesson’s script path. The output is one path string; [] indexing starts at 1.",
+      "formulaTex": null,
+      "dimensions": {
+        "source_files": [],
+        "script_argument": [],
+        "script_path": []
+      }
+    },
+    {
+      "line": 10,
+      "code": "stopifnot(length(script_path) == 1L, !is.na(script_path))",
+      "inputs": [
+        "script_path"
+      ],
+      "outputs": [],
+      "operation": "length checks that the path has one element. 1L is integer 1, and !is.na excludes missing values. stopifnot requires every condition to be TRUE and stops otherwise.",
+      "formulaTex": null,
+      "dimensions": {
+        "script_path": []
+      }
+    },
+    {
+      "line": 12,
+      "code": "project_root <- normalizePath(file.path(dirname(script_path), \"..\", \"..\"), mustWork = TRUE)",
+      "inputs": [
+        "script_path"
+      ],
+      "outputs": [
+        "project_root"
+      ],
+      "operation": "dirname extracts the script directory. file.path joins the path two levels up to the project root; normalizePath requires that directory to exist. The result is independent of the current working directory.",
+      "formulaTex": null,
+      "dimensions": {
+        "script_path": [],
+        "project_root": []
+      }
+    },
+    {
+      "line": 14,
+      "code": "source(file.path(project_root, \"shared\", \"R\", \"RHCCase.R\"))",
+      "inputs": [
+        "project_root"
+      ],
+      "outputs": [],
+      "operation": "source reads and executes the shared R definitions for reading the CSV, mathematical functions and manual model fitting. Only base R is used; no TMLE package is required.",
+      "formulaTex": null,
+      "dimensions": {
+        "project_root": []
+      }
+    },
+    {
+      "line": 16,
+      "code": "data <- rhc_data()",
+      "inputs": [],
+      "outputs": [
+        "data"
+      ],
+      "operation": "Read the original CSV, calculate empirical probabilities for the eight (x,a,y) cells and return the resulting data and model in a list. Later calculations use these same patient records.",
+      "formulaTex": null,
+      "dimensions": {
+        "data": []
+      }
+    },
+    {
+      "line": 18,
+      "code": "print(data$groups)",
+      "inputs": [
+        "data"
+      ],
+      "outputs": [],
+      "operation": "Display a multi-column table with four rows, one per (x,a) group. n, events, q_observed and initial_q are aggregated from the original CSV.",
+      "formulaTex": null,
+      "dimensions": {
+        "data": []
+      }
+    },
+    {
+      "line": 20,
+      "code": "px <- data$empirical_model$px",
+      "inputs": [
+        "data"
+      ],
+      "outputs": [
+        "px"
+      ],
+      "operation": "Extract the two-element vector of empirical X probabilities, ordered as x=0 then x=1.",
+      "formulaTex": "p_x=P_n(X=x)",
+      "dimensions": {
+        "data": [],
+        "px": [
+          2
+        ]
+      }
+    },
+    {
+      "line": 22,
+      "code": "g <- data$empirical_model$g",
+      "inputs": [
+        "data"
+      ],
+      "outputs": [
+        "g"
+      ],
+      "operation": "Extract the two-element vector of conditional RHC probabilities. Entry x+1 corresponds to baseline stratum x.",
+      "formulaTex": "g(x)=P_n(A=1\\mid X=x)",
+      "dimensions": {
+        "data": [],
+        "g": [
+          2
+        ]
+      }
+    },
+    {
+      "line": 24,
+      "code": "q <- data$empirical_model$q",
+      "inputs": [
+        "data"
+      ],
+      "outputs": [
+        "q"
+      ],
+      "operation": "Extract the 2×2 conditional death risk matrix: row a+1, column x+1; q[1,2] is a=0, x=1.",
+      "formulaTex": "Q(a,x)=E_{P_n}(Y\\mid A=a,X=x)",
+      "dimensions": {
+        "data": [],
+        "q": [
+          2,
+          2
+        ]
+      }
+    },
+    {
+      "line": 26,
+      "code": "cat(\"px =\", px, \"; g =\", g, \"; initial risk difference =\", data$initial_estimate, \"\\n\")",
+      "inputs": [
+        "px",
+        "g",
+        "data"
+      ],
+      "outputs": [],
+      "operation": "Display empirical population proportions, treatment probabilities, and the standardised risk difference from the initial Q fitted using A alone.",
+      "formulaTex": null,
+      "dimensions": {
+        "px": [
+          2
+        ],
+        "g": [
+          2
+        ],
+        "data": []
+      }
+    },
+    {
+      "line": 28,
+      "code": "print(q)",
+      "inputs": [
+        "q"
+      ],
+      "outputs": [],
+      "operation": "print preserves the 2×2 risk matrix’s rows and columns. Matrix rows represent treatment arms, rather than patients.",
+      "formulaTex": null,
+      "dimensions": {
+        "q": [
+          2,
+          2
+        ]
+      }
+    }
+  ],
+  "objects": {
+    "project_root": {
+      "key": "project_root",
+      "label": "project_root",
+      "type": "character vector",
+      "dimensions": [],
+      "dimensionText": "path or parameter string"
+    },
+    "px": {
+      "key": "px",
+      "label": "px",
+      "type": "numeric vector",
+      "dimensions": [
+        2
+      ],
+      "dimensionText": "Length 2; aligned by x=0,1"
+    },
+    "source_files": {
+      "key": "source_files",
+      "label": "source_files",
+      "type": "character vector",
+      "dimensions": [],
+      "dimensionText": "path or parameter string"
+    },
+    "script_argument": {
+      "key": "script_argument",
+      "label": "script_argument",
+      "type": "character vector",
+      "dimensions": [],
+      "dimensionText": "path or parameter string"
+    },
+    "data": {
+      "key": "data",
+      "label": "data",
+      "type": "list",
+      "dimensions": [],
+      "dimensionText": "Named container; each member has its own dimensions"
+    },
+    "script_path": {
+      "key": "script_path",
+      "label": "script_path",
+      "type": "character vector",
+      "dimensions": [],
+      "dimensionText": "path or parameter string"
+    },
+    "g": {
+      "key": "g",
+      "label": "g",
+      "type": "numeric vector",
+      "dimensions": [
+        2
+      ],
+      "dimensionText": "Length 2; aligned by x=0,1"
+    },
+    "q": {
+      "key": "q",
+      "label": "q",
+      "type": "numeric matrix",
+      "dimensions": [
+        2,
+        2
+      ],
+      "dimensionText": "2 rows (a+1) × 2 columns (x+1)"
+    }
+  }
+}

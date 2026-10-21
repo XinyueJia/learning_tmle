@@ -1,0 +1,140 @@
+{
+  "date": "2026-10-17",
+  "scope": "R option alongside mathematical objects and Julia, nine chapter workbooks and Chapter8 persistent TMLE trace",
+  "entry": "http://127.0.0.1:4174/zh/?edition=r-parallel#chapter-0",
+  "previous_verification": "zh/docs/VERIFICATION-before-r-parallel.json",
+  "source": {
+    "cohort": "SUPPORT/RHC",
+    "records": 5735,
+    "events30d": 1918,
+    "treated24h": 2184,
+    "source_sha256": "9ef4ab578be4b40ad5d97d3a7e08ffdc1f9f76aeeefee51b4996e4221556f8e8",
+    "source_bytes": 2320412,
+    "whole_source_retained": true,
+    "outcome_evidence": "Original study explicitly confirms death date or survival180 for every patient; publisheddth30 exactly agrees with dates on all5735",
+    "permission": "Vanderbilt repository use permission with original citation and acknowledgement, notCCBY"
+  },
+  "completed": [
+    "R reading option for all18 object stages in Chapters0/1 with the same operands/rows/dimensions",
+    "Julia/R workbook panels in all9 chapters, with input/output/shape/formula explanations for every R execution line",
+    "Ten independently runnable base-R scripts; first chapter includes full beginner syntax guidance",
+    "Shared R finite-distribution and raw-cohort logistic/targeting kernels",
+    "R code integrated into all10 Chapter8 steps with common formula/table/code keys and unchanged patient table/epsilon/results on language switch",
+    "Language-specific actual-source validation and accessible TeX/MathML templates",
+    "Keyboard linkage remains stable during scroll; original Julia/maths modes retained"
+  ],
+  "build": {
+    "command": "sh scripts/node.sh scripts/build.js",
+    "chapters": 9,
+    "exit_code": 0
+  },
+  "javascript": {
+    "command": "JULIA_BIN=<installed Julia1.12.5> JULIA_DEPOT_PATH=/private/tmp/eif-tutorial-julia-depot sh scripts/node.sh --test tests/*.test.js tests/zh/*.test.js",
+    "passed": 188,
+    "failed": 0,
+    "skipped": 0,
+    "new_tests": 4,
+    "exit_code": 0,
+    "runtime_executions": "Includes actual Julia workbooks and fresh processes; actual concatenated R code panels from project root",
+    "log": "output/zh/verification/r-parallel/tests.log"
+  },
+  "R": {
+    "version": "4.5.2 (2025-10-31)",
+    "dependencies": "base R",
+    "kernel_command": "Rscript --vanilla tests/R/kernel-tests.R",
+    "kernel_exit_code": 0,
+    "cross_language_command": "sh scripts/node.sh tests/r-cross-language.cjs",
+    "cross_language_exit_code": 0,
+    "numeric_assertions": 677054,
+    "trace_entries": 447330,
+    "trace_scope": "26 columns × 5735 observations × 3 epsilon values",
+    "real_stage_snippets": 18,
+    "standalone_scripts_from_other_cwd": 10,
+    "source_maps_validated": 10,
+    "checks": [
+      "Independent original CSV parser and source hash/counts",
+      "Complete ordered design matrix/all coefficients/all predictions",
+      "Eight point directions and seven independent contrasts versus separately rebuilt finite-difference functional",
+      "Pure mechanism paths and invariance",
+      "Projection/covariance/variance identities",
+      "Population double robustness",
+      "Fluctuation likelihood score/slope, interior predictions and positive/negative roots",
+      "Vector lengths, missingness, rank and numerical failure checks"
+    ],
+    "logs": [
+      "output/zh/verification/r-parallel/R-kernel.log",
+      "output/zh/verification/r-parallel/R-cross-language.log"
+    ]
+  },
+  "browser": [
+    {
+      "command": "sh scripts/node.sh tests/zh/r-parallel-browser.cjs",
+      "browser": "Chrome",
+      "viewports": [
+        1360,
+        375
+      ],
+      "exit_code": 0,
+      "log": "output/zh/verification/r-parallel/r-parallel-browser.log"
+    },
+    {
+      "command": "sh scripts/node.sh tests/zh/tmle-trace-browser.cjs",
+      "browser": "Chrome",
+      "viewports": [
+        1360,
+        375
+      ],
+      "exit_code": 0,
+      "log": "output/zh/verification/r-parallel/tmle-trace-browser.log"
+    },
+    {
+      "command": "sh scripts/node.sh tests/zh/rhc-browser.cjs",
+      "browser": "Chrome",
+      "viewports": [
+        1360,
+        375
+      ],
+      "exit_code": 0,
+      "log": "output/zh/verification/r-parallel/rhc-browser.log"
+    },
+    {
+      "command": "sh scripts/node.sh tests/zh/blue-reading-browser.cjs",
+      "browser": "Chrome",
+      "viewports": [
+        1360,
+        375
+      ],
+      "exit_code": 0,
+      "log": "output/zh/verification/r-parallel/blue-reading-browser.log"
+    }
+  ],
+  "browser_retry": "One Julia trace run completed assertions but hung on browser shutdown; its isolated process was terminated, then the complete script reran and exited0. Final evidence uses that fresh run.",
+  "independent_review": {
+    "file": "zh/reviews/r-parallel.md",
+    "maths_and_R_execution": "passed",
+    "browser": "lead actual runs, recorded separately"
+  },
+  "preservation": {
+    "manifest": "zh/docs/R_PARALLEL_PRESERVED.json",
+    "original_JS_Julia_data_files_unchanged": 37,
+    "authored_display_equations_unchanged": 54,
+    "original_materials": "package.py checks all original ZIP members"
+  },
+  "screenshots": [
+    "output/zh/playwright/r-objects-ch00-1360.png",
+    "output/zh/playwright/r-objects-ch01-375.png",
+    "output/zh/playwright/r-ch08-step-1360.png",
+    "output/zh/playwright/r-ch08-step-375.png"
+  ],
+  "unverified": [
+    "Physical touch devices and other browser engines",
+    "Complete spoken screen-reader flow",
+    "Beginner learning outcomes",
+    "Clinical causal identification or inference coverage",
+    "Historical separate127-test Julia suite",
+    "Browser regression of extracted release"
+  ],
+  "open_implementation_issues": [],
+  "handoff": "zh/docs/PROGRESS.md, zh/docs/chapters/ch00–08.md, zh/R/README.md",
+  "delivery": "releases/EIF_Tutorial_Complete.zip and .sha256; originals, CRC/SHA256 and every workspace member checked by package.py"
+}

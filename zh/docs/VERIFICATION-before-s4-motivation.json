@@ -1,0 +1,119 @@
+{
+  "date": "2026-10-17",
+  "scope": "Chapter0 Section5.3 finite-sample mean identity connecting individual IF outputs and estimation error, fixed unknown P0 versus observed Pn",
+  "entry": "http://127.0.0.1:4174/zh/?edition=mean-error#chapter-0",
+  "previous_verification": "zh/docs/VERIFICATION-before-if53-error.json",
+  "source": {
+    "cohort": "SUPPORT/RHC",
+    "records": 5735,
+    "events30d": 1918,
+    "treated24h": 2184,
+    "source_sha256": "9ef4ab578be4b40ad5d97d3a7e08ffdc1f9f76aeeefee51b4996e4221556f8e8",
+    "source_bytes": 2320412,
+    "whole_source_retained": true,
+    "outcome_evidence": "Original study explicitly confirms death date or survival180 for every patient; publisheddth30 exactly agrees with dates on all5735",
+    "permission": "Vanderbilt repository use permission with original citation and acknowledgement, notCCBY"
+  },
+  "completed": [
+    "Two complete finite-sample algebra derivations: true-centre mean equals estimation error, empirical-centre mean equals zero",
+    "Symbol recalls and exact-mean scope; general asymptotic arguments deferred to Chapter7",
+    "Unknown P0 card and observed real RHC Pn card",
+    "Actual outcomes through unchanged centre to contributions and full-n average; first6 only preview",
+    "Unknown population mode, empirical-centre mode and explicitly assumed reference m; true error always unknown",
+    "Endpoints, invalid input clearing, keyboard/reset and local scrolling; complete averaging chain visible on desktop"
+  ],
+  "build": {
+    "command": "sh scripts/node.sh scripts/build.js",
+    "chapters": 9,
+    "exit_code": 0
+  },
+  "javascript": {
+    "command": "JULIA_BIN=<installed Julia1.12.5> JULIA_DEPOT_PATH=/private/tmp/eif-tutorial-julia-depot sh scripts/node.sh --test tests/*.test.js tests/zh/*.test.js",
+    "passed": 176,
+    "failed": 0,
+    "skipped": 0,
+    "exit_code": 0,
+    "new_tests": 8,
+    "post_layout_focused_command": "sh scripts/node.sh --test tests/mean-error.test.js tests/zh/mean-error-renderer.test.js",
+    "post_layout_focused_passed": 8,
+    "independence": "Manual fixture, original categorical CSV grouped counts and independent full-record sums; unknown population remains null; no aliasing, recalculation and boundary checks",
+    "Julia": "Existing workbooks, trace cross-language and fresh-process code executed; historical separate127-test suite not rerun"
+  },
+  "browser": [
+    {
+      "command": "sh scripts/node.sh tests/zh/mean-error-browser.cjs",
+      "viewports": [
+        1360,
+        375
+      ],
+      "height": 950,
+      "exit_code": 0,
+      "final_compact_layout_checked": true,
+      "checks": [
+        "Unknown P0 retained in all modes",
+        "Observed Pn risk and unchanged first6 actual Y",
+        "Full-n empirical mean0 with nonzero individual contributions",
+        "Assumed references.3/.4/0/1 and signed distances",
+        "Invalid reference clears stale values and reset restores unknown mode",
+        "Matching row tops; desktop averaging chain wholly visible",
+        "Local slider/arrow keyboard scrolling",
+        "Two complete derivations and floating symbol recall",
+        "No Julia implementation DOM",
+        "Chapter isolation",
+        "No overflow/errors/external requests"
+      ]
+    },
+    {
+      "command": "sh scripts/node.sh tests/zh/rhc-browser.cjs",
+      "viewports": [
+        1360,
+        375
+      ],
+      "chapters": 9,
+      "exit_code": 0
+    },
+    {
+      "command": "sh scripts/node.sh tests/zh/if-notation-browser.cjs",
+      "viewports": [
+        1360,
+        375
+      ],
+      "exit_code": 0
+    },
+    {
+      "command": "sh scripts/node.sh tests/zh/qg-visual-browser.cjs",
+      "viewports": [
+        1360,
+        375
+      ],
+      "exit_code": 0
+    }
+  ],
+  "independent_review": "zh/reviews/ch00-if53-error.md; source maths/pedagogy, original-CSV numerical and generated rendering checks passed; browser executed by lead",
+  "preservation": {
+    "files": 57,
+    "manifest": "zh/docs/IF53_PROTECTED.json",
+    "all_sha256_unchanged": true,
+    "chapter0_outside_section53_unchanged": true
+  },
+  "screenshots": [
+    "output/zh/playwright/mean-error-unknown-1360.png",
+    "output/zh/playwright/mean-error-unknown-375.png",
+    "output/zh/playwright/mean-error-empirical-1360.png",
+    "output/zh/playwright/mean-error-empirical-375.png",
+    "output/zh/playwright/mean-error-assumed-1360.png",
+    "output/zh/playwright/mean-error-assumed-375.png"
+  ],
+  "unverified": [
+    "Physical touch devices",
+    "Other browser engines",
+    "Complete spoken screen-reader flow",
+    "Beginner learning outcomes",
+    "Clinical causal identification and inference coverage",
+    "Historical separate127-test Julia suite",
+    "Fresh browser regression of extracted release"
+  ],
+  "open_implementation_issues": [],
+  "handoff": "zh/docs/PROGRESS.md; zh/docs/chapters/ch00.md; zh/docs/data/MEAN_ERROR_HANDOFF.md",
+  "delivery": "releases/EIF_Tutorial_Complete.zip and .sha256; package.py verifies original materials, CRC/SHA256 and every member byte"
+}

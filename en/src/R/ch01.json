@@ -1,0 +1,1106 @@
+{
+  "version": 1,
+  "source": "en/R/ch01.R",
+  "lineCount": 91,
+  "cohort": {
+    "n": 5735,
+    "events": 1918
+  },
+  "lines": [
+    {
+      "line": 4,
+      "code": "script_argument <- grep(\"^--file=\", commandArgs(FALSE), value = TRUE)",
+      "inputs": [],
+      "outputs": [
+        "script_argument"
+      ],
+      "operation": "commandArgs(FALSE) reads the startup arguments. grep matches the start of a string using ^, and value=TRUE retains the matched strings. The result is a character vector of length zero or one locating the file run by Rscript.",
+      "formulaTex": null,
+      "dimensions": {
+        "script_argument": []
+      }
+    },
+    {
+      "line": 6,
+      "code": "source_files <- vapply(sys.frames(), function(frame) if (is.null(frame$ofile)) \"\" else frame$ofile, character(1))",
+      "inputs": [],
+      "outputs": [
+        "source_files"
+      ],
+      "operation": "sys.frames() reads the call frames. vapply applies a function to each frame, requiring one character string per result. When source() runs a script, ofile records its path; frames without a path return an empty string.",
+      "formulaTex": null,
+      "dimensions": {
+        "source_files": []
+      }
+    },
+    {
+      "line": 8,
+      "code": "script_path <- if (any(nzchar(source_files))) tail(source_files[nzchar(source_files)], 1) else if (length(script_argument)) sub(\"^--file=\", \"\", script_argument[1]) else file.path(\"en\", \"R\", \"ch01.R\")",
+      "inputs": [
+        "source_files",
+        "script_argument"
+      ],
+      "outputs": [
+        "script_path"
+      ],
+      "operation": "if selects the source path: use the last non-empty ofile when called through source(); otherwise remove the --file= prefix. Code pasted into the R console at the project root defaults to this lesson’s script path. The output is one path string; [] indexing starts at 1.",
+      "formulaTex": null,
+      "dimensions": {
+        "source_files": [],
+        "script_argument": [],
+        "script_path": []
+      }
+    },
+    {
+      "line": 10,
+      "code": "stopifnot(length(script_path) == 1L, !is.na(script_path))",
+      "inputs": [
+        "script_path"
+      ],
+      "outputs": [],
+      "operation": "length checks that the path has one element. 1L is integer 1, and !is.na excludes missing values. stopifnot requires every condition to be TRUE and stops otherwise.",
+      "formulaTex": null,
+      "dimensions": {
+        "script_path": []
+      }
+    },
+    {
+      "line": 12,
+      "code": "project_root <- normalizePath(file.path(dirname(script_path), \"..\", \"..\"), mustWork = TRUE)",
+      "inputs": [
+        "script_path"
+      ],
+      "outputs": [
+        "project_root"
+      ],
+      "operation": "dirname extracts the script directory. file.path joins the path two levels up to the project root; normalizePath requires that directory to exist. The result is independent of the current working directory.",
+      "formulaTex": null,
+      "dimensions": {
+        "script_path": [],
+        "project_root": []
+      }
+    },
+    {
+      "line": 14,
+      "code": "source(file.path(project_root, \"shared\", \"R\", \"RHCCase.R\"))",
+      "inputs": [
+        "project_root"
+      ],
+      "outputs": [],
+      "operation": "source reads and executes the shared R definitions for reading the CSV, mathematical functions and manual model fitting. Only base R is used; no TMLE package is required.",
+      "formulaTex": null,
+      "dimensions": {
+        "project_root": []
+      }
+    },
+    {
+      "line": 16,
+      "code": "rows <- read_rhc_rows(DEFAULT_SOURCE)",
+      "inputs": [],
+      "outputs": [
+        "rows"
+      ],
+      "operation": "read_rhc_rows reads the official original CSV. The shared file locates DEFAULT_SOURCE. rows is a 5735×63 data.frame; each row represents the same original patient.",
+      "formulaTex": null,
+      "dimensions": {
+        "rows": [
+          "n",
+          63
+        ]
+      }
+    },
+    {
+      "line": 18,
+      "code": "observations <- rhc_observations(rows)",
+      "inputs": [
+        "rows"
+      ],
+      "outputs": [
+        "observations"
+      ],
+      "operation": "Encode the original sex, swang1 and dth30 fields as the binary columns x, a and y. Return an n×3 data.frame in the original row order.",
+      "formulaTex": null,
+      "dimensions": {
+        "rows": [
+          "n",
+          63
+        ],
+        "observations": [
+          "n",
+          3
+        ]
+      }
+    },
+    {
+      "line": 20,
+      "code": "y <- observations$y",
+      "inputs": [
+        "observations"
+      ],
+      "outputs": [
+        "y"
+      ],
+      "operation": "$ selects column y by name. This numeric vector has length n: 1 means death within 30 days, and 0 means survival at 30 days. Its dim is NULL.",
+      "formulaTex": "\\mathbf y=(Y_1,\\ldots,Y_n)",
+      "dimensions": {
+        "observations": [
+          "n",
+          3
+        ],
+        "y": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 22,
+      "code": "n <- length(y)",
+      "inputs": [
+        "y"
+      ],
+      "outputs": [
+        "n"
+      ],
+      "operation": "length counts vector elements, returning the integer cohort size n=5735. For a data.frame, nrow counts patient rows while length counts variable columns.",
+      "formulaTex": "n=5735",
+      "dimensions": {
+        "y": [
+          "n"
+        ],
+        "n": []
+      }
+    },
+    {
+      "line": 24,
+      "code": "events <- sum(y)",
+      "inputs": [
+        "y"
+      ],
+      "outputs": [
+        "events"
+      ],
+      "operation": "sum adds the n binary indicators, returning the death-count scalar 1918. <- assigns the result on the right to the name on the left.",
+      "formulaTex": "N_Y=\\sum_iY_i",
+      "dimensions": {
+        "y": [
+          "n"
+        ],
+        "events": []
+      }
+    },
+    {
+      "line": 26,
+      "code": "risk <- events / n",
+      "inputs": [
+        "events",
+        "n"
+      ],
+      "outputs": [
+        "risk"
+      ],
+      "operation": "/ divides the death count by the cohort size. Dividing these two scalars gives one sample 30-day mortality risk on the probability scale.",
+      "formulaTex": "\\widehat\\mu=\\frac{\\sum_iY_i}{n}",
+      "dimensions": {
+        "events": [],
+        "n": [],
+        "risk": []
+      }
+    },
+    {
+      "line": 28,
+      "code": "support_y <- c(0, 1)",
+      "inputs": [],
+      "outputs": [
+        "support_y"
+      ],
+      "operation": "c combines 0 and 1 into a two-element numeric vector. These entries are the two possible outcomes, rather than individual patient records.",
+      "formulaTex": "\\mathcal Y=\\{0,1\\}",
+      "dimensions": {
+        "support_y": [
+          2
+        ]
+      }
+    },
+    {
+      "line": 30,
+      "code": "p <- vapply(support_y, function(v) mean(y == v), numeric(1))",
+      "inputs": [
+        "support_y",
+        "y"
+      ],
+      "outputs": [
+        "p"
+      ],
+      "operation": "function(v) defines a rule for one outcome category. == compares each patient’s outcome with v; mean treats TRUE as 1 and FALSE as 0. vapply applies this rule to both categories and requires one number per result, giving p length two.",
+      "formulaTex": "p_y=n^{-1}\\sum_i\\mathbf1(Y_i=y)",
+      "dimensions": {
+        "support_y": [
+          2
+        ],
+        "y": [
+          "n"
+        ],
+        "p": [
+          2
+        ]
+      }
+    },
+    {
+      "line": 32,
+      "code": "mu <- sum(p * support_y)",
+      "inputs": [
+        "p",
+        "support_y"
+      ],
+      "outputs": [
+        "mu"
+      ],
+      "operation": "* multiplies each outcome support value by its probability; sum reduces the two products to one mean. The fixed reference is the empirical outcome distribution.",
+      "formulaTex": "\\mu=\\sum_{y=0}^1p_yy=1918/5735",
+      "dimensions": {
+        "p": [
+          2
+        ],
+        "support_y": [
+          2
+        ],
+        "mu": []
+      }
+    },
+    {
+      "line": 34,
+      "code": "z <- 1",
+      "inputs": [],
+      "outputs": [
+        "z"
+      ],
+      "operation": "Choose outcome 1 to receive the added probability mass. z is one numeric scalar and must be either 0 or 1.",
+      "formulaTex": "z\\in\\{0,1\\}",
+      "dimensions": {
+        "z": []
+      }
+    },
+    {
+      "line": 36,
+      "code": "t <- 0.1",
+      "inputs": [],
+      "outputs": [
+        "t"
+      ],
+      "operation": "Set the dimensionless replacement proportion to 0.1. With t between 0 and 1, the calculation changes probability weights rather than patients’ recorded y values.",
+      "formulaTex": "0\\leq t\\leq1",
+      "dimensions": {
+        "t": []
+      }
+    },
+    {
+      "line": 38,
+      "code": "stopifnot(z %in% support_y, is.finite(t), t >= 0, t <= 1)",
+      "inputs": [
+        "z",
+        "support_y",
+        "t"
+      ],
+      "outputs": [],
+      "operation": "%in% checks membership in the allowed outcome categories. is.finite excludes NA and infinity; stopifnot checks that the path step is valid.",
+      "formulaTex": null,
+      "dimensions": {
+        "z": [],
+        "support_y": [
+          2
+        ],
+        "t": []
+      }
+    },
+    {
+      "line": 40,
+      "code": "point <- as.numeric(support_y == z)",
+      "inputs": [
+        "support_y",
+        "z"
+      ],
+      "outputs": [
+        "point"
+      ],
+      "operation": "== compares both categories with the selected outcome; as.numeric converts FALSE/TRUE to 0/1, giving a two-element point-mass probability vector.",
+      "formulaTex": "\\delta_z(y)=\\mathbf1(y=z)",
+      "dimensions": {
+        "support_y": [
+          2
+        ],
+        "z": [],
+        "point": [
+          2
+        ]
+      }
+    },
+    {
+      "line": 42,
+      "code": "p_t <- (1 - t) * p + t * point",
+      "inputs": [
+        "t",
+        "p",
+        "point"
+      ],
+      "outputs": [
+        "p_t"
+      ],
+      "operation": "Evaluate the parentheses first. A scalar scales the vector element by element; adding the two components gives a new two-element probability vector.",
+      "formulaTex": "p_{t,y}=(1-t)p_y+t\\mathbf1(y=z)",
+      "dimensions": {
+        "t": [],
+        "p": [
+          2
+        ],
+        "point": [
+          2
+        ],
+        "p_t": [
+          2
+        ]
+      }
+    },
+    {
+      "line": 44,
+      "code": "mu_t <- sum(p_t * support_y)",
+      "inputs": [
+        "p_t",
+        "support_y"
+      ],
+      "outputs": [
+        "mu_t"
+      ],
+      "operation": "Multiply the unchanged outcome support by the new probabilities, then sum the two products to obtain the new mean mu_t.",
+      "formulaTex": "\\mu_t=\\sum_yp_{t,y}y",
+      "dimensions": {
+        "p_t": [
+          2
+        ],
+        "support_y": [
+          2
+        ],
+        "mu_t": []
+      }
+    },
+    {
+      "line": 46,
+      "code": "delta <- mu_t - mu",
+      "inputs": [
+        "mu_t",
+        "mu"
+      ],
+      "outputs": [
+        "delta"
+      ],
+      "operation": "Subtract the original mean mu from the new mean mu_t. The result delta is one probability difference.",
+      "formulaTex": "\\Delta\\mu=\\mu_t-\\mu",
+      "dimensions": {
+        "mu_t": [],
+        "mu": [],
+        "delta": []
+      }
+    },
+    {
+      "line": 48,
+      "code": "derivative <- z - mu",
+      "inputs": [
+        "z",
+        "mu"
+      ],
+      "outputs": [
+        "derivative"
+      ],
+      "operation": "Subtract the fixed original mean from the selected outcome to obtain the path derivative for this chapter’s mean target.",
+      "formulaTex": "\\dot\\mu=z-\\mu",
+      "dimensions": {
+        "z": [],
+        "mu": [],
+        "derivative": []
+      }
+    },
+    {
+      "line": 50,
+      "code": "rate <- if (t == 0) NA_real_ else delta / t",
+      "inputs": [
+        "t",
+        "delta"
+      ],
+      "outputs": [
+        "rate"
+      ],
+      "operation": "if selects only one branch. At t=0, return NA_real_ instead of computing 0/0; otherwise return the rate of change.",
+      "formulaTex": "(\\mu_t-\\mu)/t=z-\\mu\\quad(t\\ne0)",
+      "dimensions": {
+        "t": [],
+        "delta": [],
+        "rate": []
+      }
+    },
+    {
+      "line": 52,
+      "code": "linear_mean <- mu + t * derivative",
+      "inputs": [
+        "mu",
+        "t",
+        "derivative"
+      ],
+      "outputs": [
+        "linear_mean"
+      ],
+      "operation": "Multiplication precedes addition when computing the new mean. For the mean target, this is an exact linear identity.",
+      "formulaTex": "\\mu_t=\\mu+t(z-\\mu)",
+      "dimensions": {
+        "mu": [],
+        "t": [],
+        "derivative": [],
+        "linear_mean": []
+      }
+    },
+    {
+      "line": 54,
+      "code": "support_D <- support_y - mu",
+      "inputs": [
+        "support_y",
+        "mu"
+      ],
+      "outputs": [
+        "support_D"
+      ],
+      "operation": "Subtract the fixed scalar mu from each of the two possible outcomes. The two-element result tabulates D(y)=y−mu under the fixed reference distribution P.",
+      "formulaTex": "D_P^{\\rm mean}(y)=y-\\mu",
+      "dimensions": {
+        "support_y": [
+          2
+        ],
+        "mu": [],
+        "support_D": [
+          2
+        ]
+      }
+    },
+    {
+      "line": 56,
+      "code": "influence <- y - risk",
+      "inputs": [
+        "y",
+        "risk"
+      ],
+      "outputs": [
+        "influence"
+      ],
+      "operation": "Apply the same subtraction to all n observed outcomes, returning a numeric vector of patient influence values. Its length is n and its dim is NULL.",
+      "formulaTex": "D_i=Y_i-\\widehat\\mu",
+      "dimensions": {
+        "y": [
+          "n"
+        ],
+        "risk": [],
+        "influence": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 58,
+      "code": "mean_influence <- sum(influence) / n",
+      "inputs": [
+        "influence",
+        "n"
+      ],
+      "outputs": [
+        "mean_influence"
+      ],
+      "operation": "sum adds all n entries; division by n gives one mean. Small floating-point rounding errors are allowed.",
+      "formulaTex": "n^{-1}\\sum_i(Y_i-\\widehat\\mu)=0",
+      "dimensions": {
+        "influence": [
+          "n"
+        ],
+        "n": [],
+        "mean_influence": []
+      }
+    },
+    {
+      "line": 60,
+      "code": "grouped_mean_D <- sum(p * support_D)",
+      "inputs": [
+        "p",
+        "support_D"
+      ],
+      "outputs": [
+        "grouped_mean_D"
+      ],
+      "operation": "Weight the two tabulated influence values by their original outcome probabilities and sum. This gives the same mean as averaging the n patient influence values.",
+      "formulaTex": "\\sum_yp_yD_P^{\\rm mean}(y)=0",
+      "dimensions": {
+        "p": [
+          2
+        ],
+        "support_D": [
+          2
+        ],
+        "grouped_mean_D": []
+      }
+    },
+    {
+      "line": 62,
+      "code": "old_mean_D <- sum(p_t * support_D)",
+      "inputs": [
+        "p_t",
+        "support_D"
+      ],
+      "outputs": [
+        "old_mean_D"
+      ],
+      "operation": "Fix the old D and just replace the distribution weights; this time the average is usually non-zero.",
+      "formulaTex": "\\sum_yp_{t,y}D_P^{\\rm mean}(y)=\\mu_t-\\mu",
+      "dimensions": {
+        "p_t": [
+          2
+        ],
+        "support_D": [
+          2
+        ],
+        "old_mean_D": []
+      }
+    },
+    {
+      "line": 64,
+      "code": "new_support_D <- support_y - mu_t",
+      "inputs": [
+        "support_y",
+        "mu_t"
+      ],
+      "outputs": [
+        "new_support_D"
+      ],
+      "operation": "Subtract the new mean mu_t from both possible outcomes to tabulate a different influence function in a two-element vector.",
+      "formulaTex": "D_{P_t}^{\\rm mean}(y)=y-\\mu_t",
+      "dimensions": {
+        "support_y": [
+          2
+        ],
+        "mu_t": [],
+        "new_support_D": [
+          2
+        ]
+      }
+    },
+    {
+      "line": 66,
+      "code": "new_mean_D <- sum(p_t * new_support_D)",
+      "inputs": [
+        "p_t",
+        "new_support_D"
+      ],
+      "outputs": [
+        "new_mean_D"
+      ],
+      "operation": "The new function’s weighted mean under the new distribution is again zero. This differs from the previous line, which uses the old function.",
+      "formulaTex": "\\sum_yp_{t,y}D_{P_t}^{\\rm mean}(y)=0",
+      "dimensions": {
+        "p_t": [
+          2
+        ],
+        "new_support_D": [
+          2
+        ],
+        "new_mean_D": []
+      }
+    },
+    {
+      "line": 68,
+      "code": "alive <- 1 - y",
+      "inputs": [
+        "y"
+      ],
+      "outputs": [
+        "alive"
+      ],
+      "operation": "Subtract each death indicator from 1 to obtain n survival indicators in the same patient order.",
+      "formulaTex": "L_i=1-Y_i",
+      "dimensions": {
+        "y": [
+          "n"
+        ],
+        "alive": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 70,
+      "code": "survival <- sum(alive) / n",
+      "inputs": [
+        "alive",
+        "n"
+      ],
+      "outputs": [
+        "survival"
+      ],
+      "operation": "Sum the survival indicators and divide by the full cohort size to obtain one 30-day survival probability.",
+      "formulaTex": "\\widehat S(30)=1-\\widehat\\mu",
+      "dimensions": {
+        "alive": [
+          "n"
+        ],
+        "n": [],
+        "survival": []
+      }
+    },
+    {
+      "line": 72,
+      "code": "survival_influence <- alive - survival",
+      "inputs": [
+        "alive",
+        "survival"
+      ],
+      "outputs": [
+        "survival_influence"
+      ],
+      "operation": "Subtract the survival mean from each patient’s survival indicator, giving n values. These are the negatives of the corresponding mortality-mean influence values.",
+      "formulaTex": "D_i^{\\rm survival}=-D_i^{\\rm mean}",
+      "dimensions": {
+        "alive": [
+          "n"
+        ],
+        "survival": [],
+        "survival_influence": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 74,
+      "code": "data <- rhc_data(DEFAULT_SOURCE)",
+      "inputs": [],
+      "outputs": [
+        "data"
+      ],
+      "operation": "Reread the original CSV and summarise it by (x,a,y) cell and (a,x) stratum. Return a list describing the fixed empirical reference distribution.",
+      "formulaTex": null,
+      "dimensions": {
+        "data": []
+      }
+    },
+    {
+      "line": 76,
+      "code": "check <- mean_if(data)",
+      "inputs": [
+        "data"
+      ],
+      "outputs": [
+        "check"
+      ],
+      "operation": "mean_if uses empirical cell probabilities to calculate the outcome mean and the mean influence value. Return both quantities in a list for comparison with the patient-level calculation.",
+      "formulaTex": null,
+      "dimensions": {
+        "data": [],
+        "check": []
+      }
+    },
+    {
+      "line": 78,
+      "code": "stopifnot(n == 5735L, events == 1918, abs(mu - 1918 / 5735) < 1e-14)",
+      "inputs": [
+        "n",
+        "events",
+        "mu"
+      ],
+      "outputs": [],
+      "operation": "Check the official cohort and event counts and independent exact-fraction benchmarks for the weighted means of the two outcome categories.",
+      "formulaTex": null,
+      "dimensions": {
+        "n": [],
+        "events": [],
+        "mu": []
+      }
+    },
+    {
+      "line": 80,
+      "code": "stopifnot(length(influence) == n, length(p_t) == 2L, abs(sum(p_t) - 1) < 1e-14, all(p_t >= 0))",
+      "inputs": [
+        "influence",
+        "n",
+        "p_t"
+      ],
+      "outputs": [],
+      "operation": "Check the n patient influence values, two outcome-category probabilities and valid probability sum. Patient rows and outcome support points are different alignments.",
+      "formulaTex": null,
+      "dimensions": {
+        "influence": [
+          "n"
+        ],
+        "n": [],
+        "p_t": [
+          2
+        ]
+      }
+    },
+    {
+      "line": 82,
+      "code": "stopifnot(abs(mu_t - linear_mean) < 1e-14, is.na(rate) || abs(rate - derivative) < 1e-12)",
+      "inputs": [
+        "mu_t",
+        "linear_mean",
+        "rate",
+        "derivative"
+      ],
+      "outputs": [],
+      "operation": "|| is short-circuit OR: when t=0 yields NA, skip the undefined rate-of-change check; otherwise check exact linearity and the rate of change.",
+      "formulaTex": null,
+      "dimensions": {
+        "mu_t": [],
+        "linear_mean": [],
+        "rate": [],
+        "derivative": []
+      }
+    },
+    {
+      "line": 84,
+      "code": "stopifnot(abs(mean_influence) < 1e-12, abs(grouped_mean_D) < 1e-12, abs(new_mean_D) < 1e-12)",
+      "inputs": [
+        "mean_influence",
+        "grouped_mean_D",
+        "new_mean_D"
+      ],
+      "outputs": [],
+      "operation": "Require all three correctly centred means to be zero within numerical tolerance. Positive and negative influence values may cancel; individual values need not be zero.",
+      "formulaTex": null,
+      "dimensions": {
+        "mean_influence": [],
+        "grouped_mean_D": [],
+        "new_mean_D": []
+      }
+    },
+    {
+      "line": 86,
+      "code": "stopifnot(abs(old_mean_D - delta) < 1e-14, all(abs(survival_influence + influence) < 1e-14), abs(check$risk - risk) < 1e-14)",
+      "inputs": [
+        "old_mean_D",
+        "delta",
+        "survival_influence",
+        "influence",
+        "check",
+        "risk"
+      ],
+      "outputs": [],
+      "operation": "Check that averaging the old function under new weights equals the mean change; that survival IF values are the negatives of mortality IF values; and that grouped and patient-level risks agree.",
+      "formulaTex": null,
+      "dimensions": {
+        "old_mean_D": [],
+        "delta": [],
+        "survival_influence": [
+          "n"
+        ],
+        "influence": [
+          "n"
+        ],
+        "check": [],
+        "risk": []
+      }
+    },
+    {
+      "line": 88,
+      "code": "cat(\"n =\", n, \"; events =\", events, \"; risk =\", risk, \"; mu_t =\", mu_t, \"\\n\")",
+      "inputs": [
+        "n",
+        "events",
+        "risk",
+        "mu_t"
+      ],
+      "outputs": [],
+      "operation": "cat displays existing objects in order. Semicolons in text separate displayed values; \\n starts a new line. No new statistic is calculated.",
+      "formulaTex": null,
+      "dimensions": {
+        "n": [],
+        "events": [],
+        "risk": [],
+        "mu_t": []
+      }
+    },
+    {
+      "line": 90,
+      "code": "cat(\"mean_influence =\", mean_influence, \"; old_mean_D =\", old_mean_D, \"; new_mean_D =\", new_mean_D, \"\\n\")",
+      "inputs": [
+        "mean_influence",
+        "old_mean_D",
+        "new_mean_D"
+      ],
+      "outputs": [],
+      "operation": "Display three distinct quantities separately: the patient-level mean, the old function averaged under new weights, and the new function averaged under new weights.",
+      "formulaTex": null,
+      "dimensions": {
+        "mean_influence": [],
+        "old_mean_D": [],
+        "new_mean_D": []
+      }
+    }
+  ],
+  "objects": {
+    "project_root": {
+      "key": "project_root",
+      "label": "project_root",
+      "type": "character vector",
+      "dimensions": [],
+      "dimensionText": "path or parameter string"
+    },
+    "z": {
+      "key": "z",
+      "label": "z",
+      "type": "numeric scalar (double)",
+      "dimensions": [],
+      "dimensionText": "Length 1"
+    },
+    "observations": {
+      "key": "observations",
+      "label": "observations",
+      "type": "data.frame",
+      "dimensions": [
+        "n",
+        3
+      ],
+      "dimensionText": "5735 rows × 3 columns (x, a, y)"
+    },
+    "support_D": {
+      "key": "support_D",
+      "label": "support_D",
+      "type": "numeric vector",
+      "dimensions": [
+        2
+      ],
+      "dimensionText": "Length 2; aligned by outcomes 0 and 1"
+    },
+    "p": {
+      "key": "p",
+      "label": "p",
+      "type": "numeric vector",
+      "dimensions": [
+        2
+      ],
+      "dimensionText": "Length 2; aligned by outcomes 0 and 1"
+    },
+    "mu_t": {
+      "key": "mu_t",
+      "label": "mu_t",
+      "type": "numeric scalar (double)",
+      "dimensions": [],
+      "dimensionText": "Length 1"
+    },
+    "point": {
+      "key": "point",
+      "label": "point",
+      "type": "numeric vector",
+      "dimensions": [
+        2
+      ],
+      "dimensionText": "Length 2; aligned by outcomes 0 and 1"
+    },
+    "old_mean_D": {
+      "key": "old_mean_D",
+      "label": "old_mean_D",
+      "type": "numeric scalar (double)",
+      "dimensions": [],
+      "dimensionText": "Length 1"
+    },
+    "mean_influence": {
+      "key": "mean_influence",
+      "label": "mean_influence",
+      "type": "numeric scalar (double)",
+      "dimensions": [],
+      "dimensionText": "Length 1"
+    },
+    "source_files": {
+      "key": "source_files",
+      "label": "source_files",
+      "type": "character vector",
+      "dimensions": [],
+      "dimensionText": "path or parameter string"
+    },
+    "events": {
+      "key": "events",
+      "label": "events",
+      "type": "numeric scalar (double)",
+      "dimensions": [],
+      "dimensionText": "Length 1"
+    },
+    "linear_mean": {
+      "key": "linear_mean",
+      "label": "linear_mean",
+      "type": "numeric scalar (double)",
+      "dimensions": [],
+      "dimensionText": "Length 1"
+    },
+    "alive": {
+      "key": "alive",
+      "label": "alive",
+      "type": "numeric vector",
+      "dimensions": [
+        "n"
+      ],
+      "dimensionText": "Length n; dim is NULL"
+    },
+    "script_path": {
+      "key": "script_path",
+      "label": "script_path",
+      "type": "character vector",
+      "dimensions": [],
+      "dimensionText": "path or parameter string"
+    },
+    "new_mean_D": {
+      "key": "new_mean_D",
+      "label": "new_mean_D",
+      "type": "numeric scalar (double)",
+      "dimensions": [],
+      "dimensionText": "Length 1"
+    },
+    "influence": {
+      "key": "influence",
+      "label": "influence",
+      "type": "numeric vector",
+      "dimensions": [
+        "n"
+      ],
+      "dimensionText": "Length n; dim is NULL"
+    },
+    "derivative": {
+      "key": "derivative",
+      "label": "derivative",
+      "type": "numeric scalar (double)",
+      "dimensions": [],
+      "dimensionText": "Length 1"
+    },
+    "mu": {
+      "key": "mu",
+      "label": "mu",
+      "type": "numeric scalar (double)",
+      "dimensions": [],
+      "dimensionText": "Length 1"
+    },
+    "survival_influence": {
+      "key": "survival_influence",
+      "label": "survival_influence",
+      "type": "numeric vector",
+      "dimensions": [
+        "n"
+      ],
+      "dimensionText": "Length n; dim is NULL"
+    },
+    "n": {
+      "key": "n",
+      "label": "n",
+      "type": "integer scalar",
+      "dimensions": [],
+      "dimensionText": "Length 1"
+    },
+    "delta": {
+      "key": "delta",
+      "label": "delta",
+      "type": "numeric scalar (double)",
+      "dimensions": [],
+      "dimensionText": "Length 1"
+    },
+    "t": {
+      "key": "t",
+      "label": "t",
+      "type": "numeric scalar (double)",
+      "dimensions": [],
+      "dimensionText": "Length 1"
+    },
+    "data": {
+      "key": "data",
+      "label": "data",
+      "type": "list",
+      "dimensions": [],
+      "dimensionText": "Named container; each member has its own dimensions"
+    },
+    "grouped_mean_D": {
+      "key": "grouped_mean_D",
+      "label": "grouped_mean_D",
+      "type": "numeric scalar (double)",
+      "dimensions": [],
+      "dimensionText": "Length 1"
+    },
+    "survival": {
+      "key": "survival",
+      "label": "survival",
+      "type": "numeric scalar (double)",
+      "dimensions": [],
+      "dimensionText": "Length 1"
+    },
+    "rate": {
+      "key": "rate",
+      "label": "rate",
+      "type": "numeric scalar (double)",
+      "dimensions": [],
+      "dimensionText": "Length 1"
+    },
+    "check": {
+      "key": "check",
+      "label": "check",
+      "type": "list",
+      "dimensions": [],
+      "dimensionText": "Named container; each member has its own dimensions"
+    },
+    "y": {
+      "key": "y",
+      "label": "y",
+      "type": "numeric vector",
+      "dimensions": [
+        "n"
+      ],
+      "dimensionText": "Length n; dim is NULL"
+    },
+    "script_argument": {
+      "key": "script_argument",
+      "label": "script_argument",
+      "type": "character vector",
+      "dimensions": [],
+      "dimensionText": "path or parameter string"
+    },
+    "p_t": {
+      "key": "p_t",
+      "label": "p_t",
+      "type": "numeric vector",
+      "dimensions": [
+        2
+      ],
+      "dimensionText": "Length 2; aligned by outcomes 0 and 1"
+    },
+    "risk": {
+      "key": "risk",
+      "label": "risk",
+      "type": "numeric scalar (double)",
+      "dimensions": [],
+      "dimensionText": "Length 1"
+    },
+    "new_support_D": {
+      "key": "new_support_D",
+      "label": "new_support_D",
+      "type": "numeric vector",
+      "dimensions": [
+        2
+      ],
+      "dimensionText": "Length 2; aligned by outcomes 0 and 1"
+    },
+    "support_y": {
+      "key": "support_y",
+      "label": "support_y",
+      "type": "numeric vector",
+      "dimensions": [
+        2
+      ],
+      "dimensionText": "Length 2; aligned by outcomes 0 and 1"
+    },
+    "rows": {
+      "key": "rows",
+      "label": "rows",
+      "type": "data.frame",
+      "dimensions": [
+        "n",
+        63
+      ],
+      "dimensionText": "5735 rows × 63 columns"
+    }
+  }
+}

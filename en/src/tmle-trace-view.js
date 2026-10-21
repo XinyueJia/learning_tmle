@@ -1,0 +1,80 @@
+/** One vocabulary for formula operands, cumulative data columns and Julia tokens. */
+export const TRACE_COLUMNS={
+ a:{symbol:'Aᵢ',label:'Observed RHC',colour:'amber',meaning:'1 if RHC was received, otherwise 0; original data, unchanged by ε.',unit:'0/1'},
+ y:{symbol:'Yᵢ',label:'30-day death',colour:'blue',meaning:'1 for observed all-cause death within 30 days, otherwise 0; the outcome used for fitting and residuals.',unit:'0/1'},
+ q0:{symbol:'Q̂₀ᵢ',label:'Initial A=0 prediction',colour:'cyan',meaning:'Initial modelled death probability with the same W and input A=0.',unit:'Probability'},
+ q1:{symbol:'Q̂₁ᵢ',label:'Initial A=1 prediction',colour:'purple',meaning:'Initial death probability with the same W and input A=1, using the same Q coefficients.',unit:'Probability'},
+ qa:{symbol:'Q̂Aᵢ',label:'Initial observed-arm prediction',colour:'slate',meaning:'Select Q̂1 or Q̂0 row by row using observed A.',unit:'Probability'},
+ g:{symbol:'ĝᵢ',label:'Fitted RHC probability',colour:'green',meaning:'Initial treatment probability given the same baseline W; held fixed during targeting.',unit:'Probability'},
+ h0:{symbol:'H₀ᵢ',label:'A=0 update weight',colour:'cyan',meaning:'−1/(1−ĝᵢ), used to update predictions with A=0 for everyone; always negative.',unit:'Inverse probability weight'},
+ h1:{symbol:'H₁ᵢ',label:'A=1 update weight',colour:'purple',meaning:'1/ĝᵢ, used to update predictions with A=1 for everyone; always positive.',unit:'Inverse probability weight'},
+ h:{symbol:'H_Aᵢ',label:'Observed-arm update weight H',colour:'orange',meaning:'The update regression uses the clever covariate A/ĝ−(1−A)/(1−ĝ), selecting H1 or H0 using observed A; it comes from the EIF residual term.',unit:'Inverse probability weight'},
+ offset:{symbol:'o_Aᵢ',label:'Observed-arm offset',colour:'slate',meaning:'logit(Q̂Aᵢ): the log odds of the initial prediction, with coefficient fixed at 1.',unit:'log odds'},
+ epsilon:{symbol:'ε',label:'Shared update parameter',colour:'orange',meaning:'One update parameter shared by all patients and both treatment inputs.',scalar:true,unit:'Scalar'},
+ shift:{symbol:'εH_Aᵢ',label:'Observed-arm logit increment',colour:'orange',meaning:'Multiply the same scalar ε by each observed-arm H, giving n logit increments.',unit:'Change in log odds'},
+ eta:{symbol:'η_Aᵢ',label:'Updated observed-arm linear predictor',colour:'slate',meaning:'Fixed offset plus εH; addition takes place on the logit scale.',unit:'log odds'},
+ qstar_a:{symbol:'Qε,Aᵢ',label:'Current observed-arm prediction Qε',colour:'slate',meaning:'expit(η_Aᵢ) converts the updated logit to an observed-arm probability.',unit:'Probability'},
+ residual:{symbol:'Yᵢ−Qε,Aᵢ',label:'Updated residual',colour:'blue',meaning:'Observed Y minus the updated prediction for the corresponding treatment.',unit:'Probability difference'},
+ score_contribution:{symbol:'H_Aᵢ(Yᵢ−Qε,Aᵢ)',label:'Score contribution',colour:'orange',meaning:'Each patient’s weighted residual; its mean over all n patients is the likelihood score for ε.',unit:'Weighted probability difference'},
+ offset0:{symbol:'o₀ᵢ',label:'Fixed A=0 offset',colour:'cyan',meaning:'logit(Q̂₀ᵢ): the fixed initial logit prediction with A=0 for everyone.',unit:'log odds'},
+ shift0:{symbol:'εH₀ᵢ',label:'A=0 logit increment',colour:'cyan',meaning:'Multiply the shared scalar ε by each A=0 weight H0, giving each patient’s logit increment.',unit:'Change in log odds'},
+ eta0:{symbol:'η₀ᵢ',label:'Updated A=0 logit',colour:'cyan',meaning:'offset0+εH0: each patient’s updated linear predictor with input A=0.',unit:'log odds'},
+ qstar0:{symbol:'Qε,0ᵢ',label:'Current A=0 prediction Qε',colour:'cyan',meaning:'expit(eta0): the updated probability for the same patient with prediction input A=0.',unit:'Probability'},
+ offset1:{symbol:'o₁ᵢ',label:'Fixed A=1 offset',colour:'purple',meaning:'logit(Q̂₁ᵢ): the fixed initial logit prediction with A=1 for everyone.',unit:'log odds'},
+ shift1:{symbol:'εH₁ᵢ',label:'A=1 logit increment',colour:'purple',meaning:'Multiply the same ε by H1; positive ε increases the logit along the A=1 update weights.',unit:'Change in log odds'},
+ eta1:{symbol:'η₁ᵢ',label:'Updated A=1 logit',colour:'purple',meaning:'offset1+εH1: each patient’s updated linear predictor with input A=1.',unit:'log odds'},
+ qstar1:{symbol:'Qε,1ᵢ',label:'Current A=1 prediction Qε',colour:'purple',meaning:'expit(eta1): the updated probability for the same patient with prediction input A=1.',unit:'Probability'},
+ contrast:{symbol:'Δε,ᵢ',label:'Patient-level prediction contrast',colour:'green',meaning:'Qε,1−Qε,0 compares two predictions at the same W; its mean over all n patients is the standardised risk difference.',unit:'Probability difference'},
+ psi:{symbol:'ψ̂ε',label:'Current plug-in risk difference',colour:'green',meaning:'The mean contrast over all n patients. Solving the score equation gives the TMLE along this path.',scalar:true,unit:'Probability difference'},
+ centred:{symbol:'Δε,ᵢ−ψ̂ε',label:'Centred prediction contrast',colour:'green',meaning:'Each contrast minus the same full-sample mean ψ; the mean over all n patients is 0.',unit:'Probability difference'},
+ eif:{symbol:'D̂ε,ᵢ',label:'Full fitted EIF per patient',colour:'orange',meaning:'Score contribution plus centred prediction contrast; only its full-sample mean equals the mean score, while individual values generally differ.',unit:'Probability difference'},
+ n:{symbol:'n',label:'Total original records',colour:'slate',meaning:'Number of patients in the full original CSV; pagination does not change it.',scalar:true,unit:'Patients'},
+ score_mean:{symbol:'sₙ(ε)',label:'Mean score over all patients',colour:'orange',meaning:'sum(score_contribution)/n; root finding makes the mean weighted contribution close to 0.',scalar:true,unit:'Mean weighted probability difference'},
+ eif_mean:{symbol:'PₙD̂ε',label:'Mean EIF over all patients',colour:'orange',meaning:'sum(eif)/n; equals the mean score and checks the update equation. See Section 7 for the remainder analysis.',scalar:true,unit:'Mean probability difference'}
+};
+export const TRACE_STEPS=[
+ {title:'Retain the observed records',added:['a','y'],inputs:[],outputs:['a','y','n'],formulaTex:String.raw`(W_i,A_i,Y_i),\quad i=1,\ldots,n`,intro:'Fix the study data first: observed A/Y and baseline W remain unchanged. Row i follows the original CSV order; age, sex and race preview part of W, while the full design has 17 columns.',prediction:'Predict: will observed A or Y change when the model is updated?',answer:'No. Fitted predictions change; the patient’s observed treatment and outcome do not.'},
+ {title:'Add three initial predictions',added:['q0','q1','qa'],inputs:['a'],outputs:['q0','q1','qa'],formulaTex:String.raw`\widehat Q_{A,i}=A_i\widehat Q_{1,i}+(1-A_i)\widehat Q_{0,i}`,intro:'Set model input A to 0 and 1 at the same W to obtain two prediction columns. Observed A only selects qa row by row; both calls use the same baseline and coefficients.',prediction:'Predict: for a row with A=0, should qa copy q0 or q1?',answer:'Copy q0. Copy q1 only when A=1; row i stays the same.'},
+ {title:'Compute observed-arm H and both treatment-input weights from g',added:['g','h0','h1','h'],inputs:['a','g'],outputs:['h0','h1','h'],formulaTex:String.raw`H_{0,i}=-\frac1{1-\widehat g_i},\quad H_{1,i}=\frac1{\widehat g_i},\quad H_{A,i}=\frac{A_i}{\widehat g_i}-\frac{1-A_i}{1-\widehat g_i}`,intro:'g predicts RHC assignment; H comes from the EIF residual weights in Chapter 4. Observed-arm H_A fits ε; H0/H1 update the two prediction columns. Initial g is then held fixed.',prediction:'Predict: what sign does H_A have for a patient with A=0?',answer:'Negative, since observed H_A=H0=−1/(1−g). H1 for input A=1 is always positive.'},
+ {title:'Take the logit of initial predictions to obtain the fixed offset',added:['offset'],inputs:['qa'],outputs:['offset'],formulaTex:String.raw`o_{A,i}=\operatorname{logit}(\widehat Q_{A,i})=\log\frac{\widehat Q_{A,i}}{1-\widehat Q_{A,i}}`,intro:'Take logit(qa) to obtain the fixed offset; subsequent updates are added on this scale.',prediction:'Predict: what sign does the offset have when initial risk is below 0.5?',answer:'Negative. q/(1−q) is below 1, so its logarithm is below 0. The offset is in log odds.'},
+ {title:'Update every observed-arm prediction with the same ε',added:['shift','eta','qstar_a'],inputs:['offset','epsilon','h'],outputs:['shift','eta','qstar_a'],formulaTex:String.raw`b_{A,i}=\epsilon H_{A,i},\quad\eta_{A,i}=o_{A,i}+b_{A,i},\quad Q_{\epsilon,A,i}=\operatorname{expit}(\eta_{A,i})`,intro:'Multiply εH, add it to the fixed offset on the logit scale, then use expit to return to probabilities. ε is the sole new parameter, shared by everyone. Before root finding these are predictions at the current trial ε.',prediction:'Predict: do updated and initial predictions agree at ε=0?',answer:'Yes. The increment is 0 and expit(logit(q))=q; floating-point calculations may leave only machine-precision error.'},
+ {title:'Compute each weighted residual, then average',added:['residual','score_contribution'],inputs:['y','qstar_a','h'],outputs:['residual','score_contribution','score_mean'],formulaTex:String.raw`r_i=Y_i-Q_{\epsilon,A,i},\quad c_i=H_{A,i}r_i,\quad s_n(\epsilon)=\frac1n\sum_{i=1}^nc_i`,intro:'After row-wise subtraction and multiplication, average over all 5735 patients. This mean weighted residual is the likelihood score for ε. Enter ε to inspect its value; bisection or automatic root finding locates its zero.',prediction:'Predict: must every residual be 0 for sₙ(ε) to be close to 0?',answer:'No. Only the mean of all n signed weighted residuals must be close to 0.'},
+ {title:'Update everyone’s A=0 prediction to Qε,0',added:['offset0','shift0','eta0','qstar0'],inputs:['q0','epsilon','h0'],outputs:['offset0','shift0','eta0','qstar0'],formulaTex:String.raw`o_{0,i}=\operatorname{logit}(\widehat Q_{0,i}),\quad\eta_{0,i}=o_{0,i}+\epsilon H_{0,i},\quad Q_{\epsilon,0,i}=\operatorname{expit}(\eta_{0,i})`,intro:'Compute an A=0 prediction for every patient using that patient’s H0 and initial q0 offset. Use the same current ε throughout this column. The fitted ε is obtained from all patients’ observed-treatment predictions; a manually entered ε remains a trial value.',prediction:'Predict: which way does this risk column move when ε is positive?',answer:'H0 is negative, so the logit decreases. Since expit is increasing, each A=0 risk decreases.'},
+ {title:'Update everyone’s A=1 prediction to Qε,1',added:['offset1','shift1','eta1','qstar1'],inputs:['q1','epsilon','h1'],outputs:['offset1','shift1','eta1','qstar1'],formulaTex:String.raw`o_{1,i}=\operatorname{logit}(\widehat Q_{1,i}),\quad\eta_{1,i}=o_{1,i}+\epsilon H_{1,i},\quad Q_{\epsilon,1,i}=\operatorname{expit}(\eta_{1,i})`,intro:'Likewise compute A=1 predictions for everyone using H1, the same ε, the same baseline W and the same patients.',prediction:'Predict: does a patient with observed A=0 also need qstar1?',answer:'Yes. Standardisation requires both predictions at every W; qstar1 records the model prediction with input A=1.'},
+ {title:'Subtract row by row, then average the full column',added:['contrast'],inputs:['qstar1','qstar0','n'],outputs:['contrast','psi'],formulaTex:String.raw`\Delta_{\epsilon,i}=Q_{\epsilon,1,i}-Q_{\epsilon,0,i},\quad\widehat\psi_\epsilon=\frac1n\sum_i\Delta_{\epsilon,i}`,intro:'Form an n-element contrast vector, then average over the full cohort. This updated plug-in estimate becomes the TMLE constructed here only after solving for ε̂. Changing the display window does not change it.',prediction:'Predict: can we average qstar1 only among RHC recipients and qstar0 among everyone else?',answer:'No. Those terms use different population compositions; here both arms are standardised over the same n patients.'},
+ {title:'Add the centred prediction contrast and check the full EIF mean',added:['centred','eif'],inputs:['score_contribution','contrast','psi'],outputs:['centred','eif','eif_mean'],formulaTex:String.raw`\widehat D_{\epsilon,i}=c_i+(\Delta_{\epsilon,i}-\widehat\psi_\epsilon),\quad P_n(\Delta_\epsilon-\widehat\psi_\epsilon)=0,\quad P_n\widehat D_\epsilon=s_n(\epsilon)`,intro:'Add the centred prediction contrast to the residual score contribution to obtain the full fitted EIF. Individual values generally differ between these columns; their full-sample means agree because the centred term averages to zero.',prediction:'Predict: why does the full EIF mean equal the score mean?',answer:'The full EIF is the score contribution plus the centred prediction contrast. The latter has full-sample mean 0 by definition, so the means agree.'}
+];
+export const escapeTrace=value=>String(value).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
+export const traceNumber=value=>Number.isInteger(value)?String(value):Math.abs(value)<5e-9?'0':value.toFixed(6);
+export const traceLink=(key,text=TRACE_COLUMNS[key]?.symbol)=>{
+ const c=TRACE_COLUMNS[key];if(!c)throw Error(`Unknown TMLE trace symbol ${key}`);
+ return `<button type="button" class="trace-symbol ov-${c.colour}" data-trace-key="${key}" title="${escapeTrace(c.meaning)}" aria-label="${escapeTrace(c.symbol+'; code variable '+key+'; '+c.meaning)}">${escapeTrace(text)}</button>`;
+};
+export function traceFormula(step){
+ const k=traceLink,sep='<span class="trace-equals"> = </span>',line=(lhs,...rhs)=>`<div class="trace-formula-line">${k(lhs)}${sep}${rhs.join('')}</div>`;
+ return [
+ ()=>`<div class="trace-formula-line">Same row i: Wᵢ, ${k('a')}, ${k('y')}; total ${k('n')} rows</div>`,
+ ()=>line('qa',k('a'),' × ',k('q1'),' + (1 − ',k('a'),') × ',k('q0')),
+ ()=>line('h0','−1 / (1 − ',k('g'),')')+line('h1','1 / ',k('g'))+line('h',k('a'),' / ',k('g'),' − (1 − ',k('a'),') / (1 − ',k('g'),')'),
+ ()=>line('offset','logit(',k('qa'),')'),
+ ()=>line('shift',k('epsilon'),' × ',k('h'))+line('eta',k('offset'),' + ',k('shift'))+line('qstar_a','expit(',k('eta'),')'),
+ ()=>line('residual',k('y'),' − ',k('qstar_a'))+line('score_contribution',k('h'),' × ',k('residual'))+line('score_mean','sum(',k('score_contribution'),') / ',k('n')),
+ ()=>line('offset0','logit(',k('q0'),')')+line('shift0',k('epsilon'),' × ',k('h0'))+line('eta0',k('offset0'),' + ',k('shift0'))+line('qstar0','expit(',k('eta0'),')'),
+ ()=>line('offset1','logit(',k('q1'),')')+line('shift1',k('epsilon'),' × ',k('h1'))+line('eta1',k('offset1'),' + ',k('shift1'))+line('qstar1','expit(',k('eta1'),')'),
+ ()=>line('contrast',k('qstar1'),' − ',k('qstar0'))+line('psi','sum(',k('contrast'),') / ',k('n')),
+ ()=>line('centred',k('contrast'),' − ',k('psi'))+line('eif',k('score_contribution'),' + ',k('centred'))+line('eif_mean','sum(',k('eif'),') / ',k('n'))
+ ][step]();
+}
+/** Tokenisation leaves strings/comments literal; linked identifiers copy as normal Julia. */
+export function traceCode(code,language='julia'){
+ if(language==='r')return code.split(/("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|#[^\n]*|[A-Za-z_][A-Za-z_0-9]*)/g).map(token=>TRACE_COLUMNS[token]?traceLink(token,token):escapeTrace(token)).join('');
+ return code.split(/("(?:\\.|[^"\\])*"|#[^\n]*|[A-Za-z_][A-Za-z_0-9]*)/g).map(token=>TRACE_COLUMNS[token]?traceLink(token,token):escapeTrace(token)).join('');
+}
+export function activeColumns(step){if(!Number.isInteger(step)||step<0||step>=TRACE_STEPS.length)throw Error('Invalid trace step');return TRACE_STEPS.slice(0,step+1).flatMap(s=>s.added);}
+/** Concatenating the ten code panels must also be executable from a fresh Julia session. */
+export function traceStepCode(mapping,stage){
+ const step=TRACE_STEPS[stage];if(!step)throw Error('Invalid trace code step');
+ if(mapping.source?.endsWith('.R'))return mapping.lines.filter(entry=>entry.step===stage);
+ const wanted=new Set([...step.outputs,...(stage===0?['rows','fit']:[]),...(stage===2?['g']:[]),...(stage===4?['epsilon']:[])]);
+ return mapping.lines.filter(entry=>entry.outputs.some(key=>wanted.has(key))||(stage===0&&/^(include\(|using )/.test(entry.code))||(stage===4&&entry.code.startsWith('isfinite(epsilon)')));
+}

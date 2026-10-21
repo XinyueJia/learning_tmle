@@ -1,0 +1,113 @@
+{
+  "date": "2026-10-17",
+  "scope": "Chapter0 introduces propensity scores, PSM and IPW before influence functions, with real RHC composition and weighting diagrams",
+  "entry": "http://127.0.0.1:4174/zh/?edition=propensity-first#chapter-0",
+  "previous_verification": "zh/docs/VERIFICATION-before-propensity-bridge.json",
+  "source": {
+    "cohort": "SUPPORT/RHC",
+    "records": 5735,
+    "events30d": 1918,
+    "treated24h": 2184,
+    "source_sha256": "9ef4ab578be4b40ad5d97d3a7e08ffdc1f9f76aeeefee51b4996e4221556f8e8",
+    "source_bytes": 2320412,
+    "whole_source_retained": true,
+    "outcome_evidence": "Original study explicitly confirms death date or survival180 for every patient; publisheddth30 exactly agrees with dates on all5735",
+    "permission": "Vanderbilt repository use permission with original citation and acknowledgement, notCCBY"
+  },
+  "completed": [
+    "Motivates treatment allocation before naming Q/g with observed whole-cohort sex composition",
+    "Introduces PSM and its design-dependent target population before IF",
+    "Explains ATE-IPW through actual RHC stratum counts, observed-arm probabilities and inverse weights",
+    "Displays first-six source rows while aggregating all5735 records",
+    "Derives both arms of the population identity by conditional expectation with local symbol recalls",
+    "Separates HT/Hajek, sex-saturated exact balance, full-W estimation and causal identification",
+    "Preserves previous mathematical material, Julia/R workbooks and chapter0 maths-only policy"
+  ],
+  "build": {
+    "command": "sh scripts/node.sh scripts/build.js",
+    "chapters": 9,
+    "exit_code": 0
+  },
+  "full_tests": {
+    "command": "JULIA_BIN=<installed Julia1.12.5> JULIA_DEPOT_PATH=/private/tmp/eif-tutorial-julia-depot sh scripts/node.sh --test tests/*.test.js tests/zh/*.test.js",
+    "passed": 193,
+    "failed": 0,
+    "skipped": 0,
+    "exit_code": 0,
+    "log": "output/zh/verification/propensity-bridge/full.log",
+    "includes": "Real Julia workbooks and displayed code execution; displayed R code execution; existing mathematical/regression assertions plus five new propensity tests"
+  },
+  "final_renderer_tests": {
+    "command": "sh scripts/node.sh --test tests/zh/propensity-bridge.test.js",
+    "passed": 5,
+    "failed": 0,
+    "skipped": 0,
+    "exit_code": 0,
+    "log": "output/zh/verification/propensity-bridge/final-renderer.log",
+    "reason": "After final table-header MathML formatting; no numerical source change"
+  },
+  "browser": [
+    {
+      "command": "sh scripts/node.sh tests/zh/propensity-bridge-browser.cjs",
+      "browser": "Chrome",
+      "viewports": [
+        1360,
+        375
+      ],
+      "exit_code": 0,
+      "log": "output/zh/verification/propensity-bridge/propensity-bridge-browser.log"
+    },
+    {
+      "command": "sh scripts/node.sh tests/zh/rhc-browser.cjs",
+      "browser": "Chrome",
+      "viewports": [
+        1360,
+        375
+      ],
+      "exit_code": 0,
+      "log": "output/zh/verification/propensity-bridge/rhc-browser.log"
+    },
+    {
+      "command": "sh scripts/node.sh tests/zh/qg-visual-browser.cjs",
+      "browser": "Chrome",
+      "viewports": [
+        1360,
+        375
+      ],
+      "exit_code": 0,
+      "log": "output/zh/verification/propensity-bridge/qg-visual-browser.log"
+    }
+  ],
+  "independent_review": {
+    "reviewer": "Scoped independent mathematical and pedagogical reviewer, separate from lead author/implementer",
+    "record": "zh/reviews/ch00-propensity-bridge.md",
+    "checks": "Independent Python csv and Fraction calculations of source counts and stratum-standardised risks, five tests personally rerun; read full-test/browser logs and inspected four screenshots",
+    "control_risk": 0.3065432779107717,
+    "treated_risk": 0.3802353969580787,
+    "risk_difference": 0.073692119047307,
+    "blocking_issues": []
+  },
+  "preservation": {
+    "manifest": "zh/docs/PROPENSITY_BRIDGE_PRESERVED.json",
+    "original_JS_Julia_data_files_unchanged": 37,
+    "original_display_equations_retained": 54,
+    "new_display_equations": 4,
+    "chapter1_to_8_full_source_unchanged": true,
+    "reference_article_unchanged": true,
+    "original_numeric_kernels_or_R_sources_changed": false
+  },
+  "visual_inspection": [
+    "output/zh/playwright/propensity-weights-1360.png",
+    "output/zh/playwright/propensity-weights-375.png",
+    "Independent reviewer inspected three mobile diagrams and the desktop weight figure"
+  ],
+  "source_verification": "zh/docs/SOURCES.md: publisher propensity-score abstract and Cole/Hernan IPW sections; full1983 paper not obtained this run",
+  "unverified_this_run": [
+    "No PSM algorithm, matched cohort or matching effect was computed; PSM is a design introduction",
+    "Independent R all-row cross-language harness was not rerun; original R sources unchanged, displayed R execution covered in193tests",
+    "Physical devices, other browser engines, complete spoken screen-reader flow and causal identification of a clinical effect",
+    "Browser execution of the extracted release"
+  ],
+  "open_implementation_issues": [],
+  "delivery": "releases/EIF_Tutorial_Complete.zip and .sha256; package.py validates original materials, CRC/SHA256 and every workspace member"
+}

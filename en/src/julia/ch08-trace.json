@@ -1,0 +1,1101 @@
+{
+  "version": 1,
+  "source": "en/julia/tmle_trace.jl",
+  "lineCount": 56,
+  "cohort": {
+    "n": 5735,
+    "events": 1918
+  },
+  "columns": {
+    "rows": {
+      "key": "rows",
+      "label": "Original patient records",
+      "symbol": "r_1,\\ldots,r_n",
+      "type": "Vector{Dict{String,String}}",
+      "dimensions": [
+        "n"
+      ]
+    },
+    "fit": {
+      "key": "fit",
+      "label": "Initial fitted regressions and inputs",
+      "symbol": "\\widehat Q,\\widehat g",
+      "type": "NamedTuple",
+      "dimensions": []
+    },
+    "n": {
+      "key": "n",
+      "label": "Total patient count",
+      "symbol": "n",
+      "type": "Int",
+      "dimensions": []
+    },
+    "epsilon": {
+      "key": "epsilon",
+      "label": "Common update coefficient",
+      "symbol": "\\epsilon",
+      "type": "Float64",
+      "dimensions": []
+    },
+    "a": {
+      "key": "a",
+      "label": "Observed RHC indicators",
+      "symbol": "A_i",
+      "type": "Vector{Float64}",
+      "dimensions": [
+        "n"
+      ]
+    },
+    "y": {
+      "key": "y",
+      "label": "Observed 30-day death indicators",
+      "symbol": "Y_i",
+      "type": "Vector{Float64}",
+      "dimensions": [
+        "n"
+      ]
+    },
+    "g": {
+      "key": "g",
+      "label": "Initial fitted treatment probabilities",
+      "symbol": "\\widehat g(W_i)",
+      "type": "Vector{Float64}",
+      "dimensions": [
+        "n"
+      ]
+    },
+    "q0": {
+      "key": "q0",
+      "label": "Initial non-RHC prediction",
+      "symbol": "\\widehat Q_{0,i}",
+      "type": "Vector{Float64}",
+      "dimensions": [
+        "n"
+      ]
+    },
+    "q1": {
+      "key": "q1",
+      "label": "Initial RHC prediction",
+      "symbol": "\\widehat Q_{1,i}",
+      "type": "Vector{Float64}",
+      "dimensions": [
+        "n"
+      ]
+    },
+    "qa": {
+      "key": "qa",
+      "label": "Initial predictions selected by observed A",
+      "symbol": "\\widehat Q_{A,i}",
+      "type": "Vector{Float64}",
+      "dimensions": [
+        "n"
+      ]
+    },
+    "offset": {
+      "key": "offset",
+      "label": "Fixed observed-arm log-odds offsets",
+      "symbol": "o_{A,i}",
+      "type": "Vector{Float64}",
+      "dimensions": [
+        "n"
+      ]
+    },
+    "offset0": {
+      "key": "offset0",
+      "label": "Fixed initial log odds for A=0",
+      "symbol": "o_{0,i}",
+      "type": "Vector{Float64}",
+      "dimensions": [
+        "n"
+      ]
+    },
+    "offset1": {
+      "key": "offset1",
+      "label": "Fixed initial log odds for A=1",
+      "symbol": "o_{1,i}",
+      "type": "Vector{Float64}",
+      "dimensions": [
+        "n"
+      ]
+    },
+    "h": {
+      "key": "h",
+      "label": "Observed-arm update weights",
+      "symbol": "H_{A,i}",
+      "type": "Vector{Float64}",
+      "dimensions": [
+        "n"
+      ]
+    },
+    "h0": {
+      "key": "h0",
+      "label": "Update weights for prediction input A=0",
+      "symbol": "H_{0,i}",
+      "type": "Vector{Float64}",
+      "dimensions": [
+        "n"
+      ]
+    },
+    "h1": {
+      "key": "h1",
+      "label": "Update weights for prediction input A=1",
+      "symbol": "H_{1,i}",
+      "type": "Vector{Float64}",
+      "dimensions": [
+        "n"
+      ]
+    },
+    "shift": {
+      "key": "shift",
+      "label": "Observed-arm log-odds increments",
+      "symbol": "b_{A,i}",
+      "type": "Vector{Float64}",
+      "dimensions": [
+        "n"
+      ]
+    },
+    "shift0": {
+      "key": "shift0",
+      "label": "Log-odds increments for prediction input A=0",
+      "symbol": "b_{0,i}",
+      "type": "Vector{Float64}",
+      "dimensions": [
+        "n"
+      ]
+    },
+    "shift1": {
+      "key": "shift1",
+      "label": "Log-odds increments for prediction input A=1",
+      "symbol": "b_{1,i}",
+      "type": "Vector{Float64}",
+      "dimensions": [
+        "n"
+      ]
+    },
+    "eta": {
+      "key": "eta",
+      "label": "Updated linear predictor under actual A",
+      "symbol": "\\eta_{A,i}",
+      "type": "Vector{Float64}",
+      "dimensions": [
+        "n"
+      ]
+    },
+    "eta0": {
+      "key": "eta0",
+      "label": "Updated linear predictor for A=0",
+      "symbol": "\\eta_{0,i}",
+      "type": "Vector{Float64}",
+      "dimensions": [
+        "n"
+      ]
+    },
+    "eta1": {
+      "key": "eta1",
+      "label": "Updated linear predictor for A=1",
+      "symbol": "\\eta_{1,i}",
+      "type": "Vector{Float64}",
+      "dimensions": [
+        "n"
+      ]
+    },
+    "qstar_a": {
+      "key": "qstar_a",
+      "label": "Current predictions under observed A",
+      "symbol": "Q_{\\epsilon,A,i}",
+      "type": "Vector{Float64}",
+      "dimensions": [
+        "n"
+      ]
+    },
+    "residual": {
+      "key": "residual",
+      "label": "Observed death indicator minus updated risk",
+      "symbol": "r_i",
+      "type": "Vector{Float64}",
+      "dimensions": [
+        "n"
+      ]
+    },
+    "score_contribution": {
+      "key": "score_contribution",
+      "label": "Patient-level score contribution",
+      "symbol": "c_i",
+      "type": "Vector{Float64}",
+      "dimensions": [
+        "n"
+      ]
+    },
+    "qstar0": {
+      "key": "qstar0",
+      "label": "Current risk predictions with input A=0",
+      "symbol": "Q_{\\epsilon,0,i}",
+      "type": "Vector{Float64}",
+      "dimensions": [
+        "n"
+      ]
+    },
+    "qstar1": {
+      "key": "qstar1",
+      "label": "Current risk predictions with input A=1",
+      "symbol": "Q_{\\epsilon,1,i}",
+      "type": "Vector{Float64}",
+      "dimensions": [
+        "n"
+      ]
+    },
+    "contrast": {
+      "key": "contrast",
+      "label": "Contrasts between updated predictions",
+      "symbol": "\\Delta_{\\epsilon,i}",
+      "type": "Vector{Float64}",
+      "dimensions": [
+        "n"
+      ]
+    },
+    "centred": {
+      "key": "centred",
+      "label": "Centred contrasts between updated predictions",
+      "symbol": "\\Delta_{\\epsilon,i}-\\widehat\\psi_\\epsilon",
+      "type": "Vector{Float64}",
+      "dimensions": [
+        "n"
+      ]
+    },
+    "eif": {
+      "key": "eif",
+      "label": "Fitted EIF value for each patient",
+      "symbol": "\\widehat D_{\\epsilon,i}",
+      "type": "Vector{Float64}",
+      "dimensions": [
+        "n"
+      ]
+    },
+    "psi": {
+      "key": "psi",
+      "label": "Mean updated prediction difference over all patients",
+      "symbol": "\\widehat\\psi_\\epsilon",
+      "type": "Float64",
+      "dimensions": []
+    },
+    "score_mean": {
+      "key": "score_mean",
+      "label": "Score mean over all patients",
+      "symbol": "s_n(\\epsilon)",
+      "type": "Float64",
+      "dimensions": []
+    },
+    "eif_mean": {
+      "key": "eif_mean",
+      "label": "Empirical EIF mean over all patients",
+      "symbol": "\\overline D_\\epsilon",
+      "type": "Float64",
+      "dimensions": []
+    }
+  },
+  "lines": [
+    {
+      "line": 3,
+      "code": "include(joinpath(@__DIR__, \"..\", \"..\", \"shared\", \"julia\", \"RHCCase.jl\"))",
+      "inputs": [],
+      "outputs": [],
+      "operation": "include reads and executes shared Julia definitions. @__DIR__ is the script directory; joinpath joins the path, and two .. components lead to the project root. This loads definitions without reading patients or running TMLE.",
+      "formulaTex": null,
+      "dimensions": {}
+    },
+    {
+      "line": 5,
+      "code": "using .RHCCase",
+      "inputs": [],
+      "outputs": [],
+      "operation": "using brings the local RHCCase module’s exported functions into this script. The leading dot identifies a local module.",
+      "formulaTex": null,
+      "dimensions": {}
+    },
+    {
+      "line": 7,
+      "code": "rows = read_rhc_rows(DEFAULT_SOURCE)",
+      "inputs": [],
+      "outputs": [
+        "rows"
+      ],
+      "operation": "read_rhc_rows reads the original CSV, and = assigns the returned records to rows. This vector contains n patient dictionaries, each retaining 63 string fields in the original row order.",
+      "formulaTex": "\\mathrm{rows}=(r_1,\\ldots,r_n)",
+      "dimensions": {
+        "rows": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 8,
+      "code": "fit = prepare_full(rows)",
+      "inputs": [
+        "rows"
+      ],
+      "outputs": [
+        "fit"
+      ],
+      "operation": "prepare_full fits only initial g and Q, returning a named tuple fit. Its baseline design is n×17; adding actual A gives Q an n×18 design. No targeting or epsilon solve occurs.",
+      "formulaTex": "\\widehat g,\\widehat Q\\leftarrow\\operatorname{fit}(\\mathrm{rows})",
+      "dimensions": {
+        "rows": [
+          "n"
+        ],
+        "fit": []
+      }
+    },
+    {
+      "line": 10,
+      "code": "n = fit.n",
+      "inputs": [
+        "fit"
+      ],
+      "outputs": [
+        "n"
+      ],
+      "operation": "Read the n field from fit. The result is one integer: the total cohort size used in every average.",
+      "formulaTex": "n=\\#\\{\\text{original patient}\\}",
+      "dimensions": {
+        "fit": [],
+        "n": []
+      }
+    },
+    {
+      "line": 11,
+      "code": "a = copy(fit.a)",
+      "inputs": [
+        "fit"
+      ],
+      "outputs": [
+        "a"
+      ],
+      "operation": "Read the observed 0/1 RHC indicators from fit.a. copy returns an independent floating-point vector of length n, preserving patient row order and the saved initial fit.",
+      "formulaTex": "A_i",
+      "dimensions": {
+        "fit": [],
+        "a": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 12,
+      "code": "y = copy(fit.y)",
+      "inputs": [
+        "fit"
+      ],
+      "outputs": [
+        "y"
+      ],
+      "operation": "Read the observed 0/1 death indicators from fit.y. copy returns an independent floating-point vector of length n, preserving patient row order and the saved initial fit.",
+      "formulaTex": "Y_i",
+      "dimensions": {
+        "fit": [],
+        "y": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 13,
+      "code": "g = copy(fit.g)",
+      "inputs": [
+        "fit"
+      ],
+      "outputs": [
+        "g"
+      ],
+      "operation": "Read the initial fitted treatment probabilities from fit.g. copy returns an independent floating-point vector of length n, preserving patient row order and the saved initial fit.",
+      "formulaTex": "\\widehat g(W_i)",
+      "dimensions": {
+        "fit": [],
+        "g": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 14,
+      "code": "q0 = copy(fit.q0)",
+      "inputs": [
+        "fit"
+      ],
+      "outputs": [
+        "q0"
+      ],
+      "operation": "Read the initial outcome predictions with input A=0 from fit.q0. copy returns an independent floating-point vector of length n, preserving patient row order and the saved initial fit.",
+      "formulaTex": "\\widehat Q_{0,i}",
+      "dimensions": {
+        "fit": [],
+        "q0": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 15,
+      "code": "q1 = copy(fit.q1)",
+      "inputs": [
+        "fit"
+      ],
+      "outputs": [
+        "q1"
+      ],
+      "operation": "Read the initial outcome predictions with input A=1 from fit.q1. copy returns an independent floating-point vector of length n, preserving patient row order and the saved initial fit.",
+      "formulaTex": "\\widehat Q_{1,i}",
+      "dimensions": {
+        "fit": [],
+        "q1": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 17,
+      "code": "qa = a .* q1 .+ (1 .- a) .* q0",
+      "inputs": [
+        "a",
+        "q1",
+        "q0"
+      ],
+      "outputs": [
+        "qa"
+      ],
+      "operation": "The dotted operators .* and .+ broadcast multiplication and addition across corresponding entries. Observed a=1 selects q1 and a=0 selects q0, producing n observed-arm predictions in qa.",
+      "formulaTex": "\\widehat Q_{A,i}=A_i\\widehat Q_{1,i}+(1-A_i)\\widehat Q_{0,i}",
+      "dimensions": {
+        "a": [
+          "n"
+        ],
+        "q1": [
+          "n"
+        ],
+        "q0": [
+          "n"
+        ],
+        "qa": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 19,
+      "code": "offset = logit.(qa)",
+      "inputs": [
+        "qa"
+      ],
+      "outputs": [
+        "offset"
+      ],
+      "operation": "The dot in logit. broadcasts logit(p)=log(p/(1-p)) over qa. This produces n fixed initial log odds under actual A. These are not Y and are not refitted as epsilon changes.",
+      "formulaTex": "o_{A,i}=\\operatorname{logit}(\\widehat Q_{A,i})",
+      "dimensions": {
+        "qa": [
+          "n"
+        ],
+        "offset": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 20,
+      "code": "offset0 = logit.(q0)",
+      "inputs": [
+        "q0"
+      ],
+      "outputs": [
+        "offset0"
+      ],
+      "operation": "The dot in logit. broadcasts logit(p)=log(p/(1-p)) over q0. These n fixed initial log odds use prediction input A=0. They are not Y and are not refitted as epsilon changes.",
+      "formulaTex": "o_{0,i}=\\operatorname{logit}(\\widehat Q_{0,i})",
+      "dimensions": {
+        "q0": [
+          "n"
+        ],
+        "offset0": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 21,
+      "code": "offset1 = logit.(q1)",
+      "inputs": [
+        "q1"
+      ],
+      "outputs": [
+        "offset1"
+      ],
+      "operation": "The dot in logit. broadcasts logit(p)=log(p/(1-p)) over q1. These n fixed initial log odds use prediction input A=1. They are not Y and are not refitted as epsilon changes.",
+      "formulaTex": "o_{1,i}=\\operatorname{logit}(\\widehat Q_{1,i})",
+      "dimensions": {
+        "q1": [
+          "n"
+        ],
+        "offset1": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 23,
+      "code": "h = a ./ g .- (1 .- a) ./ (1 .- g)",
+      "inputs": [
+        "a",
+        "g"
+      ],
+      "outputs": [
+        "h"
+      ],
+      "operation": "./ divides corresponding entries and .- subtracts them. Each row uses observed a and fitted g to calculate H: 1/g for a=1 and −1/(1−g) for a=0. These are signed inverse-probability weights.",
+      "formulaTex": "H_{A,i}=\\frac{A_i}{\\widehat g_i}-\\frac{1-A_i}{1-\\widehat g_i}",
+      "dimensions": {
+        "a": [
+          "n"
+        ],
+        "g": [
+          "n"
+        ],
+        "h": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 24,
+      "code": "h0 = -1.0 ./ (1 .- g)",
+      "inputs": [
+        "g"
+      ],
+      "outputs": [
+        "h0"
+      ],
+      "operation": "Broadcast division of −1.0 by 1−g to obtain n negative update weights for prediction input A=0. Keep the initial fitted g fixed.",
+      "formulaTex": "H_{0,i}=-\\frac1{1-\\widehat g_i}",
+      "dimensions": {
+        "g": [
+          "n"
+        ],
+        "h0": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 25,
+      "code": "h1 = 1.0 ./ g",
+      "inputs": [
+        "g"
+      ],
+      "outputs": [
+        "h1"
+      ],
+      "operation": "Broadcast division of 1.0 by g to obtain n positive update weights for prediction input A=1. Use the same initial g and baseline records as for h0.",
+      "formulaTex": "H_{1,i}=\\frac1{\\widehat g_i}",
+      "dimensions": {
+        "g": [
+          "n"
+        ],
+        "h1": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 27,
+      "code": "epsilon = parse(Float64, get(ENV, \"TMLE_EPSILON\", \"0\"))",
+      "inputs": [],
+      "outputs": [
+        "epsilon"
+      ],
+      "operation": "get reads TMLE_EPSILON from ENV, using the string \"0\" when it is absent. parse converts this string to one Float64 scalar shared by all patients and both prediction inputs. The default zero is a trial value.",
+      "formulaTex": "\\epsilon\\in\\mathbb R\\quad(\\text{default }0)",
+      "dimensions": {
+        "epsilon": []
+      }
+    },
+    {
+      "line": 28,
+      "code": "isfinite(epsilon) || throw(ArgumentError(\"TMLE_EPSILON must be finite\"))",
+      "inputs": [
+        "epsilon"
+      ],
+      "outputs": [],
+      "operation": "isfinite checks that epsilon is finite. || evaluates its right side only if the left side is false. NaN or infinity triggers throw and stops execution before an invalid update.",
+      "formulaTex": "|\\epsilon|<\\infty",
+      "dimensions": {
+        "epsilon": []
+      }
+    },
+    {
+      "line": 30,
+      "code": "shift = epsilon .* h",
+      "inputs": [
+        "epsilon",
+        "h"
+      ],
+      "outputs": [
+        "shift"
+      ],
+      "operation": "Broadcast multiplication of the same scalar epsilon by each entry of h, giving an n-element vector shift of log-odds increments. Each increment depends on that patient’s update weight.",
+      "formulaTex": "b_{A,i}=\\epsilon H_{A,i}",
+      "dimensions": {
+        "epsilon": [],
+        "h": [
+          "n"
+        ],
+        "shift": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 31,
+      "code": "shift0 = epsilon .* h0",
+      "inputs": [
+        "epsilon",
+        "h0"
+      ],
+      "outputs": [
+        "shift0"
+      ],
+      "operation": "Broadcast multiplication of the same scalar epsilon by each entry of h0, giving an n-element vector shift0 of log-odds increments. Each increment depends on that patient’s update weight.",
+      "formulaTex": "b_{0,i}=\\epsilon H_{0,i}",
+      "dimensions": {
+        "epsilon": [],
+        "h0": [
+          "n"
+        ],
+        "shift0": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 32,
+      "code": "shift1 = epsilon .* h1",
+      "inputs": [
+        "epsilon",
+        "h1"
+      ],
+      "outputs": [
+        "shift1"
+      ],
+      "operation": "Broadcast multiplication of the same scalar epsilon by each entry of h1, giving an n-element vector shift1 of log-odds increments. Each increment depends on that patient’s update weight.",
+      "formulaTex": "b_{1,i}=\\epsilon H_{1,i}",
+      "dimensions": {
+        "epsilon": [],
+        "h1": [
+          "n"
+        ],
+        "shift1": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 33,
+      "code": "eta = offset .+ shift",
+      "inputs": [
+        "offset",
+        "shift"
+      ],
+      "outputs": [
+        "eta"
+      ],
+      "operation": "Add each patient’s fixed offset to that row’s shift, giving n eta linear predictors. Addition occurs on the log-odds scale; epsilon is not added directly to probabilities.",
+      "formulaTex": "\\eta_{A,i}=o_{A,i}+b_{A,i}",
+      "dimensions": {
+        "offset": [
+          "n"
+        ],
+        "shift": [
+          "n"
+        ],
+        "eta": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 34,
+      "code": "eta0 = offset0 .+ shift0",
+      "inputs": [
+        "offset0",
+        "shift0"
+      ],
+      "outputs": [
+        "eta0"
+      ],
+      "operation": "Add each patient’s fixed offset0 to that row’s shift0, giving n eta0 linear predictors. Addition occurs on the log-odds scale; epsilon is not added directly to probabilities.",
+      "formulaTex": "\\eta_{0,i}=o_{0,i}+b_{0,i}",
+      "dimensions": {
+        "offset0": [
+          "n"
+        ],
+        "shift0": [
+          "n"
+        ],
+        "eta0": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 35,
+      "code": "eta1 = offset1 .+ shift1",
+      "inputs": [
+        "offset1",
+        "shift1"
+      ],
+      "outputs": [
+        "eta1"
+      ],
+      "operation": "Add each patient’s fixed offset1 to that row’s shift1, giving n eta1 linear predictors. Addition occurs on the log-odds scale; epsilon is not added directly to probabilities.",
+      "formulaTex": "\\eta_{1,i}=o_{1,i}+b_{1,i}",
+      "dimensions": {
+        "offset1": [
+          "n"
+        ],
+        "shift1": [
+          "n"
+        ],
+        "eta1": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 37,
+      "code": "qstar_a = expit.(eta)",
+      "inputs": [
+        "eta"
+      ],
+      "outputs": [
+        "qstar_a"
+      ],
+      "operation": "Broadcast expit(u)=1/(1+exp(−u)) over eta, returning n probabilities in qstar_a at the current trial epsilon. All updates share one epsilon and the same baseline records; a later assertion checks strict probability bounds.",
+      "formulaTex": "Q_{\\epsilon,A,i}=\\operatorname{expit}(\\eta_{A,i})",
+      "dimensions": {
+        "eta": [
+          "n"
+        ],
+        "qstar_a": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 38,
+      "code": "residual = y .- qstar_a",
+      "inputs": [
+        "y",
+        "qstar_a"
+      ],
+      "outputs": [
+        "residual"
+      ],
+      "operation": "Subtract updated risk qstar_a from observed death indicator y, element by element, to obtain the residual vector. y retains the original observations. Residuals can be positive or negative and are not probabilities.",
+      "formulaTex": "r_i=Y_i-Q_{\\epsilon,A,i}",
+      "dimensions": {
+        "y": [
+          "n"
+        ],
+        "qstar_a": [
+          "n"
+        ],
+        "residual": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 39,
+      "code": "score_contribution = h .* residual",
+      "inputs": [
+        "h",
+        "residual"
+      ],
+      "outputs": [
+        "score_contribution"
+      ],
+      "operation": "Multiply h for the same patient by its residual to obtain n score contributions. Here we have only multiplied row by row, not averaged across patients; the scores are not propensity scores g.",
+      "formulaTex": "c_i=H_{A,i}r_i",
+      "dimensions": {
+        "h": [
+          "n"
+        ],
+        "residual": [
+          "n"
+        ],
+        "score_contribution": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 41,
+      "code": "qstar0 = expit.(eta0)",
+      "inputs": [
+        "eta0"
+      ],
+      "outputs": [
+        "qstar0"
+      ],
+      "operation": "Broadcast expit(u)=1/(1+exp(−u)) over eta0, returning n probabilities in qstar0 at the current trial epsilon. All updates share one epsilon and the same baseline records; a later assertion checks strict probability bounds.",
+      "formulaTex": "Q_{\\epsilon,0,i}=\\operatorname{expit}(\\eta_{0,i})",
+      "dimensions": {
+        "eta0": [
+          "n"
+        ],
+        "qstar0": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 42,
+      "code": "qstar1 = expit.(eta1)",
+      "inputs": [
+        "eta1"
+      ],
+      "outputs": [
+        "qstar1"
+      ],
+      "operation": "Broadcast expit(u)=1/(1+exp(−u)) over eta1, returning n probabilities in qstar1 at the current trial epsilon. All updates share one epsilon and the same baseline records; a later assertion checks strict probability bounds.",
+      "formulaTex": "Q_{\\epsilon,1,i}=\\operatorname{expit}(\\eta_{1,i})",
+      "dimensions": {
+        "eta1": [
+          "n"
+        ],
+        "qstar1": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 44,
+      "code": "contrast = qstar1 .- qstar0",
+      "inputs": [
+        "qstar1",
+        "qstar0"
+      ],
+      "outputs": [
+        "contrast"
+      ],
+      "operation": "Subtract qstar0 from qstar1 in each patient row to obtain n contrasts between model predictions at the same W. These are not observed individual causal effects.",
+      "formulaTex": "\\Delta_{\\epsilon,i}=Q_{\\epsilon,1,i}-Q_{\\epsilon,0,i}",
+      "dimensions": {
+        "qstar1": [
+          "n"
+        ],
+        "qstar0": [
+          "n"
+        ],
+        "contrast": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 45,
+      "code": "psi = sum(contrast) / n",
+      "inputs": [
+        "contrast",
+        "n"
+      ],
+      "outputs": [
+        "psi"
+      ],
+      "operation": "sum adds all n contrast entries, then division by n produces one standardised risk-difference scalar psi. This averages all 5,735 patients, rather than only the displayed rows.",
+      "formulaTex": "\\widehat\\psi_\\epsilon=\\frac1n\\sum_{i=1}^n\\Delta_{\\epsilon,i}",
+      "dimensions": {
+        "contrast": [
+          "n"
+        ],
+        "n": [],
+        "psi": []
+      }
+    },
+    {
+      "line": 46,
+      "code": "centred = contrast .- psi",
+      "inputs": [
+        "contrast",
+        "psi"
+      ],
+      "outputs": [
+        "centred"
+      ],
+      "operation": "Broadcast subtraction of the same scalar psi from each contrast. The resulting n-element vector has empirical mean zero in exact arithmetic, with possible floating-point rounding error.",
+      "formulaTex": "\\Delta_{\\epsilon,i}-\\widehat\\psi_\\epsilon",
+      "dimensions": {
+        "contrast": [
+          "n"
+        ],
+        "psi": [],
+        "centred": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 47,
+      "code": "eif = score_contribution .+ centred",
+      "inputs": [
+        "score_contribution",
+        "centred"
+      ],
+      "outputs": [
+        "eif"
+      ],
+      "operation": "Add the score contribution and centred risk difference in the same row to obtain n empirical EIF values. No averaging across patients occurs here. Whether the empirical mean is close to 0 depends on epsilon; individual residuals need not be 0.",
+      "formulaTex": "\\widehat D_{\\epsilon,i}=c_i+(\\Delta_{\\epsilon,i}-\\widehat\\psi_\\epsilon)=H_{A,i}(Y_i-Q_{\\epsilon,A,i})+\\Delta_{\\epsilon,i}-\\widehat\\psi_\\epsilon",
+      "dimensions": {
+        "score_contribution": [
+          "n"
+        ],
+        "centred": [
+          "n"
+        ],
+        "eif": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 49,
+      "code": "score_mean = sum(score_contribution) / n",
+      "inputs": [
+        "score_contribution",
+        "n"
+      ],
+      "outputs": [
+        "score_mean"
+      ],
+      "operation": "sum adds all score contributions and divides by n to obtain one scalar. This is the derivative of the mean Bernoulli log likelihood with respect to epsilon. Root finding makes this mean close to 0, not every contribution.",
+      "formulaTex": "s_n(\\epsilon)=\\frac1n\\sum_{i=1}^nc_i",
+      "dimensions": {
+        "score_contribution": [
+          "n"
+        ],
+        "n": [],
+        "score_mean": []
+      }
+    },
+    {
+      "line": 50,
+      "code": "eif_mean = sum(eif) / n",
+      "inputs": [
+        "eif",
+        "n"
+      ],
+      "outputs": [
+        "eif_mean"
+      ],
+      "operation": "Sum all n fitted EIF values and divide by n. Since the centred contrast averages to zero, eif_mean agrees with score_mean within floating-point error. At the default trial epsilon=0, either mean can be non-zero.",
+      "formulaTex": "\\overline D_\\epsilon=\\frac1n\\sum_{i=1}^n\\widehat D_{\\epsilon,i}\\approx s_n(\\epsilon)",
+      "dimensions": {
+        "eif": [
+          "n"
+        ],
+        "n": [],
+        "eif_mean": []
+      }
+    },
+    {
+      "line": 52,
+      "code": "@assert all(p -> 0 < p < 1, [g; q0; q1; qa; qstar_a; qstar0; qstar1])",
+      "inputs": [
+        "g",
+        "q0",
+        "q1",
+        "qa",
+        "qstar_a",
+        "qstar0",
+        "qstar1"
+      ],
+      "outputs": [],
+      "operation": "Require every initial and updated probability to lie strictly between 0 and 1. Semicolons inside brackets concatenate the vectors for this check. A floating-point endpoint causes failure; the code does not truncate probabilities.",
+      "formulaTex": "0<\\widehat g_i,\\widehat Q_{0,i},\\widehat Q_{1,i},\\widehat Q_{A,i},Q_{\\epsilon,A,i},Q_{\\epsilon,0,i},Q_{\\epsilon,1,i}<1",
+      "dimensions": {
+        "g": [
+          "n"
+        ],
+        "q0": [
+          "n"
+        ],
+        "q1": [
+          "n"
+        ],
+        "qa": [
+          "n"
+        ],
+        "qstar_a": [
+          "n"
+        ],
+        "qstar0": [
+          "n"
+        ],
+        "qstar1": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 53,
+      "code": "@assert a == fit.a && y == fit.y",
+      "inputs": [
+        "a",
+        "y",
+        "fit"
+      ],
+      "outputs": [],
+      "operation": "== compares each whole array with its saved original, and && requires both comparisons to be true. The assertion stops execution if either observed treatment or outcome has changed.",
+      "formulaTex": "\\mathbf a=\\mathrm{fit.a},\\quad\\mathbf y=\\mathrm{fit.y}",
+      "dimensions": {
+        "a": [
+          "n"
+        ],
+        "y": [
+          "n"
+        ],
+        "fit": []
+      }
+    },
+    {
+      "line": 54,
+      "code": "println(\"n = \", n, \"; epsilon = \", epsilon, \"; Risk difference psi = \", psi)",
+      "inputs": [
+        "n",
+        "epsilon",
+        "psi"
+      ],
+      "outputs": [],
+      "operation": "println displays n, epsilon and psi in order, then starts a new line. Commas separate labels and values; they do not sum them or refit the model. psi is a probability difference; multiply by 100 to express percentage points.",
+      "formulaTex": "n,\\epsilon,\\widehat\\psi_\\epsilon",
+      "dimensions": {
+        "n": [],
+        "epsilon": [],
+        "psi": []
+      }
+    },
+    {
+      "line": 55,
+      "code": "println(\"score_mean = \", score_mean, \"; eif_mean = \", eif_mean)",
+      "inputs": [
+        "score_mean",
+        "eif_mean"
+      ],
+      "outputs": [],
+      "operation": "println displays the score mean and empirical EIF mean over all patients separately. Agreement does not establish finite-sample unbiasedness or clinical causal identification. Displaying results leaves all vectors unchanged.",
+      "formulaTex": "s_n(\\epsilon),\\overline D_\\epsilon",
+      "dimensions": {
+        "score_mean": [],
+        "eif_mean": []
+      }
+    }
+  ]
+}

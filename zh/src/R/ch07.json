@@ -1,0 +1,285 @@
+{
+  "version": 1,
+  "source": "zh/R/ch07.R",
+  "lineCount": 29,
+  "cohort": {
+    "n": 5735,
+    "events": 1918
+  },
+  "lines": [
+    {
+      "line": 4,
+      "code": "script_argument <- grep(\"^--file=\", commandArgs(FALSE), value = TRUE)",
+      "inputs": [],
+      "outputs": [
+        "script_argument"
+      ],
+      "operation": "commandArgs(FALSE)读取启动参数，grep按^匹配开头，value=TRUE保留字符串。输出零项或一项字符向量，定位Rscript当前文件。",
+      "formulaTex": null,
+      "dimensions": {
+        "script_argument": []
+      }
+    },
+    {
+      "line": 6,
+      "code": "source_files <- vapply(sys.frames(), function(frame) if (is.null(frame$ofile)) \"\" else frame$ofile, character(1))",
+      "inputs": [],
+      "outputs": [
+        "source_files"
+      ],
+      "operation": "sys.frames()读取调用环境；vapply逐个返回长度1字符。被source()调用时ofile记录当前脚本路径；没有路径的环境返回空串。",
+      "formulaTex": null,
+      "dimensions": {
+        "source_files": []
+      }
+    },
+    {
+      "line": 8,
+      "code": "script_path <- if (any(nzchar(source_files))) tail(source_files[nzchar(source_files)], 1) else if (length(script_argument)) sub(\"^--file=\", \"\", script_argument[1]) else file.path(\"zh\", \"R\", \"ch07.R\")",
+      "inputs": [
+        "source_files",
+        "script_argument"
+      ],
+      "outputs": [
+        "script_path"
+      ],
+      "operation": "if选择来源：source()时取最后一个非空ofile，否则去掉--file=前缀。在项目根R控制台直接运行时，默认使用本讲脚本位置；输出一个路径字符串，[]索引从1开始。",
+      "formulaTex": null,
+      "dimensions": {
+        "source_files": [],
+        "script_argument": [],
+        "script_path": []
+      }
+    },
+    {
+      "line": 10,
+      "code": "stopifnot(length(script_path) == 1L, !is.na(script_path))",
+      "inputs": [
+        "script_path"
+      ],
+      "outputs": [],
+      "operation": "length检查路径只有一项；1L是整数1，!is.na排除缺失。stopifnot要求所有条件为TRUE，否则停止。",
+      "formulaTex": null,
+      "dimensions": {
+        "script_path": []
+      }
+    },
+    {
+      "line": 12,
+      "code": "project_root <- normalizePath(file.path(dirname(script_path), \"..\", \"..\"), mustWork = TRUE)",
+      "inputs": [
+        "script_path"
+      ],
+      "outputs": [
+        "project_root"
+      ],
+      "operation": "dirname取脚本目录；file.path向上两层拼接项目根，normalizePath要求目录存在。路径不依赖当前工作目录。",
+      "formulaTex": null,
+      "dimensions": {
+        "script_path": [],
+        "project_root": []
+      }
+    },
+    {
+      "line": 14,
+      "code": "source(file.path(project_root, \"shared\", \"R\", \"RHCCase.R\"))",
+      "inputs": [
+        "project_root"
+      ],
+      "outputs": [],
+      "operation": "source读取并执行共享R定义，提供实际CSV读取、纯数学函数与手动拟合器。仅使用base R，无需安装TMLE软件包。",
+      "formulaTex": null,
+      "dimensions": {
+        "project_root": []
+      }
+    },
+    {
+      "line": 16,
+      "code": "data <- rhc_data()",
+      "inputs": [],
+      "outputs": [
+        "data"
+      ],
+      "operation": "从同一官方CSV计算各观测组合的概率及经验模型，输出list；后续所有数值由输入记录决定。",
+      "formulaTex": null,
+      "dimensions": {
+        "data": []
+      }
+    },
+    {
+      "line": 18,
+      "code": "initial_values <- eif_values(data$initial_fit, data$cells)",
+      "inputs": [
+        "data"
+      ],
+      "outputs": [
+        "initial_values"
+      ],
+      "operation": "初始拟合Q/g在8种观测组合上的EIF值，输出8项向量。",
+      "formulaTex": null,
+      "dimensions": {
+        "data": [],
+        "initial_values": [
+          8
+        ]
+      }
+    },
+    {
+      "line": 20,
+      "code": "initial_moments <- if_variance(data, initial_values)",
+      "inputs": [
+        "data",
+        "initial_values"
+      ],
+      "outputs": [
+        "initial_moments"
+      ],
+      "operation": "按当前格概率计算平均、二阶矩、中心方差及SE，返回list。",
+      "formulaTex": "\\widehat{\\operatorname{var}}(D)=\\sum_jp_j(D_j-\\overline D)^2,\\quad\\widehat{SE}=\\sqrt{\\widehat{\\operatorname{var}}(D)/n}",
+      "dimensions": {
+        "data": [],
+        "initial_values": [
+          8
+        ],
+        "initial_moments": []
+      }
+    },
+    {
+      "line": 22,
+      "code": "saturated_values <- eif_values(data$empirical_model, data$cells)",
+      "inputs": [
+        "data"
+      ],
+      "outputs": [
+        "saturated_values"
+      ],
+      "operation": "在完整经验分布饱和模型上计算8项EIF，区别于初始仅按A的Q。",
+      "formulaTex": null,
+      "dimensions": {
+        "data": [],
+        "saturated_values": [
+          8
+        ]
+      }
+    },
+    {
+      "line": 24,
+      "code": "saturated_moments <- if_variance(data, saturated_values)",
+      "inputs": [
+        "data",
+        "saturated_values"
+      ],
+      "outputs": [
+        "saturated_moments"
+      ],
+      "operation": "同样概率加权得到第二套经验矩list。",
+      "formulaTex": null,
+      "dimensions": {
+        "data": [],
+        "saturated_values": [
+          8
+        ],
+        "saturated_moments": []
+      }
+    },
+    {
+      "line": 26,
+      "code": "print(list(initial = initial_moments, saturated = saturated_moments))",
+      "inputs": [
+        "initial_moments",
+        "saturated_moments"
+      ],
+      "outputs": [],
+      "operation": "按名称显示两套经验平均、二阶矩、方差、SE；不能当作已知P0效率界。",
+      "formulaTex": null,
+      "dimensions": {
+        "initial_moments": [],
+        "saturated_moments": []
+      }
+    },
+    {
+      "line": 28,
+      "code": "cat(\"initial SE in percentage points =\", 100 * initial_moments$se, \"; saturated =\", 100 * saturated_moments$se, \"\\n\")",
+      "inputs": [
+        "initial_moments",
+        "saturated_moments"
+      ],
+      "outputs": [],
+      "operation": "两个概率差SE分别乘100换成百分点；方差换成百分点平方时乘10000。",
+      "formulaTex": null,
+      "dimensions": {
+        "initial_moments": [],
+        "saturated_moments": []
+      }
+    }
+  ],
+  "objects": {
+    "project_root": {
+      "key": "project_root",
+      "label": "project_root",
+      "type": "character vector",
+      "dimensions": [],
+      "dimensionText": "路径或参数字符串"
+    },
+    "initial_values": {
+      "key": "initial_values",
+      "label": "initial_values",
+      "type": "numeric vector",
+      "dimensions": [
+        8
+      ],
+      "dimensionText": "长度8；按(x,a,y)格对齐"
+    },
+    "source_files": {
+      "key": "source_files",
+      "label": "source_files",
+      "type": "character vector",
+      "dimensions": [],
+      "dimensionText": "路径或参数字符串"
+    },
+    "script_argument": {
+      "key": "script_argument",
+      "label": "script_argument",
+      "type": "character vector",
+      "dimensions": [],
+      "dimensionText": "路径或参数字符串"
+    },
+    "data": {
+      "key": "data",
+      "label": "data",
+      "type": "list",
+      "dimensions": [],
+      "dimensionText": "命名容器；各成员按自身维度"
+    },
+    "script_path": {
+      "key": "script_path",
+      "label": "script_path",
+      "type": "character vector",
+      "dimensions": [],
+      "dimensionText": "路径或参数字符串"
+    },
+    "saturated_values": {
+      "key": "saturated_values",
+      "label": "saturated_values",
+      "type": "numeric vector",
+      "dimensions": [
+        8
+      ],
+      "dimensionText": "长度8；按(x,a,y)格对齐"
+    },
+    "initial_moments": {
+      "key": "initial_moments",
+      "label": "initial_moments",
+      "type": "list",
+      "dimensions": [],
+      "dimensionText": "命名容器；各成员按自身维度"
+    },
+    "saturated_moments": {
+      "key": "saturated_moments",
+      "label": "saturated_moments",
+      "type": "list",
+      "dimensions": [],
+      "dimensionText": "命名容器；各成员按自身维度"
+    }
+  }
+}

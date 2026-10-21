@@ -1,0 +1,6 @@
+Total patients N = 200
+Endpoint event risk = 0.58
+Y = 0，D = -0.58
+Y = 1，D = 0.42
+Empirical IF mean (before rounding) = 6.938893903907228e-17
+Empirical IF mean (at most six decimal places) = 0.0

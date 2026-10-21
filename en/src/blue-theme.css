@@ -1,0 +1,260 @@
+@charset "UTF-8";
+/* Load after style.css, object-visuals.css and tmle-trace.css on every current zh page.
+   Colour-only layer: object dimensions, row heights and mathematical layout stay with their owners. */
+:root {
+  color-scheme: light;
+  --theme-navy: #011451;
+  --theme-blue: #005398;
+  --theme-ink: #172b4d;
+  --theme-muted: #465b75;
+  --theme-white: #ffffff;
+  --theme-panel: #f2f7fc;
+  --theme-panel-strong: #e5eff9;
+  --theme-border: #b8cce0;
+  --theme-control-border: #6989a9;
+  --theme-rail-text: #ccddf2;
+  --theme-focus: #005398;
+  --theme-focus-on-navy: #8dd5ff;
+  --theme-error: #a12b24;
+  /* Compatibility aliases keep the original components on the same theme. */
+  --ink: var(--theme-ink);
+  --muted: var(--theme-muted);
+  --green: var(--theme-blue);
+  --bg: var(--theme-white);
+  --paper: var(--theme-white);
+  --line: var(--theme-border);
+  --gold: #87531d;
+  color: var(--theme-ink);
+  background: var(--theme-white);
+}
+
+body, main, .public-data-page, .sources {
+  color: var(--theme-ink);
+  background-color: var(--theme-white);
+}
+a { color: var(--theme-blue); }
+main a:hover, .public-data-page a:hover, .sources a:hover { color: var(--theme-navy); }
+h1, h2, h3 { color: var(--theme-navy); }
+::selection { color: var(--theme-navy); background: #cce4fa; }
+
+/* The course rail alone is dark; companion documents keep white reading surfaces. */
+.shell > aside {
+  color: var(--theme-white);
+  background: var(--theme-navy);
+  border-color: var(--theme-navy);
+}
+.shell > aside .brand,
+.shell > aside a,
+.shell > aside nav a { color: var(--theme-white); }
+.shell > aside .rail-note,
+.shell > aside .rail-bottom { color: var(--theme-rail-text); }
+.shell > aside nav a span { opacity: 1; }
+.shell > aside nav a:hover {
+  color: var(--theme-navy);
+  background: var(--theme-panel-strong);
+}
+.shell > aside nav a[aria-current="page"] {
+  color: var(--theme-navy);
+  background: var(--theme-panel-strong);
+  box-shadow: inset 3px 0 var(--theme-focus-on-navy);
+}
+.shell > aside .rail-bottom a:hover { text-decoration-thickness: 2px; }
+.skip { color: var(--theme-navy); background: var(--theme-white); }
+
+/* Reading, formula and code surfaces: no global MathML or KaTeX visibility changes. */
+blockquote, .lab, .step-visual, .case-workbench,
+.julia-dataflow, .julia-line-card, .public-data-notice, .public-bars {
+  color: var(--theme-ink);
+  background-color: var(--theme-panel);
+  border-color: var(--theme-border);
+}
+blockquote, .public-data-notice, .julia-line-card { border-left-color: var(--theme-blue); }
+.equation, details, .metric, .chart,
+.visual-cards > div, .replacement-stages > section, .rate-path,
+.function-journey, .reference-panels > section,
+.intro-question-grid > div, .potential-branches > section,
+.intro-bridge > section, .intro-risk-grid > section,
+.intro-functional-map > div, .intro-eif-uses > section,
+.intro-target, .public-cards section {
+  background-color: var(--theme-white);
+  border-color: var(--theme-border);
+}
+code, pre { color: var(--theme-ink); background-color: var(--theme-panel); }
+pre code { background-color: transparent; }
+th { color: var(--theme-ink); background-color: var(--theme-panel-strong); }
+td, th { border-color: var(--theme-border); }
+summary, output, .public-cards strong { color: var(--theme-blue); }
+.lab-intro, .step-visual .visual-lead, .step-visual .visual-kicker,
+.step-visual figcaption, .rate-path small,
+.journey-calculation small, .journey-output small, .map-rule > small,
+.ledger-scale, .intro-question-grid small, .intro-bridge small,
+.intro-question-grid span, .branch-tag, .intro-target > small,
+.estimator-analysis header small, .estimator-methods header small,
+.estimator-if-context small, .estimator-if-function small, .estimator-if-average small,
+.method-shared-inputs span, .method-guidance-hub > span, .method-branches,
+.method-route-heading small, .method-mini-flow li > span:not(.method-flow-arrow),
+.method-mini-flow small, .method-conditions {
+  color: var(--theme-muted);
+}
+.step-visual figcaption, .journey-output, .step-visual .ledger-total,
+.rate-answer, .method-if-guidance { border-color: var(--theme-border); }
+.step-visual .visual-result, .intro-target, .estimator-error-relation {
+  background-color: var(--theme-white);
+  border-left-color: var(--theme-blue);
+}
+.visual-result b, .observed-outcome, .intro-target > strong,
+.intro-error-flow b, .estimator-target-icon, .method-guidance-symbol,
+.flow-arrow, .bridge-arrow, .estimator-arrow, .estimator-merge b,
+.estimator-theory-link, .estimator-theory-link > span { color: var(--theme-blue); }
+.visual-chart text { fill: var(--theme-muted); }
+.potential-person, .lookup-summary > span, .normalisation-ledger,
+.intro-bridge .assumption-bridge, .intro-eif-card, .intro-error-baseline,
+.intro-error-flow, .estimator-target-band, .estimator-merge > span,
+.estimator-analysis, .method-shared-inputs > div, .method-guidance-hub {
+  background-color: var(--theme-panel-strong);
+  border-color: var(--theme-border);
+}
+.potential-branches .counterfactual-branch { background-color: var(--theme-panel); }
+.replacement-stages h4 > span, .estimator-arm-results span {
+  background-color: var(--theme-panel-strong);
+}
+.estimator-analysis header > span { background-color: var(--theme-blue); color: var(--theme-white); }
+.estimator-if-context > span, .estimator-function-symbol,
+.estimator-rule, .estimator-node, .estimator-methods,
+.method-route, .method-tmle, .method-mini-flow .method-output,
+.method-tmle .method-mini-flow .method-output {
+  background-color: var(--theme-white);
+  border-color: var(--theme-border);
+}
+.method-mini-flow li, .method-tmle .method-mini-flow li { background-color: var(--theme-panel); }
+.rate-track, .intro-risk-track, .public-bar-track { background-color: var(--theme-panel-strong); border-color: var(--theme-border); }
+.intro-risk-track i, .public-bar-track span { background-color: var(--theme-blue); }
+.probability-strip, .mixture-strip, .contribution-strip { border-color: var(--theme-border); }
+
+/* Controls are blue on white. Semantic vector cells and badges retain their identities. */
+.control select, .control input[type="number"], .public-controls select,
+.ov-toolbar select, .ov-scenario-control select,
+.trace-controls input, .trace-row-controls select {
+  color: var(--theme-ink);
+  background-color: var(--theme-white);
+  border-color: var(--theme-control-border);
+}
+input[type="range"], .ov-toolbar input { accent-color: var(--theme-blue); }
+.lab button, footer button, .next, .case-workbench button,
+.ov-toolbar button, .trace-controls button, .trace-step-list button,
+.trace-navigation button, .trace-row-controls button {
+  color: var(--theme-blue);
+  background-color: var(--theme-white);
+  border-color: var(--theme-control-border);
+}
+.lab button:hover, footer button:hover, .next:hover, .case-workbench button:hover,
+.ov-toolbar button:hover, .trace-controls button:hover, .trace-step-list button:hover,
+.trace-navigation button:hover, .trace-row-controls button:hover {
+  color: var(--theme-navy);
+  background-color: var(--theme-panel-strong);
+}
+.trace-step-list button[aria-current] {
+  color: var(--theme-white);
+  background-color: var(--theme-navy);
+  border-color: var(--theme-navy);
+}
+.lab .error, .case-workbench .case-error, .case-workbench [role="alert"] { color: var(--theme-error); }
+.rhc-full .full-status { color: #87531d; }
+
+/* Floating symbol explanations are part of the white reading layer. */
+.recall-trigger { color: var(--theme-blue); border-color: var(--theme-control-border); }
+.recall-trigger:hover, .recall-trigger[aria-expanded="true"] {
+  background-color: var(--theme-panel-strong);
+  border-color: var(--theme-blue);
+}
+.recall-popover {
+  color: var(--theme-ink);
+  background-color: var(--theme-white);
+  border-color: var(--theme-control-border);
+  box-shadow: 0 12px 36px #01145126;
+}
+.recall-header { background-color: var(--theme-white); }
+.recall-header strong { color: var(--theme-navy); }
+.recall-popover .recall-close { color: var(--theme-ink); background-color: var(--theme-panel-strong); }
+
+/* Neutral framing around objects changes; the established object palette does not. */
+.object-figure {
+  color: var(--theme-ink);
+  background-color: var(--theme-white);
+  border-color: var(--theme-border);
+}
+.object-figure figcaption { color: var(--theme-muted); border-color: var(--theme-border); }
+.ov-eyebrow, .ov-reading-mode, .ov-model small, .ov-code > span,
+.ov-algebra li > span, .ov-ellipsis, .ov-cell > small { color: var(--theme-muted); }
+.ov-toolbar, .ov-scenario-control, .ov-expression, .ov-explanation, .ov-grouping {
+  color: var(--theme-ink);
+  background-color: var(--theme-panel);
+  border-color: var(--theme-border);
+}
+.ov-model, .ov-concat, .ov-code { border-color: var(--theme-control-border); }
+.ov-model { background-color: var(--theme-white); }
+.ov-arrow { color: var(--theme-blue); }
+.ov-algebra li { border-color: var(--theme-border); }
+.ov-algebra code { color: var(--theme-ink); background-color: var(--theme-panel); }
+.ov-row-selected { outline-color: var(--theme-navy); }
+.ov-matrix-head { background-color: var(--ov-tint, var(--theme-panel-strong)); }
+.ov-matrix-row { border-color: var(--ov-line, var(--theme-border)); }
+
+/* Chapter 8: table framing stays blue; column semantics stay with the vector palette. */
+.trace-step-content, .trace-formula, .trace-object-chain, .trace-line-card {
+  color: var(--theme-ink);
+  background-color: var(--theme-panel);
+  border-color: var(--theme-border);
+}
+.trace-controls, .trace-table-scroll,
+.trace-patient-table th, .trace-patient-table td { border-color: var(--theme-border); }
+.trace-patient-table .trace-row-key,
+.trace-patient-table .trace-w-preview {
+  color: var(--theme-ink);
+  background-color: var(--theme-panel-strong);
+  border-color: var(--theme-control-border);
+}
+.trace-selected-row > th, .trace-selected-row > td {
+  box-shadow: inset 0 2px var(--theme-navy), inset 0 -2px var(--theme-navy);
+}
+.trace-patient-table .trace-new-column { border-top-color: var(--theme-blue); }
+.trace-new-label { color: var(--theme-blue); }
+
+/* Match or exceed the existing component focus selectors, without !important. */
+:is(a, button, select, input, summary, [tabindex]):focus-visible,
+.object-figure :focus-visible, .ov-scenario-control :focus-visible,
+.rhc-full :focus-visible {
+  outline-color: var(--theme-focus);
+}
+.shell > aside a:focus-visible { outline-color: var(--theme-focus-on-navy); }
+.shell > aside nav a:is(:hover, [aria-current="page"]):focus-visible {
+  outline-color: var(--theme-focus);
+}
+
+@media (max-width: 800px) {
+  .shell > aside { border-bottom-color: var(--theme-control-border); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html, .shell > aside nav, .trace-table-scroll { scroll-behavior: auto; }
+  a, button, select, input, summary, .recall-popover { transition: none; animation: none; }
+}
+
+@media print {
+  :root { --theme-white: #ffffff; --theme-panel: #ffffff; --theme-panel-strong: #ffffff; }
+  .shell > aside { color: #172b4d; background-color: #ffffff; border-color: #b8cce0; }
+  .shell > aside .brand, .shell > aside a, .shell > aside nav a,
+  .shell > aside .rail-note, .shell > aside .rail-bottom { color: #172b4d; }
+  .shell > aside nav a[aria-current="page"] { color: #172b4d; background-color: #ffffff; box-shadow: none; }
+  .trace-step-list button[aria-current] { color: #172b4d; background-color: #ffffff; border-color: #6989a9; }
+  .recall-popover { box-shadow: none; }
+}
+
+@media (forced-colors: active) {
+  .shell > aside { border-color: CanvasText; }
+  .shell > aside nav a[aria-current="page"] { outline: 1px solid Highlight; }
+}
+
+/* Keep the longer publication name within the course rail at all widths. */
+.shell > aside .brand{font-size:29px;line-height:1.2;overflow-wrap:normal}
+.shell > aside .brand span{font-size:14px;line-height:1.6;margin:.35rem 0 .8rem}

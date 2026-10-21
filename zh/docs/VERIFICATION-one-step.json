@@ -1,0 +1,33 @@
+{
+  "date": "2026-10-21",
+  "scope": "Chapter 0 six-step algorithm, step 2: initial plug-in, initial fitted EIF and one-step/AIPW equality, followed by TMLE targeting",
+  "source": "zh/src/tmle-overview.md",
+  "build": "sh scripts/node.sh scripts/build.js (exit 0)",
+  "tests": {
+    "files": [
+      "tests/zh/tmle-overview.test.js",
+      "tests/zh/dr-intro.test.js"
+    ],
+    "passed": 7,
+    "failed": 0,
+    "checks": "Independent direct patient sums, initial EIF mean/AIPW correction equality, likelihood derivative and variance benchmarks; rendered mathematics and authored order"
+  },
+  "browser": {
+    "suite": "tests/zh/tmle-overview-browser.cjs",
+    "engine": "Chrome via Playwright",
+    "widths": [
+      1360,
+      375
+    ],
+    "passed": true,
+    "checks": [
+      "Six steps, fixed patient rows and cumulative columns",
+      "MathML formulae and symbol recalls",
+      "Initial and updated predictions, equation root, estimate and SE",
+      "Reset and navigation",
+      "No raw symbols, page overflow or console errors"
+    ]
+  },
+  "evidence": "output/zh/verification/one-step",
+  "unchanged": "Shared data, numerical kernels, Julia/R source and later derivations. No full-suite rerun in this explanatory-text pass."
+}

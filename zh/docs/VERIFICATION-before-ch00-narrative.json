@@ -1,0 +1,140 @@
+{
+  "date": "2026-10-18",
+  "scope": "Chapter0 §5.4 fifth step: why TMLE updates Q when AIPW can already solve an empirical equation",
+  "entry": "http://127.0.0.1:4174/zh/?edition=why-target-q#chapter-0",
+  "previous_verification": "zh/docs/VERIFICATION-before-why-target-q.json",
+  "source": {
+    "cohort": "SUPPORT/RHC",
+    "records": 5735,
+    "events30d": 1918,
+    "treated24h": 2184,
+    "source_sha256": "9ef4ab578be4b40ad5d97d3a7e08ffdc1f9f76aeeefee51b4996e4221556f8e8",
+    "source_bytes": 2320412,
+    "whole_source_retained": true,
+    "outcome_evidence": "Original study explicitly confirms death date or survival180 for every patient; publisheddth30 exactly agrees with dates on all5735",
+    "permission": "Vanderbilt repository use permission with original citation and acknowledgement, notCCBY"
+  },
+  "completed": [
+    "Explain AIPW as a complete direct-correction route and TMLE as substitution through updated probabilities",
+    "Derive two arm-specific augmented summands, shared-epsilon logistic prediction update and updated-Q AIPW identity",
+    "Use real RHC six-row objects for both arms with a common uncropped axis and distinct contribution/prediction shapes",
+    "Reduce all5735 records to two arm means and their difference for both routes",
+    "Clarify that only the contrast of two weighted residual means is targeted, not each arm separately",
+    "Keep hypothetical true errors unknown and avoid inferring finite-sample dominance from contribution ranges or numerical closeness"
+  ],
+  "build": {
+    "command": "sh scripts/node.sh scripts/build.js",
+    "chapters": 9,
+    "exit_code": 0,
+    "log": "output/zh/verification/why-target-q/build.log"
+  },
+  "full_tests": {
+    "command": "JULIA_BIN=<installed Julia1.12.5> JULIA_DEPOT_PATH=/private/tmp/eif-tutorial-julia-depot sh scripts/node.sh --test tests/*.test.js tests/zh/*.test.js",
+    "passed": 210,
+    "failed": 0,
+    "skipped": 0,
+    "exit_code": 0,
+    "includes": "Actual displayed Julia and R programme execution",
+    "log": "output/zh/verification/why-target-q/full-tests.log",
+    "scope_note": "Full suite preceded final SVG-class/footer display repair; final10 focused tests and all three Chrome suites ran after the repair"
+  },
+  "final_focused_tests": {
+    "command": "sh scripts/node.sh --test tests/target-comparison.test.js tests/zh/target-comparison.test.js tests/eif-correction.test.js tests/zh/eif-correction.test.js",
+    "passed": 10,
+    "failed": 0,
+    "skipped": 0,
+    "exit_code": 0,
+    "log": "output/zh/verification/why-target-q/focused.log"
+  },
+  "browser": [
+    {
+      "command": "sh scripts/node.sh tests/zh/target-comparison-browser.cjs",
+      "browser": "Chrome",
+      "viewports": [
+        1360,
+        375
+      ],
+      "exit_code": 0,
+      "log": "output/zh/verification/why-target-q/target-comparison-browser.log"
+    },
+    {
+      "command": "sh scripts/node.sh tests/zh/eif-correction-browser.cjs",
+      "browser": "Chrome",
+      "viewports": [
+        1360,
+        375
+      ],
+      "exit_code": 0,
+      "log": "output/zh/verification/why-target-q/eif-correction-browser.log"
+    },
+    {
+      "command": "sh scripts/node.sh tests/zh/rhc-browser.cjs",
+      "browser": "Chrome",
+      "viewports": [
+        1360,
+        375
+      ],
+      "exit_code": 0,
+      "log": "output/zh/verification/why-target-q/rhc-browser.log"
+    }
+  ],
+  "issues_fixed": [
+    "Initial browser callback test selected an older preceding recall; corrected the selector to the nearest preceding recall and retained the expit-content assertion",
+    "Visual inspection found generic header svg CSS changed KaTeX widehat size; scoped axis and mark styles to owned SVG classes",
+    "Visual inspection found inherited footer wrapping clipped descriptions; applied nowrap and sufficient height, asserted all labels stay inside their footer"
+  ],
+  "independent_review": {
+    "record": "zh/reviews/ch00-why-target-q.md",
+    "scope": "Definitions, same-target interpretation, original-kernel numerical oracles, all5735x16 fields and static HTML; no lead-script/browser claims",
+    "open_blockers": []
+  },
+  "visual_inspection": [
+    "Lead viewed final desktop three-column RHC treated-arm comparison and AIPW reduction",
+    "Lead viewed mobile control-arm panel with native horizontal scrolling; plotted-point coordinate and keyboard assertions cover both arms"
+  ],
+  "numerical_oracle": {
+    "initial_arm_means": [
+      0.30176382259742274,
+      0.38826267849975415
+    ],
+    "aipw_arm_means": [
+      0.30412885976038406,
+      0.394096854969483
+    ],
+    "tmle_arm_means": [
+      0.3005830449692062,
+      0.39056276970451126
+    ],
+    "z1_row2": -0.1957527094804618,
+    "z1_row5": 1.8046933000675585,
+    "updated_arm_corrections": [
+      0.0035466933111384,
+      0.00354669331079811
+    ],
+    "targeted_residual_difference": "approximately -3.403e-13",
+    "targeted_epsilon": 0.003576966662876657,
+    "displayed_domain": [
+      -1,
+      2
+    ],
+    "domain_scope": "First six real rows, pooled across both arms; full cohort ranges separately reported"
+  },
+  "preservation": {
+    "date": "2026-10-18",
+    "compared_with": "Previous delivered correction-centres release",
+    "original_display_equations_retained_in_order": 69,
+    "new_display_equations": 3,
+    "chapters_1_to_8_byte_identical": true,
+    "all_pre_existing_shared_files_unchanged": 30,
+    "all_existing_zh_Julia_R_files_unchanged": 35,
+    "new_shared_module": "shared/js/target-comparison.js",
+    "source_csv_sha256": "9ef4ab578be4b40ad5d97d3a7e08ffdc1f9f76aeeefee51b4996e4221556f8e8"
+  },
+  "unverified_this_run": [
+    "Clinical causal identification, real-data iid/representativeness, actual finite-sample accuracy or confidence-interval coverage",
+    "Physical devices, other browser engines, complete spoken screen-reader flow and learning outcomes",
+    "Browser run of extracted archive and independent R all-row harness; full tests executed displayed R programmes"
+  ],
+  "open_implementation_issues": [],
+  "delivery": "releases/EIF_Tutorial_Complete.zip and .sha256, verified by package.py against every workspace member and original materials"
+}

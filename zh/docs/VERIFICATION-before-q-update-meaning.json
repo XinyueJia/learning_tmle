@@ -1,0 +1,81 @@
+{
+  "date": "2026-10-20",
+  "scope": "Chapter 0 six-step TMLE algorithm overview with the same real RHC patients and explicit EIF roles",
+  "entry": "http://127.0.0.1:4174/zh/?edition=tmle-overview#chapter-0",
+  "source": {
+    "cohort": "SUPPORT/RHC",
+    "records": 5735,
+    "events30d": 1918,
+    "treated24h": 2184,
+    "source_sha256": "9ef4ab578be4b40ad5d97d3a7e08ffdc1f9f76aeeefee51b4996e4221556f8e8",
+    "source_bytes": 2320412,
+    "whole_source_retained": true,
+    "outcome_evidence": "Original study explicitly confirms death date or survival180 for every patient; publisheddth30 exactly agrees with dates on all5735",
+    "permission": "Vanderbilt repository use permission with original citation and acknowledgement, notCCBY"
+  },
+  "previous_verification": "zh/docs/VERIFICATION-before-tmle-overview.json",
+  "changes": [
+    "Six editable step narratives: initial predictions, g/H, offset and epsilon score, two-arm targeting, standardisation, EIF/SE",
+    "One source-ordered six-patient table progressively reveals 15 data columns; full cohort used for calculations",
+    "Initial epsilon=0 versus fitted-root views, selectable patient update flow, next/previous/direct step navigation and reset",
+    "Qepsilon labels for initial trial; Qstar only for fitted targeting; final risk difference and SE use fitted state"
+  ],
+  "mathematics_review": "zh/reviews/ch00-tmle-overview.md",
+  "build": {
+    "command": "sh scripts/node.sh scripts/build.js",
+    "exit_code": 0,
+    "log": "output/zh/verification/tmle-overview/build.log"
+  },
+  "full_tests": {
+    "command": "JULIA_BIN=/Users/xinyuejia/.julia/juliaup/julia-1.12.5+0.aarch64.apple.darwin14/Julia-1.12.app/Contents/Resources/julia/bin/julia JULIA_DEPOT_PATH=/private/tmp/eif-tutorial-julia-depot sh scripts/node.sh --test tests/*.test.js tests/zh/*.test.js",
+    "passed": 227,
+    "failed": 0,
+    "skipped": 0,
+    "exit_code": 0,
+    "actual_Julia_and_R_execution": true,
+    "log": "output/zh/verification/tmle-overview/tests.log"
+  },
+  "browser": {
+    "browser": "Chrome",
+    "viewports": [
+      1360,
+      375
+    ],
+    "commands": [
+      "sh scripts/node.sh tests/zh/tmle-overview-browser.cjs",
+      "sh scripts/node.sh tests/zh/dr-intro-browser.cjs"
+    ],
+    "exit_codes": [
+      0,
+      0
+    ],
+    "scope": [
+      "Six steps, column counts and ordered rows, initial/fitted score and predictions, root/SE benchmarks, accessible formula recalls, keyboard horizontal scrolling, reset and chapter navigation",
+      "Existing three introductory figures, supplement/R workbook round trip and chapter 1 handoff",
+      "No page-wide overflow or console errors"
+    ],
+    "logs": [
+      "output/zh/verification/tmle-overview/browser.log",
+      "output/zh/verification/tmle-overview/intro-regression.log"
+    ]
+  },
+  "corrections_during_review": [
+    "Initial Qepsilon and final Qstar labels separated following independent review",
+    "DR explanation tied to EIF structure and consistency, rather than simply using two models",
+    "Initial browser run had a premature visibility assertion after hash navigation; test now waits for the chapter to become visible; final two-viewports pass"
+  ],
+  "visual_inspection": [
+    "output/zh/playwright/tmle-overview-step3-1360.png",
+    "output/zh/playwright/tmle-overview-step6-375.png"
+  ],
+  "not_rerun": [
+    "Every historical browser suite for chapters 1–8; full numerical and cross-language assertions ran, and chapter-1 navigation was checked"
+  ],
+  "not_verified": [
+    "Learning outcomes with actual novice readers",
+    "Physical mobile devices, other browser engines, complete spoken screen-reader review",
+    "Causal identification, actual study representativeness/iid assumptions, finite-sample accuracy or confidence-interval coverage",
+    "Browser start from extracted release archive"
+  ],
+  "packaging_command": "python3 scripts/package.py; CRC/SHA256 and every archived workspace member verified"
+}

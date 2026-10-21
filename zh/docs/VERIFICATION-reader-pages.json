@@ -1,0 +1,35 @@
+{
+  "date": "2026-10-21",
+  "scope": "Reader references and author-record visibility; bilingual editions",
+  "build": "Both editions succeeded",
+  "tests": {
+    "command": "sh scripts/node.sh --test tests/reader-pages.test.js tests/hierarchy.test.js",
+    "passed": 8,
+    "failed": 0
+  },
+  "browser": {
+    "engine": "Chrome",
+    "widths": [
+      1360,
+      790,
+      375
+    ],
+    "checks": [
+      "Bilingual references contain citations and data sources without author records",
+      "Legacy Chinese audit bookmark redirects to sources",
+      "Patient summary layout, groups, download integrity and keyboard scrolling",
+      "No document overflow, page errors or console errors"
+    ],
+    "screenshot_inspected": "output/en/verification/reader-pages/zh-790.png"
+  },
+  "not_rerun": [
+    "Full numerical suite",
+    "Julia and R programmes"
+  ],
+  "unchanged": [
+    "Shared maths",
+    "Original observations",
+    "Julia/R calculations"
+  ],
+  "logs": "output/en/verification/reader-pages/"
+}

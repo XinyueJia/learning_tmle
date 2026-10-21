@@ -1,0 +1,150 @@
+{
+  "date": "2026-10-16",
+  "scope": "Real RHC object expressions inside mathematics and Julia, complete Chapter 0 and 1 samples; chapters 2–8 retained",
+  "entry": "http://127.0.0.1:4174/zh/?edition=object-grammar#chapter-0",
+  "previous_verification": "zh/docs/VERIFICATION-before-object-grammar.json",
+  "source": {
+    "cohort": "SUPPORT/RHC",
+    "records": 5735,
+    "events30d": 1918,
+    "treated24h": 2184,
+    "source_sha256": "9ef4ab578be4b40ad5d97d3a7e08ffdc1f9f76aeeefee51b4996e4221556f8e8",
+    "source_bytes": 2320412,
+    "whole_source_retained": true,
+    "outcome_evidence": "Original study explicitly confirms death date or survival180 for every patient; publisheddth30 exactly agrees with dates on all5735",
+    "permission": "Vanderbilt repository use permission with original citation and acknowledgement, notCCBY"
+  },
+  "completed": [
+    "Chapter 0: 5 real object stages incl initial g/Q and AIPW/TMLE correction positions",
+    "Chapter 1: 13 object stages, all 18 fixed figures retained, full algebra/cancellation and probability controls",
+    "17 executable Julia lines linked to typed inputs/outputs/formulae; exact-source map prevents drift",
+    "Two Julia object workbooks match displayed snippets and run assertions",
+    "Independent Chapter 0 gate before Chapter 1, source maths/pedagogy review, desktop/mobile integration"
+  ],
+  "build": {
+    "command": "sh scripts/node.sh scripts/build.js",
+    "chapters": 9,
+    "exit_code": 0
+  },
+  "javascript": {
+    "command": "JULIA_BIN=<installed Julia 1.12.5 binary> JULIA_DEPOT_PATH=/private/tmp/eif-tutorial-julia-depot sh scripts/node.sh --test tests/*.test.js tests/zh/*.test.js",
+    "passed": 124,
+    "failed": 0,
+    "skipped": 0,
+    "exit_code": 0,
+    "includes": "7 new pure-object, 7 source-map, 7 mapped-renderer and 7 object-renderer/workbook assertions; current earlier tests"
+  },
+  "julia": {
+    "command": "julia --startup-file=no --history-file=no tests/julia/rhc-tests.jl",
+    "version": "1.12.5",
+    "passed": 127,
+    "failed": 0,
+    "exit_code": 0,
+    "new_workbooks": [
+      "zh/julia/object_ch00.jl",
+      "zh/julia/object_ch01.jl"
+    ],
+    "new_workbook_exit_codes": [
+      0,
+      0
+    ],
+    "independently_executed_by_reviewer": true,
+    "notes": "Used installed binary directly with temporary depot; Juliaup launcher sandbox lock issue avoided, no global Julia install changed"
+  },
+  "cross_language": {
+    "command": "JULIA_BIN=<installed binary> sh scripts/node.sh tests/rhc-cross-language.cjs",
+    "summaries": 23,
+    "observed_cells": 8,
+    "coefficients": 35,
+    "feature_names": 17,
+    "exit_code": 0
+  },
+  "browser": {
+    "runner": "tests/zh/object-browser.cjs and tests/zh/rhc-browser.cjs",
+    "engine": "real installed Chrome via Playwright",
+    "widths": [
+      1360,
+      375
+    ],
+    "exit_code": 0,
+    "checks": [
+      "same original patient row identities and qa source colours",
+      "patient cells fixed equal 36px height; support and coefficient keys separate",
+      "n×17 plus A gives n×18, coefficients18×1, vectors n×1, scalars1",
+      "full-cohort means unchanged by six-row pagination",
+      "math/Julia mode, same-W all1/all0/actualA predictions, actualA untouched",
+      "keyboard Enter/Arrow/Home/End; selectable rows; per-chapter reset and controls synchronisation",
+      "t0 undefined quotient, t1 endpoint, z0/z1, old and new centring separate",
+      "17 original Julia operations and typed cards, formulae, answers and recalls",
+      "all9chapters existing interactions/manual and automatic TMLE reset",
+      "no external requests, duplicate IDs, console errors, figure or document overflow",
+      "raw source bytes retained"
+    ]
+  },
+  "independent_review": [
+    "zh/reviews/object-visuals-ch00.md",
+    "zh/reviews/object-visuals-ch01.md"
+  ],
+  "screenshots_inspected": [
+    "output/zh/playwright/object-ch00-predict-375.png",
+    "output/zh/playwright/object-ch00-select-1360.png",
+    "output/zh/playwright/object-ch01-distribution-1360.png",
+    "output/zh/playwright/object-ch01-reference-distribution-375.png"
+  ],
+  "protected_unchanged_files": {
+    "zh/src/chapters/ch05.md": "5e56ff564c3e604ad803d8f928fe76c141ef744855fff72dfaec7c967215474b",
+    "zh/src/chapters/ch04.md": "49111d4435a2e2b80572170dc08564b492df70a430e35acad0503320d113b0fd",
+    "zh/src/chapters/ch03.md": "9e57bea6e4b9c7a4e8d2d015c9b6c11d38cafed50f6d88354cdd56f5c28bf9fd",
+    "zh/src/chapters/ch07.md": "09eacc6855b710cc3b5b36e2a92b5bd749585994040fd6c79631d9b42eeb3c5b",
+    "zh/src/chapters/ch06.md": "7859032eb24d48b2218718d2580bc1615678402281deea146234fc7793ed18e1",
+    "zh/src/chapters/ch02.md": "83dae09c7cb640c46c4fb01de1f07544b11e9a688a538b2a18ad3839429540bb",
+    "zh/src/chapters/ch08.md": "9112c54bd9dc3c2a2c246ef8ec3592c2dfd2829f5d71fe058c992024bc0eb1a4",
+    "shared/js/rhc.js": "ef1cdeeb37aeed14fb240a7b742b0bb4d800bd0d2c801d0f7eddf04795b8612b",
+    "shared/js/math.js": "f5112eb05b733a6a9e6a19528f91da9c3df140102a0168f6fb70d9afd8cff3a3",
+    "shared/js/case-study.js": "1e1965804318f9bc4721d6167b0d98bb56e3b5c9859315a1a44a4a2d4754ff6b",
+    "shared/julia/RHCCase.jl": "3ddd436f06aa4ee53d5ac9155b5070e2cdae37bad4d83d5fc3dfbe27fcfa1cbd",
+    "shared/data/public/rhc/source.csv": "9ef4ab578be4b40ad5d97d3a7e08ffdc1f9f76aeeefee51b4996e4221556f8e8",
+    "zh/julia/rhc_lessons/ch04.jl": "b4245d18b88316391a6de80367b45aa1a57530c69abc35615e2e4c811b3a1929",
+    "zh/julia/rhc_lessons/ch01.jl": "40dd62fcf168d57cacbfa5e29cb3b0035efe70348c44b99b9bc7b4c8df017c18",
+    "zh/julia/rhc_lessons/ch05.jl": "db8fb1c1995089c499fd1e6d534902a47766d77fea0e01b6604ad6ccc894b584",
+    "zh/julia/rhc_lessons/ch08.jl": "ade11829156de18c6ac126e1f46fd2c7c9413935817f33ccd52eb790bfa44562",
+    "zh/julia/rhc_lessons/ch02.jl": "b351adee147534e69f8883d8f3015b7302a2637a3ba25f6b2b38873e9bf02dcd",
+    "zh/julia/rhc_lessons/ch06.jl": "94ab76282c34616579abc36d95b380ce23a3ebf775f929cdbce445e875f4cd18",
+    "zh/julia/rhc_lessons/ch07.jl": "be141b918ee9c2b4b0a29302cd097ba99f1440c9c9c80a9fb0322201c5a605df",
+    "zh/julia/rhc_lessons/ch03.jl": "b5c467119109a3b6ab00ae79a65834b2b39de9ca5e6b92cf6837574391be528b"
+  },
+  "verified_source_sha256": {
+    "zh/src/chapters/ch00.md": "0728209b3a8e48aa64f8341bf1167682ba78a7d72f6312ccc8ca1bef31c79b71",
+    "zh/src/chapters/ch01.md": "03e20e6a6fe15a15980d02343cab650277f52014aeef67e9918fdae81b32c7ea",
+    "shared/js/object-data.js": "48ea38a49844ba1110dc04f07ed51a49d1c4198c1ffc72491873655601cb1432",
+    "zh/src/object-grammar.js": "1036d62ada548b140d4676aebbe9816d565d6013a5a64060a6ae4159f8fea51a",
+    "zh/src/object-visuals.js": "8a967ed9f9dcdfdb2fafaf943e6ee01b3650d15489fb3d8044aefa49203eb34d",
+    "zh/src/object-visuals.css": "f6c64ae19ba2d52279908856f2887ff6bc8340dcb441234aba5301ceb2acfb59",
+    "zh/src/julia/object-map.json": "020262a165fa58dea5728c9773a7df41ca79c09a611c928f76961c7e9a89ea36",
+    "zh/renderers/rhc-code.js": "565186a506b2ddb8c3710422201de6ec19c81e13d6d0b2fe1d24611458b4e152",
+    "zh/renderers/chapter1-visuals.js": "71d7ae0264ddc89e118516f56c1eccde8cdcece1f2df0d4d78627997e98f3855",
+    "zh/renderers/course.js": "c6fc6a78b41d02ccde297e0ae35d7c89aaf37dfd53f9914c2b8cf00d6e804ca7",
+    "zh/src/app.js": "ba5c982a46b356481de0754b90d90a78a8b266bae0547cbfdc8aac0db74939c7",
+    "zh/julia/object_ch00.jl": "e589ea770f280b027cc19084c22dd2f396b829e94ea36650eadd9aed31e950ba",
+    "zh/julia/object_ch01.jl": "3ebaf6959c0e6e5c0607d4c637791e8ceab2b7efeb4509ac5fbaaa0d05c5a964",
+    "tests/object-data.test.js": "5d1fe57261f7c7421f2888e4b97fefe3f173c34cac3a771975b4c8576b30facf",
+    "tests/zh/object-grammar.test.js": "6570c44fe07cdef54ddf1beeaf601bedc8f1ef0bcb672008dfe45b99e4f66e0d",
+    "tests/zh/julia-object-map.test.js": "86bda9ea097a3f39137833217158fd6eaa1c242c6df915ba1013d3e144f5f4ea",
+    "tests/zh/julia-object-renderer.test.js": "7a8e0b65fd3e8ebed1d6120c0f723124bdab8a5ef57460b3b81809a5dd6936a6",
+    "tests/zh/object-browser.cjs": "a2b84c91fb514b9f0e5a2328afa94c44aac6467aed52f0c127fc26be4022942f"
+  },
+  "not_part_of_this_visual_migration": [
+    "Chapter 2–8 object-grammar redesign; existing chapters remain runnable"
+  ],
+  "unverified": [
+    "Sufficient clinical causal exchangeability or selection identification",
+    "Acute pre-treatment severity reconstruction",
+    "Nuisance rates/cross-fitting/inference coverage or multicentre dependence",
+    "Physical touch devices, other browser engines, full spoken screen-reader flow",
+    "Beginner learning outcomes",
+    "Fresh browser regression of separately extracted release"
+  ],
+  "open_implementation_issues": [],
+  "handoff": "zh/docs/PROGRESS.md; zh/docs/data/OBJECT_DATA_HANDOFF.md; zh/docs/data/JULIA_OBJECT_MAP.md",
+  "delivery": "releases/EIF_Tutorial_Complete.zip and .sha256; original materials, CRC/SHA256 and member bytes checked by package.py"
+}

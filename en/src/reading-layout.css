@@ -1,0 +1,6 @@
+/* Long source identifiers remain copyable without pushing companion pages sideways. */
+.sources,.public-data-page{overflow-wrap:anywhere}
+.sources :not(pre)>code,.public-data-page :not(pre)>code{white-space:normal;overflow-wrap:anywhere;word-break:break-word}
+.sources pre,.public-data-page pre{max-width:100%;overflow-x:auto;white-space:pre}
+.sources pre code,.public-data-page pre code{white-space:pre;overflow-wrap:normal;word-break:normal}
+.sources .table-wrap,.public-data-page .table-wrap{max-width:100%;overflow-x:auto}

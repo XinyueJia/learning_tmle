@@ -1,0 +1,177 @@
+{
+  "date": "2026-10-17",
+  "scope": "Blue-white theme on five published pages; non-wrapping object/trace operations with aligned rows/operators and local sliders; language-neutral mathematical object mode",
+  "entry": "http://127.0.0.1:4174/zh/?edition=blue-reading#chapter-1",
+  "previous_verification": "zh/docs/VERIFICATION-before-blue-reading.json",
+  "source": {
+    "cohort": "SUPPORT/RHC",
+    "records": 5735,
+    "events30d": 1918,
+    "treated24h": 2184,
+    "source_sha256": "9ef4ab578be4b40ad5d97d3a7e08ffdc1f9f76aeeefee51b4996e4221556f8e8",
+    "source_bytes": 2320412,
+    "whole_source_retained": true,
+    "outcome_evidence": "Original study explicitly confirms death date or survival180 for every patient; publisheddth30 exactly agrees with dates on all5735",
+    "permission": "Vanderbilt repository use permission with original citation and acknowledgement, notCCBY"
+  },
+  "completed": [
+    "Blue-white navy/white/pale-blue theme with preserved labelled object identities",
+    "Local focusable no-wrap scroll regions, visible range controls, 18px words/30px operators/34px arrows",
+    "Measured patient/support row and operator-body alignment across both modes, including expanded fit/g",
+    "No Julia implementation DOM or concrete call syntax in mathematical object figures; executable Julia mode preserved",
+    "Five published page theme integration and long-hash/link wrapping repairs without clipping",
+    "Original 43 chapter/numerical/Julia/raw-data files preserved"
+  ],
+  "build": {
+    "command": "sh scripts/node.sh scripts/build.js",
+    "chapters": 9,
+    "exit_code": 0
+  },
+  "javascript": {
+    "command": "JULIA_BIN=<installed Julia 1.12.5 binary> JULIA_DEPOT_PATH=/private/tmp/eif-tutorial-julia-depot sh scripts/node.sh --test tests/*.test.js tests/zh/*.test.js",
+    "passed": 154,
+    "failed": 0,
+    "skipped": 0,
+    "exit_code": 0,
+    "new_tests": "7 complete figure/mode parity/language independence and scroll markup checks + 3 theme integration/contrast/preferences assertions"
+  },
+  "julia": {
+    "executed_via_javascript_suite": true,
+    "version": "1.12.5",
+    "includes": [
+      "Chapter0/1 object workbooks and exact-source mapping",
+      "4 epsilon values with all5735×26 columns cross-checked",
+      "10 displayed code panels executed sequentially in fresh process"
+    ],
+    "exit_code": 0,
+    "not_rerun": "Earlier 127-item standalone Julia suite"
+  },
+  "design_contrast": {
+    "pairs": 13,
+    "exit_code": 0,
+    "normal_text_minimum_ratio": 4.5,
+    "controls_and_focus_minimum_ratio": 3,
+    "notes": "Static WCAG pair calculations; not a complete accessibility certification",
+    "reference": "https://www.gla.ac.uk/3t4/css/main.css"
+  },
+  "browser": {
+    "engine": "real installed Chrome via Playwright",
+    "widths": [
+      1360,
+      375
+    ],
+    "runners": [
+      "tests/zh/blue-reading-browser.cjs",
+      "tests/zh/object-browser.cjs",
+      "tests/zh/tmle-trace-browser.cjs",
+      "tests/zh/rhc-browser.cjs"
+    ],
+    "exit_code": 0,
+    "expressions_per_viewport_blue_suite": 46,
+    "checks": [
+      "all18stage math/Julia modes including expanded g models",
+      "patient/support row starts within0.75px, operator centres within1px",
+      "pure operators≥28px, operation words≥18px, no internal flex wrapping",
+      "local horizontal range Home/End and region ArrowRight reach content",
+      "mathematical figure DOM has no Julia implementation panels/names/notes; numbers/dimensions equal across modes",
+      "Chapter8 five-card update chain same top/height, formula-column-code linking preserved",
+      "5pages blue/white theme, companion long identifiers wrap and code/table scroll locally",
+      "9chapters maths/answers/recalls/experiments/reset; actual source bytes and manual/autoTMLE",
+      "no external requests, console errors or document overflow",
+      "reduced motion and light reading surface with dark system preference",
+      "Current/hover pale navigation uses dark-blue keyboard focus; navy navigation keeps sky focus"
+    ],
+    "repairs": [
+      "long source hashes on companion pages",
+      "old reset test now explicitly selects epsilon rather than all inputs after horizontal sliders added"
+    ]
+  },
+  "independent_review": [
+    "zh/reviews/blue-reading-layout.md"
+  ],
+  "screenshots_inspected": [
+    "output/zh/playwright/blue-ch0-select-1360.png",
+    "output/zh/playwright/blue-ch0-predict-1360.png",
+    "output/zh/playwright/blue-ch1-distribution-1360.png",
+    "output/zh/playwright/blue-ch1-replacement-375.png",
+    "output/zh/playwright/blue-ch8-path-375.png"
+  ],
+  "protected_unchanged_files": {
+    "zh/src/chapters/ch05.md": "5e56ff564c3e604ad803d8f928fe76c141ef744855fff72dfaec7c967215474b",
+    "zh/src/chapters/ch01.md": "03e20e6a6fe15a15980d02343cab650277f52014aeef67e9918fdae81b32c7ea",
+    "zh/src/chapters/ch00.md": "0728209b3a8e48aa64f8341bf1167682ba78a7d72f6312ccc8ca1bef31c79b71",
+    "zh/src/chapters/ch04.md": "49111d4435a2e2b80572170dc08564b492df70a430e35acad0503320d113b0fd",
+    "zh/src/chapters/ch03.md": "9e57bea6e4b9c7a4e8d2d015c9b6c11d38cafed50f6d88354cdd56f5c28bf9fd",
+    "zh/src/chapters/ch07.md": "09eacc6855b710cc3b5b36e2a92b5bd749585994040fd6c79631d9b42eeb3c5b",
+    "zh/src/chapters/ch06.md": "7859032eb24d48b2218718d2580bc1615678402281deea146234fc7793ed18e1",
+    "zh/src/chapters/ch02.md": "83dae09c7cb640c46c4fb01de1f07544b11e9a688a538b2a18ad3839429540bb",
+    "zh/src/chapters/ch08.md": "f288d0b7b17443d308295e3cd6f8001bcd062c8073e36ac62eb4b8c8e78ee1f0",
+    "shared/js/rhc-model.js": "b7c47cf1251b1bfc56364eb3c9efd1c876f59a9a549e18668a689e92ee0d7945",
+    "shared/js/rhc.js": "ef1cdeeb37aeed14fb240a7b742b0bb4d800bd0d2c801d0f7eddf04795b8612b",
+    "shared/js/public-rws.js": "616897de40251ea33cbbbba995e9a00c86efdc86963b9ff8d765b9b7f541aa46",
+    "shared/js/rhc-config.js": "46e2fa37a0e3c92e207cd0a8f30dc3fc34a42c7af989be0c3f390bf98f1de829",
+    "shared/js/case-study.js": "1e1965804318f9bc4721d6167b0d98bb56e3b5c9859315a1a44a4a2d4754ff6b",
+    "shared/js/object-data.js": "48ea38a49844ba1110dc04f07ed51a49d1c4198c1ffc72491873655601cb1432",
+    "shared/js/math.js": "f5112eb05b733a6a9e6a19528f91da9c3df140102a0168f6fb70d9afd8cff3a3",
+    "shared/js/tmle-trace.js": "3aea31703636a4a436a2e8fd2ce139adbca947a55516e43cc5ffd46a047acc8d",
+    "shared/julia/PublicRWS.jl": "0ffd9a43e767c32143519d94d54b3731749e3ddc73ee5ca0b61f039f865bad6d",
+    "shared/julia/RHCCase.jl": "3ddd436f06aa4ee53d5ac9155b5070e2cdae37bad4d83d5fc3dfbe27fcfa1cbd",
+    "shared/julia/EIFCase.jl": "4f0db611995958b29c5dbbbc788289aaebd05c93b5195e41641caf3d5d40da4c",
+    "zh/julia/public_data_audit.jl": "91720804619a39031e6545b1e4f9fe668314372717b81080e8a867b2a7e06cb2",
+    "zh/julia/object_ch01.jl": "3ebaf6959c0e6e5c0607d4c637791e8ceab2b7efeb4509ac5fbaaa0d05c5a964",
+    "zh/julia/object_ch00.jl": "e589ea770f280b027cc19084c22dd2f396b829e94ea36650eadd9aed31e950ba",
+    "zh/julia/run_case.jl": "08d30a3572e9668083465bf462a10fdc5b454e4966cf6b1a4475c6253cef17d3",
+    "zh/julia/tmle_trace.jl": "b08ffc5d76c63cf98e1cd86824cd03af121c4de2a1fc450ba953b80ab366d27c",
+    "zh/julia/rhc_case.jl": "aa6903a24283cdf4778c998fb0d687cc3ab8c677d6fb1420233716a67c2c1208",
+    "zh/julia/rhc_lessons/ch04.jl": "b4245d18b88316391a6de80367b45aa1a57530c69abc35615e2e4c811b3a1929",
+    "zh/julia/rhc_lessons/ch01.jl": "40dd62fcf168d57cacbfa5e29cb3b0035efe70348c44b99b9bc7b4c8df017c18",
+    "zh/julia/rhc_lessons/ch05.jl": "db8fb1c1995089c499fd1e6d534902a47766d77fea0e01b6604ad6ccc894b584",
+    "zh/julia/rhc_lessons/ch08.jl": "ade11829156de18c6ac126e1f46fd2c7c9413935817f33ccd52eb790bfa44562",
+    "zh/julia/rhc_lessons/ch02.jl": "b351adee147534e69f8883d8f3015b7302a2637a3ba25f6b2b38873e9bf02dcd",
+    "zh/julia/rhc_lessons/ch06.jl": "94ab76282c34616579abc36d95b380ce23a3ebf775f929cdbce445e875f4cd18",
+    "zh/julia/rhc_lessons/ch07.jl": "be141b918ee9c2b4b0a29302cd097ba99f1440c9c9c80a9fb0322201c5a605df",
+    "zh/julia/rhc_lessons/ch03.jl": "b5c467119109a3b6ab00ae79a65834b2b39de9ca5e6b92cf6837574391be528b",
+    "zh/julia/lessons/ch04.jl": "45a5f53ca420323bba11ae9857e674d25cac9c6cb2762db657deaf90736ccd06",
+    "zh/julia/lessons/ch01.jl": "b19ab8c6c61d17dfbdcf8aeefb12c4aafb222613236d296f1efaebd8592daf92",
+    "zh/julia/lessons/ch05.jl": "416436e8275d10fd8fb88ded2c6b71d7d0d1a7cfc210303ab12e66cea0e49371",
+    "zh/julia/lessons/ch08.jl": "6c8f9b2765e753ef1fb79d5938ac31f75f4b27f78ecbb65c95f60179451bd46a",
+    "zh/julia/lessons/ch02.jl": "329c50a910a92e4f05b3ebf97e080436f5a0038cfaf6331a31761d32aa5e992b",
+    "zh/julia/lessons/ch06.jl": "f8291b3b13f6f8155b926bb21ed591d623a12268a5998bfa43705cdcbbeda67f",
+    "zh/julia/lessons/ch07.jl": "60177345b68d86b3977542bf37d65f4aee94b488c9da1dbd099fd6f64acd4c10",
+    "zh/julia/lessons/ch03.jl": "026fcc094a80d96a7d1f4797765d421bde06619c82c274cbf7b970aded5d9222",
+    "shared/data/public/rhc/source.csv": "9ef4ab578be4b40ad5d97d3a7e08ffdc1f9f76aeeefee51b4996e4221556f8e8"
+  },
+  "verified_source_sha256": {
+    "zh/src/blue-theme.css": "f7c50d480f1f9e8801c8f6e5c02073513f80f7f5e09f29b770a7a97d9f7e7ef6",
+    "zh/src/reading-layout.css": "71fa9e89a1b8965900fa0c1254c15fbd63d6931bdb73f8601e4c6e274a795897",
+    "zh/src/diagram-layout.js": "ccba2f50c38b2d2b5bf627d87b916ba31e825638cbf35e1c3e2dbc11e0ce8ac8",
+    "zh/src/object-grammar.js": "61de1cdd9a8248a7f5dc11b430fab89e78de20bf7a71bab9dabbaa7ae15fae54",
+    "zh/src/object-visuals.css": "abfdef0d9b6b57a3e2848a12e8146a11bfe7ef34ac49c2ff688c75698e2695c3",
+    "zh/src/tmle-trace.css": "2d973586ae9d5953e81f0257129626dea7f809e7cffc129cd33c53c70d2c25cf",
+    "zh/src/rhc-full.js": "8422f791da55f8268dc425586b7fdbc625f1b7c62d2482deaf741e95d0cc2dcf",
+    "zh/src/app.js": "d93110ee2279fb3f6b657edd6b2c504d2ae54b61c37d1e737ec9f3cd534e30e8",
+    "zh/renderers/course.js": "2dbfaaedecf825641808547c0bf0aee4c58c54461a5184289d2c3c275cfae009",
+    "tests/zh/math-reading-mode.test.js": "3eded6dcc6f8fd2c779ae5e44f94fdc16af7fbc8b1d28212f899470d0158ed23",
+    "tests/zh/blue-design.test.js": "08cbed1a6db31def64dc236ba40ee0b078ad912f7c137aa1e40dd981f6bbe6fe",
+    "tests/zh/blue-reading-browser.cjs": "644eb7d6843447d11bd1a8c3769c217ceb7c8556f67c9fac8e5949ef5281c847",
+    "tests/zh/object-grammar.test.js": "f02503f75d0e7225a308f9e11d445c668e8f46ff38de5f106310236a10b921ec",
+    "tests/zh/rhc-browser.cjs": "0d7f01db7e2fd2ae259e7c99e3fcd4f586cf5ce9571f82cd0eeea2ecc4802e96"
+  },
+  "not_part_of_this_change": [
+    "Implementing an R version",
+    "New cumulative teaching visuals for Chapters2–7",
+    "Hiding standalone Julia teaching sections outside mathematical object figures"
+  ],
+  "unverified": [
+    "Sufficient clinical causal exchangeability or selection identification",
+    "Acute pre-treatment severity reconstruction",
+    "Nuisance rates/cross-fitting/inference coverage or multicentre dependence",
+    "Physical touch devices, other browser engines, full spoken screen-reader flow",
+    "Beginner learning outcomes",
+    "Fresh browser regression of separately extracted release",
+    "Actual print output and complete spoken screen-reader flow for new layout"
+  ],
+  "open_implementation_issues": [],
+  "handoff": "zh/docs/PROGRESS.md; zh/docs/DESIGN_SYSTEM.md; zh/docs/data/MATH_MODE_HANDOFF.md",
+  "delivery": "releases/EIF_Tutorial_Complete.zip and .sha256; original material, CRC/SHA and every member checked by package.py"
+}

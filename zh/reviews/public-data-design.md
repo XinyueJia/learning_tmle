@@ -1,0 +1,95 @@
+# Public observational data: independent design review
+
+Review date: 2026-10-16. Scope: candidate selection and design safeguards, against `COURSE_CONTRACT.md` and `RWS_CASE_PROTOCOL.md`. This review does not approve a pipeline that has not yet been inspected. No mathematical engine, chapter, protocol or source data was modified by this reviewer.
+
+## Judgment
+
+Ng et al. (2021) is the strongest candidate found for the requested genuine public oncology drug-comparison application. It supports a real observational application alongside the synthetic eight-cell derivation. It does **not** justify importing the synthetic case's known distribution, complete 12-month composite endpoint, sufficient binary confounder, or causal truth. The endpoint and eligibility discrepancies below require explicit treatment before integration.
+
+RHC is a strong public observational medical-intervention fallback if oncology drug data prove unsuitable. Rotterdam is public and oncology-related, but its treatment and follow-up documentation make it a weaker fit. None of these sources guarantees exchangeability or clinically adequate overlap.
+
+## Candidate 1: Ng et al., first-line EGFR-TKIs
+
+**Primary evidence.** The single-centre retrospective study reports provider-selected first-line afatinib, erlotinib or gefitinib in advanced NSCLC, and radiographic progression assessment using RECIST 1.1. The treatment groups differ in age, ECOG performance status, stage and mutation profile. Its article states data availability through S1 and a Creative Commons Attribution licence. It does not explicitly specify the PFS time origin, censoring rule, or whether death is included in the PFS event. These last three claims must not be supplied from familiarity with standard trial terminology. [Article and Methods](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0253335).
+
+**Direct file audit.** The anonymously accessible [S1 CSV](https://journals.plos.org/plosone/article/file?id=10.1371/journal.pone.0253335.s001&type=supplementary) was read independently in memory on the review date. Its SHA-256 is `5194dca457f8efac8cbd771f47dee06b3aabe3885923585cd8f0d452471fbd9d`. There are 107 rows and 34 columns: 47 afatinib, 33 erlotinib and 27 gefitinib records. Derived checks, not conclusions copied from the article:
+
+- One erlotinib record has `EGFR_S=Negative`; it is the only row with `filter_$=0`. The other 106 have `filter_$=1`. Therefore “all 107 are mutation-positive” is contradicted by the released file. A clinically specified mutation-positive cohort can exclude the negative record, with an explicit flow count. The undocumented flag alone is not a clinical eligibility rule.
+- `Survived` is the complement of `Death`; this redundancy does not independently validate death ascertainment.
+- Thirteen records have `PFS_month > Follow_up_month`; eleven differ by more than 0.11 month. These discrepancies prevent an unqualified assumption that both fields share the same time origin and measurement convention.
+- Twenty-seven records have `Death=1` and `Progression=0`. This is compatible with several competing field meanings; it does not establish whether `PFS_month` is time to progression, death, last assessment, treatment cessation, or some combination.
+- At least one living, non-progressed record has both reported times below 12 months. Its 12-month event status cannot be set to zero or discarded merely to obtain a complete binary table.
+
+The CSV is supplementary material linked by the article, with no separate restrictive notice found in the material inspected. Preserve the article attribution, dataset DOI/link, licence link, unmodified-source checksum and description of transformations. [PLOS reuse policy](https://journals.plos.org/plosone/s/licenses-and-copyright) and [CC BY 4.0 attribution conditions](https://creativecommons.org/licenses/by/4.0/).
+
+**Design requirements and limits.** These are reviewer judgments, rather than extra facts established by the source:
+
+1. A pairwise afatinib versus a named active comparator is the clearest intervention contrast. Pooling erlotinib and gefitinib is possible as an explicitly defined comparison with a first-generation treatment mixture; it must not be labelled a single drug B. The mixture and target population require specification.
+2. “First-line TKI” is supported. “Verified new users after a documented washout” is not. State the intended time zero as initiation only if this is justified for the released time variables; otherwise distinguish the desired protocol from the limitations of its retrospective reconstruction. Calendar dates and a washout history cannot be invented.
+3. Do not create `Y = 1{PFS_month <= 12}` without an event/censoring indicator. Do not set `Y = 1{Progression=1 and PFS_month<=12}` and call it progression-or-death. A publishable composite reconstruction needs an explicit dictionary connecting progression status/time, death status/time and progression surveillance. The current public documentation leaves this unresolved.
+4. A more conservative possible application is 12-month all-cause mortality using `Death` and `Follow_up_month`, with that endpoint named plainly. This still requires a stated interpretation of follow-up origin and censoring. `Death=0` before the horizon remains unknown. Changing the endpoint changes the clinical question; it is not a cosmetic relabelling of PFS.
+5. Keep age, ECOG, mutation, stage, sex and smoking available for design review and adjustment. A single binary `X`, such as `ECOG>=2`, can demonstrate a coarsened standardisation calculation; it cannot certify adequate confounding control. `RT`, later TKI switching, treatment response, disease control and subsequent cancer cannot automatically be treated as baseline covariates because their timing is not established.
+6. Report treatment counts within clinically relevant strata, propensity distributions, extreme fitted probabilities and weight behaviour. With approximately one hundred records, fine strata can be sparse. Positivity is a target-population assumption; seeing both treatments in two coarse X groups is insufficient. Restriction or trimming changes the target and needs its own label.
+7. Clinical severity, prescribing judgment, calendar era and access can remain unmeasured. No fitted model, EIF, AIPW or TMLE calculation recovers the unknown causal truth from the file. The published article's clinical conclusions and cross-study comparisons must not become the tutorial's asserted drug recommendation.
+
+**Decision:** suitable for a genuine public-data application with conspicuous endpoint, timing and confounding boundaries. Not yet approved as a complete-observation 12-month PFS causal analysis.
+
+## Candidate 2: right heart catheterisation (RHC)
+
+The original study is an observational cohort of 5,735 critically ill adults at five US teaching hospitals. The public repository defines `swang1` as RHC on the first day the patient qualified for SUPPORT. This is a procedure/monitoring intervention, rather than drug treatment or oncology. [Original study](https://pubmed.ncbi.nlm.nih.gov/8782638/) and [official RHC description](https://hbiostat.org/data/repo/rhc.html).
+
+The official dictionary includes baseline severity, physiology, diagnoses, comorbidities and `dth30`, as well as admission, last-contact and death dates. Its missingness summary reports no missing `dth30`. [Official dictionary](https://hbiostat.org/data/repo/crhc). Independent in-memory reading of the [official CSV](https://hbiostat.org/data/repo/rhc.csv) found 5,735 rows, 2,184 RHC and 3,551 non-RHC records, and 1,918 `dth30=Yes` records. These are descriptive audit counts. The repository explicitly grants data use with original-study citation and Vanderbilt acknowledgement. [Repository permission](https://hbiostat.org/data/).
+
+Reviewer requirements: audit date arithmetic and horizon coverage before asserting complete 30-day follow-up; missing death dates for survivors do not by themselves indicate missing outcomes. Baseline and treatment share a day, so verify the measurement order of proposed confounders, rather than assuming all “day 1” fields precede catheterisation. Model a day-one initiation strategy, with any later treatment changes interpreted accordingly. RHC absence is not an active comparator drug. A severity-score dichotomy can support a small arithmetic demonstration, with an explicit residual-confounding limitation. The full observational adjustment set and sensitivity to unmeasured indication should remain visible. The observed-data standardised contrast is estimable; the true causal effect is unknown.
+
+**Decision:** best non-drug fallback for the current binary-outcome course, conditional on follow-up and temporal audits. It requires a different clinical narrative and horizon.
+
+## Candidate 3: Rotterdam breast cancer records
+
+The `survival::rotterdam` documentation describes 2,982 breast-cancer records with hormonal-treatment and chemotherapy indicators, prognostic covariates, and relapse/death or last-follow-up times. It also explicitly discusses 43 deaths recorded after recurrence surveillance ended and explains why combining these into recurrence-free survival can require an unsupported assumption about unobserved recurrence. [Official dataset documentation](https://search.r-project.org/CRAN/refmans/survival/html/rotterdam.html).
+
+Reviewer judgment: this is a real oncology dataset, but an indicator of hormonal treatment does not identify named drug A versus named drug B or supply treatment initiation dates. Surgery-year information does not solve the potential mismatch between eligibility, exposure classification and follow-up origin. Neither relapse nor death indicators alone yield a complete 12-month binary endpoint. Do not remove early censored patients or count them as event-free. Do not treat the surgery-to-treatment interval as guaranteed event-free follow-up. Named-drug initial-strategy claims need information not established by the public dictionary. Before vendoring data, record package version and inspect the actual source-distribution licence and any dataset-specific notices; package availability alone is not an independently verified permission statement for every future redistribution.
+
+**Decision:** useful for demonstrating censoring and the limits of public oncology data; weaker than Ng for this requested active-drug application. Not a drop-in replacement for the course's complete binary endpoint.
+
+## Other sources deliberately not promoted
+
+Standard SEER is not an anonymous-download substitute: its access process requires a request and agreement. Its chemotherapy category is yes versus no/unknown, and NCI specifically warns about treatment misclassification and unmeasured reasons for treatment. [Access process](https://seer.cancer.gov/data/access.html) and [treatment limitations](https://seer.cancer.gov/data-software/documentation/seerstat/nov2023/treatment-limitations-nov2023.html). It should not be converted into drug versus no-drug causal evidence. Randomised trial datasets cannot satisfy a request for observational RWS merely by calling their analyses “real world”. Cross-sectional NHANES medication/exposure associations need a credible temporal design before any effectiveness claim.
+
+## Integration acceptance conditions
+
+Maintain a genuine distinction between the synthetic population used to verify formulas and the released cohort used to illustrate estimation. Source counts, fitted nuisance functions and empirical influence values are not the real population distribution or truth. Keep raw source fields and an auditable patient flow; document eligibility, treatment coding, horizon, missingness and exclusions before showing results. Display source provenance and limitations beside the application result, rather than only in a distant bibliography.
+
+Unknown horizon outcomes require either a visibly unresolved analysis or an explicitly extended observation model and censoring method. A complete-case risk contrast is not automatically the target-population contrast. If the binary-X calculation is retained, call it standardisation by the specified coarse baseline factor and state that its causal interpretation remains unsupported. Exact empirical eight-cell zeros must not be replaced silently to satisfy a strictly positive synthetic-model API.
+
+Final acceptance depends on inspection of the chosen pipeline, frozen source, output and user-facing wording. This document records candidate review and pending requirements, not completion of that later review.
+
+## Implemented companion: independent review, 2026-10-16
+
+**Accepted scope:** a genuine public-data loading, inspection and design exercise. The implemented companion is suitable for that limited purpose. It is not an accepted clinical PFS analysis, clinical treatment-effect estimate, or completed migration of the eight lessons to real patient data. The user's subsequent permission to change disease or endpoint broadens future source selection; it does not resolve this file's documentation gaps.
+
+### What was inspected and actually checked
+
+The reviewer inspected `source.csv`, its README and provenance, `shared/js/public-rws.js`, `shared/julia/PublicRWS.jl`, `zh/julia/public_data_audit.jl`, `zh/src/public-data.md`, `zh/src/public-data.js`, the notice/navigation/build logic in `zh/renderers/course.js`, and the new current-status sections in README, COURSE_CONTRACT, RWS_CASE_PROTOCOL and CASE_STUDY. The source-candidate report and the two implementation test files were also read.
+
+Independent Python reading of the vendored CSV reproduced the original publisher checksum, 12,469 bytes, 107 rows and 34 columns. Counts match the implementation: 47/33/27 initial drugs; 13 PFS times greater than reported follow-up; 27 deaths without recorded progression; one mutation-negative record; 24 records with `Progression=0` and `PFS_month<12`; two with `Death=0` and `Follow_up_month<12`. The last two are provisional field checks, not validated censoring classifications. The earlier candidate audit's “at least one” living/non-progressed record satisfying both early-time conditions is consistent with these broader counts.
+
+The reviewer independently ran `sh scripts/node.sh --test tests/public-rws.test.js`: **6/6 passed**. Direct JS calls confirmed that the endpoint gate stays false and preparation throws at 6, 12, 24 and 60 months. Julia 1.12.5 independently ran `tests/julia/public-rws-tests.jl`: **119/119 assertions passed across six test sets**. This includes raw-source preservation, changed-input behaviour, explicit drug filtering, malformed CSV handling, refusal of endpoint preparation and actual command-line output from another working directory. These runs verify the inspected audit behaviour; they do not establish source-field clinical meaning.
+
+The reviewer viewed the existing desktop and mobile lab screenshots `output/zh/playwright/public-data-1360.png` and `public-data-375.png`. Counts, units, the closed endpoint notice and explanatory text were readable. The reviewer did not independently operate a browser or execute the full nine-chapter browser suite. The lead's browser runs remain separate evidence.
+
+### Semantic and audience findings
+
+- The genuine file and synthetic mathematics example are clearly distinguished in the course's top notice, companion opening, endpoint explanation, return-to-course text and current-status documents. The 58% risk and 20pp effect are expressly restricted to the synthetic model. The public audit neither imports the synthetic truth nor fits Q or g.
+- The public page preserves three named initial drugs and all 107 source rows. A display filter is described as changing the displayed records; it does not silently select a mutation-positive cohort, delete the negative record, impute a field, pool drugs or prepare binary treatment.
+- The prominent endpoint message remains closed under every filter and threshold. Both languages refuse endpoint preparation; neither exports an effect estimator from this module. Shortening the threshold is explicitly explained as unable to supply the missing dictionary. There is no exposed “force” option to create a clinical endpoint.
+- The 13 and 27 flags are correctly described as prompts for clarification, rather than proven erroneous patients. Death without recorded progression can be clinically compatible with a composite endpoint. The early-field counts are described as provisional checks; the expanded rules explicitly say they are neither clinical censoring rates nor established counts of unknown outcomes.
+- Counts and drug bars use people/records, with no risk denominator, survival probability, efficacy ranking or treatment recommendation. For the intended introductory audience, the prominent endpoint message, adjacent card explanations and prediction-answer exercise adequately prevent the most likely count-to-risk misunderstanding. Full patient-level outcome interpretation still depends on external documentation.
+- Julia explanations connect file locations, raw strings, filtering, named output and printed counts without implying that O=(X,A,Y) has already been constructed. The new script is a documented companion, not a second clinical estimator or the existing first lesson's line-by-line sample.
+- Future estimation requirements remain explicit: time zero, eligibility, treatment contrast, event definition, censoring, baseline-only covariates, residual confounding and overlap. No claim that one binary X suffices is transferred from the synthetic model.
+
+One documentation inconsistency was reported to the lead: the source-screening report initially said no patient records had been added to the repository. That sentence needs a historical qualifier now that Ng's CSV has been adopted. It does not affect the audit calculation. Progress/verification metadata and release packaging were still being finalised when inspected; this reviewer does not certify their later state.
+
+**Issue closed on reinspection (2026-10-16):** the candidate report now labels the temporary-copy statement as the initial screening stage, links the subsequent unchanged 107-row Ng source and provenance, and states that the implemented adoption is audit-only with `endpoint_admissible=false`. Its historical conclusion also distinguishes the new companion from the unchanged synthetic analytical dataset. The documentation inconsistency is resolved. No additional source or method change was part of this reinspection; final build, wider regression and release records remain the lead's responsibility.
+
+**Remaining work:** find or substantiate a sufficiently documented observational treatment/outcome dataset, fix the clinical protocol and corresponding observation model, and then implement and independently review its estimator. This review accepts the present honest partial adoption and its data-audit boundaries; it does not mark that remaining clinical work complete.

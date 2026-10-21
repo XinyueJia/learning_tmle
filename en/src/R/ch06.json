@@ -1,0 +1,219 @@
+{
+  "version": 1,
+  "source": "en/R/ch06.R",
+  "lineCount": 25,
+  "cohort": {
+    "n": 5735,
+    "events": 1918
+  },
+  "lines": [
+    {
+      "line": 4,
+      "code": "script_argument <- grep(\"^--file=\", commandArgs(FALSE), value = TRUE)",
+      "inputs": [],
+      "outputs": [
+        "script_argument"
+      ],
+      "operation": "commandArgs(FALSE) reads the startup arguments. grep matches the start of a string using ^, and value=TRUE retains the matched strings. The result is a character vector of length zero or one locating the file run by Rscript.",
+      "formulaTex": null,
+      "dimensions": {
+        "script_argument": []
+      }
+    },
+    {
+      "line": 6,
+      "code": "source_files <- vapply(sys.frames(), function(frame) if (is.null(frame$ofile)) \"\" else frame$ofile, character(1))",
+      "inputs": [],
+      "outputs": [
+        "source_files"
+      ],
+      "operation": "sys.frames() reads the call frames. vapply applies a function to each frame, requiring one character string per result. When source() runs a script, ofile records its path; frames without a path return an empty string.",
+      "formulaTex": null,
+      "dimensions": {
+        "source_files": []
+      }
+    },
+    {
+      "line": 8,
+      "code": "script_path <- if (any(nzchar(source_files))) tail(source_files[nzchar(source_files)], 1) else if (length(script_argument)) sub(\"^--file=\", \"\", script_argument[1]) else file.path(\"en\", \"R\", \"ch06.R\")",
+      "inputs": [
+        "source_files",
+        "script_argument"
+      ],
+      "outputs": [
+        "script_path"
+      ],
+      "operation": "if selects the source path: use the last non-empty ofile when called through source(); otherwise remove the --file= prefix. Code pasted into the R console at the project root defaults to this lesson’s script path. The output is one path string; [] indexing starts at 1.",
+      "formulaTex": null,
+      "dimensions": {
+        "source_files": [],
+        "script_argument": [],
+        "script_path": []
+      }
+    },
+    {
+      "line": 10,
+      "code": "stopifnot(length(script_path) == 1L, !is.na(script_path))",
+      "inputs": [
+        "script_path"
+      ],
+      "outputs": [],
+      "operation": "length checks that the path has one element. 1L is integer 1, and !is.na excludes missing values. stopifnot requires every condition to be TRUE and stops otherwise.",
+      "formulaTex": null,
+      "dimensions": {
+        "script_path": []
+      }
+    },
+    {
+      "line": 12,
+      "code": "project_root <- normalizePath(file.path(dirname(script_path), \"..\", \"..\"), mustWork = TRUE)",
+      "inputs": [
+        "script_path"
+      ],
+      "outputs": [
+        "project_root"
+      ],
+      "operation": "dirname extracts the script directory. file.path joins the path two levels up to the project root; normalizePath requires that directory to exist. The result is independent of the current working directory.",
+      "formulaTex": null,
+      "dimensions": {
+        "script_path": [],
+        "project_root": []
+      }
+    },
+    {
+      "line": 14,
+      "code": "source(file.path(project_root, \"shared\", \"R\", \"RHCCase.R\"))",
+      "inputs": [
+        "project_root"
+      ],
+      "outputs": [],
+      "operation": "source reads and executes the shared R definitions for reading the CSV, mathematical functions and manual model fitting. Only base R is used; no TMLE package is required.",
+      "formulaTex": null,
+      "dimensions": {
+        "project_root": []
+      }
+    },
+    {
+      "line": 16,
+      "code": "data <- rhc_data()",
+      "inputs": [],
+      "outputs": [
+        "data"
+      ],
+      "operation": "Read the original CSV, calculate empirical probabilities for the eight (x,a,y) cells and return the resulting data and model in a list. Later calculations use these same patient records.",
+      "formulaTex": null,
+      "dimensions": {
+        "data": []
+      }
+    },
+    {
+      "line": 18,
+      "code": "demo <- projection_demo(data, b = 1)",
+      "inputs": [
+        "data"
+      ],
+      "outputs": [
+        "demo"
+      ],
+      "operation": "In this exercise, keep empirical g fixed and let b specify coefficients of candidate additional components. Perform the weighted linear-algebra projection manually and return a list.",
+      "formulaTex": "f=D+b(A-g(X))",
+      "dimensions": {
+        "data": [],
+        "demo": []
+      }
+    },
+    {
+      "line": 20,
+      "code": "cat(\"candidate norm squared =\", demo$candidate_second_moment, \"; projection =\", demo$projection_second_moment, \"; residual =\", demo$residual_second_moment, \"\\n\")",
+      "inputs": [
+        "demo"
+      ],
+      "outputs": [],
+      "operation": "Display three weighted squared norms to check the Pythagorean decomposition. Each scalar has units of squared probability differences.",
+      "formulaTex": "\\lVert f\\rVert^2=\\lVert\\Pi f\\rVert^2+\\lVert f-\\Pi f\\rVert^2",
+      "dimensions": {
+        "demo": []
+      }
+    },
+    {
+      "line": 22,
+      "code": "projection_error <- max(abs(demo$projection - demo$canonical))",
+      "inputs": [
+        "demo"
+      ],
+      "outputs": [
+        "projection_error"
+      ],
+      "operation": "Subtract the two eight-element vectors, take absolute values with abs, then use max to reduce them to one maximum error.",
+      "formulaTex": null,
+      "dimensions": {
+        "demo": [],
+        "projection_error": []
+      }
+    },
+    {
+      "line": 24,
+      "code": "cat(\"maximum projection error =\", projection_error, \"\\n\")",
+      "inputs": [
+        "projection_error"
+      ],
+      "outputs": [],
+      "operation": "Display the maximum numerical difference between the projection and the canonical gradient in this model with fixed g.",
+      "formulaTex": null,
+      "dimensions": {
+        "projection_error": []
+      }
+    }
+  ],
+  "objects": {
+    "project_root": {
+      "key": "project_root",
+      "label": "project_root",
+      "type": "character vector",
+      "dimensions": [],
+      "dimensionText": "path or parameter string"
+    },
+    "demo": {
+      "key": "demo",
+      "label": "demo",
+      "type": "list",
+      "dimensions": [],
+      "dimensionText": "Named container; each member has its own dimensions"
+    },
+    "projection_error": {
+      "key": "projection_error",
+      "label": "projection_error",
+      "type": "numeric scalar (double)",
+      "dimensions": [],
+      "dimensionText": "Length 1"
+    },
+    "source_files": {
+      "key": "source_files",
+      "label": "source_files",
+      "type": "character vector",
+      "dimensions": [],
+      "dimensionText": "path or parameter string"
+    },
+    "script_argument": {
+      "key": "script_argument",
+      "label": "script_argument",
+      "type": "character vector",
+      "dimensions": [],
+      "dimensionText": "path or parameter string"
+    },
+    "data": {
+      "key": "data",
+      "label": "data",
+      "type": "list",
+      "dimensions": [],
+      "dimensionText": "Named container; each member has its own dimensions"
+    },
+    "script_path": {
+      "key": "script_path",
+      "label": "script_path",
+      "type": "character vector",
+      "dimensions": [],
+      "dimensionText": "path or parameter string"
+    }
+  }
+}

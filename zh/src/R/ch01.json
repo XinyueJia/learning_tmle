@@ -1,0 +1,1106 @@
+{
+  "version": 1,
+  "source": "zh/R/ch01.R",
+  "lineCount": 91,
+  "cohort": {
+    "n": 5735,
+    "events": 1918
+  },
+  "lines": [
+    {
+      "line": 4,
+      "code": "script_argument <- grep(\"^--file=\", commandArgs(FALSE), value = TRUE)",
+      "inputs": [],
+      "outputs": [
+        "script_argument"
+      ],
+      "operation": "commandArgs(FALSE)读取启动参数，grep按^匹配开头，value=TRUE保留字符串。输出零项或一项字符向量，定位Rscript当前文件。",
+      "formulaTex": null,
+      "dimensions": {
+        "script_argument": []
+      }
+    },
+    {
+      "line": 6,
+      "code": "source_files <- vapply(sys.frames(), function(frame) if (is.null(frame$ofile)) \"\" else frame$ofile, character(1))",
+      "inputs": [],
+      "outputs": [
+        "source_files"
+      ],
+      "operation": "sys.frames()读取调用环境；vapply逐个返回长度1字符。被source()调用时ofile记录当前脚本路径；没有路径的环境返回空串。",
+      "formulaTex": null,
+      "dimensions": {
+        "source_files": []
+      }
+    },
+    {
+      "line": 8,
+      "code": "script_path <- if (any(nzchar(source_files))) tail(source_files[nzchar(source_files)], 1) else if (length(script_argument)) sub(\"^--file=\", \"\", script_argument[1]) else file.path(\"zh\", \"R\", \"ch01.R\")",
+      "inputs": [
+        "source_files",
+        "script_argument"
+      ],
+      "outputs": [
+        "script_path"
+      ],
+      "operation": "if选择来源：source()时取最后一个非空ofile，否则去掉--file=前缀。在项目根R控制台直接运行时，默认使用本讲脚本位置；输出一个路径字符串，[]索引从1开始。",
+      "formulaTex": null,
+      "dimensions": {
+        "source_files": [],
+        "script_argument": [],
+        "script_path": []
+      }
+    },
+    {
+      "line": 10,
+      "code": "stopifnot(length(script_path) == 1L, !is.na(script_path))",
+      "inputs": [
+        "script_path"
+      ],
+      "outputs": [],
+      "operation": "length检查路径只有一项；1L是整数1，!is.na排除缺失。stopifnot要求所有条件为TRUE，否则停止。",
+      "formulaTex": null,
+      "dimensions": {
+        "script_path": []
+      }
+    },
+    {
+      "line": 12,
+      "code": "project_root <- normalizePath(file.path(dirname(script_path), \"..\", \"..\"), mustWork = TRUE)",
+      "inputs": [
+        "script_path"
+      ],
+      "outputs": [
+        "project_root"
+      ],
+      "operation": "dirname取脚本目录；file.path向上两层拼接项目根，normalizePath要求目录存在。路径不依赖当前工作目录。",
+      "formulaTex": null,
+      "dimensions": {
+        "script_path": [],
+        "project_root": []
+      }
+    },
+    {
+      "line": 14,
+      "code": "source(file.path(project_root, \"shared\", \"R\", \"RHCCase.R\"))",
+      "inputs": [
+        "project_root"
+      ],
+      "outputs": [],
+      "operation": "source读取并执行共享R定义，提供实际CSV读取、纯数学函数与手动拟合器。仅使用base R，无需安装TMLE软件包。",
+      "formulaTex": null,
+      "dimensions": {
+        "project_root": []
+      }
+    },
+    {
+      "line": 16,
+      "code": "rows <- read_rhc_rows(DEFAULT_SOURCE)",
+      "inputs": [],
+      "outputs": [
+        "rows"
+      ],
+      "operation": "read_rhc_rows读取官方原CSV；DEFAULT_SOURCE由共享文件定位。rows为5735×63 data.frame；每行仍是同一患者。",
+      "formulaTex": null,
+      "dimensions": {
+        "rows": [
+          "n",
+          63
+        ]
+      }
+    },
+    {
+      "line": 18,
+      "code": "observations <- rhc_observations(rows)",
+      "inputs": [
+        "rows"
+      ],
+      "outputs": [
+        "observations"
+      ],
+      "operation": "将原字段sex、swang1、dth30编码为x、a、y三列0/1；输出n×3 data.frame，保留原始行序。",
+      "formulaTex": null,
+      "dimensions": {
+        "rows": [
+          "n",
+          63
+        ],
+        "observations": [
+          "n",
+          3
+        ]
+      }
+    },
+    {
+      "line": 20,
+      "code": "y <- observations$y",
+      "inputs": [
+        "observations"
+      ],
+      "outputs": [
+        "y"
+      ],
+      "operation": "$按名称取出y列。y是长度n的数值向量，1表示30日死亡，0表示未死亡；长度为n，dim为NULL。",
+      "formulaTex": "\\mathbf y=(Y_1,\\ldots,Y_n)",
+      "dimensions": {
+        "observations": [
+          "n",
+          3
+        ],
+        "y": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 22,
+      "code": "n <- length(y)",
+      "inputs": [
+        "y"
+      ],
+      "outputs": [
+        "n"
+      ],
+      "operation": "length数向量元素，返回一个整数人数n=5735。nrow数data.frame的患者行，length数其变量列。",
+      "formulaTex": "n=5735",
+      "dimensions": {
+        "y": [
+          "n"
+        ],
+        "n": []
+      }
+    },
+    {
+      "line": 24,
+      "code": "events <- sum(y)",
+      "inputs": [
+        "y"
+      ],
+      "outputs": [
+        "events"
+      ],
+      "operation": "sum将n项0/1相加，返回死亡人数标量1918；<-把右侧结果赋给左侧名字。",
+      "formulaTex": "N_Y=\\sum_iY_i",
+      "dimensions": {
+        "y": [
+          "n"
+        ],
+        "events": []
+      }
+    },
+    {
+      "line": 26,
+      "code": "risk <- events / n",
+      "inputs": [
+        "events",
+        "n"
+      ],
+      "outputs": [
+        "risk"
+      ],
+      "operation": "/是除法；两个标量相除得到样本30日死亡风险，单位为概率。",
+      "formulaTex": "\\widehat\\mu=\\frac{\\sum_iY_i}{n}",
+      "dimensions": {
+        "events": [],
+        "n": [],
+        "risk": []
+      }
+    },
+    {
+      "line": 28,
+      "code": "support_y <- c(0, 1)",
+      "inputs": [],
+      "outputs": [
+        "support_y"
+      ],
+      "operation": "c把0、1合成长度2数值向量。此处两项表示可能结局类别，分别对应结局0与1。",
+      "formulaTex": "\\mathcal Y=\\{0,1\\}",
+      "dimensions": {
+        "support_y": [
+          2
+        ]
+      }
+    },
+    {
+      "line": 30,
+      "code": "p <- vapply(support_y, function(v) mean(y == v), numeric(1))",
+      "inputs": [
+        "support_y",
+        "y"
+      ],
+      "outputs": [
+        "p"
+      ],
+      "operation": "function(v)是接收一个结局的规则；==逐人判断，mean将TRUE当1、FALSE当0平均。vapply对两个类别分别调用并要求每次输出一个数，p长度2。",
+      "formulaTex": "p_y=n^{-1}\\sum_i\\mathbf1(Y_i=y)",
+      "dimensions": {
+        "support_y": [
+          2
+        ],
+        "y": [
+          "n"
+        ],
+        "p": [
+          2
+        ]
+      }
+    },
+    {
+      "line": 32,
+      "code": "mu <- sum(p * support_y)",
+      "inputs": [
+        "p",
+        "support_y"
+      ],
+      "outputs": [
+        "mu"
+      ],
+      "operation": "*按同一结局逐项相乘，sum把两项收缩为均值标量；这里冻结参考为经验结局分布。",
+      "formulaTex": "\\mu=\\sum_{y=0}^1p_yy=1918/5735",
+      "dimensions": {
+        "p": [
+          2
+        ],
+        "support_y": [
+          2
+        ],
+        "mu": []
+      }
+    },
+    {
+      "line": 34,
+      "code": "z <- 1",
+      "inputs": [],
+      "outputs": [
+        "z"
+      ],
+      "operation": "选择接收新增权重的结局1；z是一个数值标量，仅允许0或1。",
+      "formulaTex": "z\\in\\{0,1\\}",
+      "dimensions": {
+        "z": []
+      }
+    },
+    {
+      "line": 36,
+      "code": "t <- 0.1",
+      "inputs": [],
+      "outputs": [
+        "t"
+      ],
+      "operation": "设置无量纲替换比例0.1；t取0至1，数学上改变概率权重，不修改原患者y。",
+      "formulaTex": "0\\leq t\\leq1",
+      "dimensions": {
+        "t": []
+      }
+    },
+    {
+      "line": 38,
+      "code": "stopifnot(z %in% support_y, is.finite(t), t >= 0, t <= 1)",
+      "inputs": [
+        "z",
+        "support_y",
+        "t"
+      ],
+      "outputs": [],
+      "operation": "%in%检查属于允许类别；is.finite排除NA、无穷大，stopifnot检查合法路径步长。",
+      "formulaTex": null,
+      "dimensions": {
+        "z": [],
+        "support_y": [
+          2
+        ],
+        "t": []
+      }
+    },
+    {
+      "line": 40,
+      "code": "point <- as.numeric(support_y == z)",
+      "inputs": [
+        "support_y",
+        "z"
+      ],
+      "outputs": [
+        "point"
+      ],
+      "operation": "==对两类逐项判断，as.numeric把FALSE/TRUE变成0/1；输出长度2点质量概率向量。",
+      "formulaTex": "\\delta_z(y)=\\mathbf1(y=z)",
+      "dimensions": {
+        "support_y": [
+          2
+        ],
+        "z": [],
+        "point": [
+          2
+        ]
+      }
+    },
+    {
+      "line": 42,
+      "code": "p_t <- (1 - t) * p + t * point",
+      "inputs": [
+        "t",
+        "p",
+        "point"
+      ],
+      "outputs": [
+        "p_t"
+      ],
+      "operation": "括号先运算；标量乘向量是逐元素缩放，两组分相加得到长度2新概率。",
+      "formulaTex": "p_{t,y}=(1-t)p_y+t\\mathbf1(y=z)",
+      "dimensions": {
+        "t": [],
+        "p": [
+          2
+        ],
+        "point": [
+          2
+        ],
+        "p_t": [
+          2
+        ]
+      }
+    },
+    {
+      "line": 44,
+      "code": "mu_t <- sum(p_t * support_y)",
+      "inputs": [
+        "p_t",
+        "support_y"
+      ],
+      "outputs": [
+        "mu_t"
+      ],
+      "operation": "结局支持不变，只换新概率；逐项乘再求和得到新均值标量。",
+      "formulaTex": "\\mu_t=\\sum_yp_{t,y}y",
+      "dimensions": {
+        "p_t": [
+          2
+        ],
+        "support_y": [
+          2
+        ],
+        "mu_t": []
+      }
+    },
+    {
+      "line": 46,
+      "code": "delta <- mu_t - mu",
+      "inputs": [
+        "mu_t",
+        "mu"
+      ],
+      "outputs": [
+        "delta"
+      ],
+      "operation": "两个均值标量相减，delta单位为概率差。",
+      "formulaTex": "\\Delta\\mu=\\mu_t-\\mu",
+      "dimensions": {
+        "mu_t": [],
+        "mu": [],
+        "delta": []
+      }
+    },
+    {
+      "line": 48,
+      "code": "derivative <- z - mu",
+      "inputs": [
+        "z",
+        "mu"
+      ],
+      "outputs": [
+        "derivative"
+      ],
+      "operation": "选择的结局减冻结原均值，得到均值路径导数；目标为本讲的均值。",
+      "formulaTex": "\\dot\\mu=z-\\mu",
+      "dimensions": {
+        "z": [],
+        "mu": [],
+        "derivative": []
+      }
+    },
+    {
+      "line": 50,
+      "code": "rate <- if (t == 0) NA_real_ else delta / t",
+      "inputs": [
+        "t",
+        "delta"
+      ],
+      "outputs": [
+        "rate"
+      ],
+      "operation": "if只选择一个分支；t为0时不做0/0，返回数值缺失NA_real_。非零t时返回一个变化率。",
+      "formulaTex": "(\\mu_t-\\mu)/t=z-\\mu\\quad(t\\ne0)",
+      "dimensions": {
+        "t": [],
+        "delta": [],
+        "rate": []
+      }
+    },
+    {
+      "line": 52,
+      "code": "linear_mean <- mu + t * derivative",
+      "inputs": [
+        "mu",
+        "t",
+        "derivative"
+      ],
+      "outputs": [
+        "linear_mean"
+      ],
+      "operation": "乘法先于加法，计算一个新均值；对均值目标这是精确线性恒等式。",
+      "formulaTex": "\\mu_t=\\mu+t(z-\\mu)",
+      "dimensions": {
+        "mu": [],
+        "t": [],
+        "derivative": [],
+        "linear_mean": []
+      }
+    },
+    {
+      "line": 54,
+      "code": "support_D <- support_y - mu",
+      "inputs": [
+        "support_y",
+        "mu"
+      ],
+      "outputs": [
+        "support_D"
+      ],
+      "operation": "R将一个标量从两项分别减去，输出长度2函数值表；固定P下D(y)=y−mu。",
+      "formulaTex": "D_P^{\\rm mean}(y)=y-\\mu",
+      "dimensions": {
+        "support_y": [
+          2
+        ],
+        "mu": [],
+        "support_D": [
+          2
+        ]
+      }
+    },
+    {
+      "line": 56,
+      "code": "influence <- y - risk",
+      "inputs": [
+        "y",
+        "risk"
+      ],
+      "outputs": [
+        "influence"
+      ],
+      "operation": "同一规则应用到全部n位患者，返回长度n数值向量；长度为n，dim为NULL。",
+      "formulaTex": "D_i=Y_i-\\widehat\\mu",
+      "dimensions": {
+        "y": [
+          "n"
+        ],
+        "risk": [],
+        "influence": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 58,
+      "code": "mean_influence <- sum(influence) / n",
+      "inputs": [
+        "influence",
+        "n"
+      ],
+      "outputs": [
+        "mean_influence"
+      ],
+      "operation": "先sum全部n项再除n，得到一个平均；浮点下允许极小误差。",
+      "formulaTex": "n^{-1}\\sum_i(Y_i-\\widehat\\mu)=0",
+      "dimensions": {
+        "influence": [
+          "n"
+        ],
+        "n": [],
+        "mean_influence": []
+      }
+    },
+    {
+      "line": 60,
+      "code": "grouped_mean_D <- sum(p * support_D)",
+      "inputs": [
+        "p",
+        "support_D"
+      ],
+      "outputs": [
+        "grouped_mean_D"
+      ],
+      "operation": "按原概率对两项函数表加权求和，得到与逐人平均相同的标量。",
+      "formulaTex": "\\sum_yp_yD_P^{\\rm mean}(y)=0",
+      "dimensions": {
+        "p": [
+          2
+        ],
+        "support_D": [
+          2
+        ],
+        "grouped_mean_D": []
+      }
+    },
+    {
+      "line": 62,
+      "code": "old_mean_D <- sum(p_t * support_D)",
+      "inputs": [
+        "p_t",
+        "support_D"
+      ],
+      "outputs": [
+        "old_mean_D"
+      ],
+      "operation": "固定旧D，仅换新分布权重；这次平均通常非零。",
+      "formulaTex": "\\sum_yp_{t,y}D_P^{\\rm mean}(y)=\\mu_t-\\mu",
+      "dimensions": {
+        "p_t": [
+          2
+        ],
+        "support_D": [
+          2
+        ],
+        "old_mean_D": []
+      }
+    },
+    {
+      "line": 64,
+      "code": "new_support_D <- support_y - mu_t",
+      "inputs": [
+        "support_y",
+        "mu_t"
+      ],
+      "outputs": [
+        "new_support_D"
+      ],
+      "operation": "以新均值为中心建立另一条函数的长度2值表。",
+      "formulaTex": "D_{P_t}^{\\rm mean}(y)=y-\\mu_t",
+      "dimensions": {
+        "support_y": [
+          2
+        ],
+        "mu_t": [],
+        "new_support_D": [
+          2
+        ]
+      }
+    },
+    {
+      "line": 66,
+      "code": "new_mean_D <- sum(p_t * new_support_D)",
+      "inputs": [
+        "p_t",
+        "new_support_D"
+      ],
+      "outputs": [
+        "new_mean_D"
+      ],
+      "operation": "新函数在新分布下的加权平均重新为零；与上一行使用旧函数的量不同。",
+      "formulaTex": "\\sum_yp_{t,y}D_{P_t}^{\\rm mean}(y)=0",
+      "dimensions": {
+        "p_t": [
+          2
+        ],
+        "new_support_D": [
+          2
+        ],
+        "new_mean_D": []
+      }
+    },
+    {
+      "line": 68,
+      "code": "alive <- 1 - y",
+      "inputs": [
+        "y"
+      ],
+      "outputs": [
+        "alive"
+      ],
+      "operation": "逐人取0/1补集，返回长度n存活指标向量，行序不变。",
+      "formulaTex": "L_i=1-Y_i",
+      "dimensions": {
+        "y": [
+          "n"
+        ],
+        "alive": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 70,
+      "code": "survival <- sum(alive) / n",
+      "inputs": [
+        "alive",
+        "n"
+      ],
+      "outputs": [
+        "survival"
+      ],
+      "operation": "存活指标先相加再除全部人数，得到一个30日存活风险标量。",
+      "formulaTex": "\\widehat S(30)=1-\\widehat\\mu",
+      "dimensions": {
+        "alive": [
+          "n"
+        ],
+        "n": [],
+        "survival": []
+      }
+    },
+    {
+      "line": 72,
+      "code": "survival_influence <- alive - survival",
+      "inputs": [
+        "alive",
+        "survival"
+      ],
+      "outputs": [
+        "survival_influence"
+      ],
+      "operation": "每位患者存活指标减存活均值，得到n项；等于死亡均值影响值的反号。",
+      "formulaTex": "D_i^{\\rm survival}=-D_i^{\\rm mean}",
+      "dimensions": {
+        "alive": [
+          "n"
+        ],
+        "survival": [],
+        "survival_influence": [
+          "n"
+        ]
+      }
+    },
+    {
+      "line": 74,
+      "code": "data <- rhc_data(DEFAULT_SOURCE)",
+      "inputs": [],
+      "outputs": [
+        "data"
+      ],
+      "operation": "同一原始CSV按(x,a,y)组合及(a,x)分组分别汇总，返回list；对应冻结的经验参考分布。",
+      "formulaTex": null,
+      "dimensions": {
+        "data": []
+      }
+    },
+    {
+      "line": 76,
+      "code": "check <- mean_if(data)",
+      "inputs": [
+        "data"
+      ],
+      "outputs": [
+        "check"
+      ],
+      "operation": "mean_if用各观测组合的概率计算均值及加权IF平均，输出list供独立核对。",
+      "formulaTex": null,
+      "dimensions": {
+        "data": [],
+        "check": []
+      }
+    },
+    {
+      "line": 78,
+      "code": "stopifnot(n == 5735L, events == 1918, abs(mu - 1918 / 5735) < 1e-14)",
+      "inputs": [
+        "n",
+        "events",
+        "mu"
+      ],
+      "outputs": [],
+      "operation": "核对官方人数和事件数，以及两类加权均值的独立分数基准。",
+      "formulaTex": null,
+      "dimensions": {
+        "n": [],
+        "events": [],
+        "mu": []
+      }
+    },
+    {
+      "line": 80,
+      "code": "stopifnot(length(influence) == n, length(p_t) == 2L, abs(sum(p_t) - 1) < 1e-14, all(p_t >= 0))",
+      "inputs": [
+        "influence",
+        "n",
+        "p_t"
+      ],
+      "outputs": [],
+      "operation": "检查n项患者影响值、2项类别概率和合法概率和；患者与结局支持两种对齐不可混淆。",
+      "formulaTex": null,
+      "dimensions": {
+        "influence": [
+          "n"
+        ],
+        "n": [],
+        "p_t": [
+          2
+        ]
+      }
+    },
+    {
+      "line": 82,
+      "code": "stopifnot(abs(mu_t - linear_mean) < 1e-14, is.na(rate) || abs(rate - derivative) < 1e-12)",
+      "inputs": [
+        "mu_t",
+        "linear_mean",
+        "rate",
+        "derivative"
+      ],
+      "outputs": [],
+      "operation": "||是短路或：t=0产生NA的分支无需检查未定义变化率；其余情况核对精确线性和变化率。",
+      "formulaTex": null,
+      "dimensions": {
+        "mu_t": [],
+        "linear_mean": [],
+        "rate": [],
+        "derivative": []
+      }
+    },
+    {
+      "line": 84,
+      "code": "stopifnot(abs(mean_influence) < 1e-12, abs(grouped_mean_D) < 1e-12, abs(new_mean_D) < 1e-12)",
+      "inputs": [
+        "mean_influence",
+        "grouped_mean_D",
+        "new_mean_D"
+      ],
+      "outputs": [],
+      "operation": "要求三种正确中心化平均在数值容差内为零；患者间贡献可以互相抵消。",
+      "formulaTex": null,
+      "dimensions": {
+        "mean_influence": [],
+        "grouped_mean_D": [],
+        "new_mean_D": []
+      }
+    },
+    {
+      "line": 86,
+      "code": "stopifnot(abs(old_mean_D - delta) < 1e-14, all(abs(survival_influence + influence) < 1e-14), abs(check$risk - risk) < 1e-14)",
+      "inputs": [
+        "old_mean_D",
+        "delta",
+        "survival_influence",
+        "influence",
+        "check",
+        "risk"
+      ],
+      "outputs": [],
+      "operation": "核对旧函数新权重的平均等于均值变化、存活IF逐项反号，以及按组和逐人风险一致。",
+      "formulaTex": null,
+      "dimensions": {
+        "old_mean_D": [],
+        "delta": [],
+        "survival_influence": [
+          "n"
+        ],
+        "influence": [
+          "n"
+        ],
+        "check": [],
+        "risk": []
+      }
+    },
+    {
+      "line": 88,
+      "code": "cat(\"n =\", n, \"; events =\", events, \"; risk =\", risk, \"; mu_t =\", mu_t, \"\\n\")",
+      "inputs": [
+        "n",
+        "events",
+        "risk",
+        "mu_t"
+      ],
+      "outputs": [],
+      "operation": "cat按次序显示对象，分号文字只是分隔符；\\n是换行，不计算新的统计量。",
+      "formulaTex": null,
+      "dimensions": {
+        "n": [],
+        "events": [],
+        "risk": [],
+        "mu_t": []
+      }
+    },
+    {
+      "line": 90,
+      "code": "cat(\"mean_influence =\", mean_influence, \"; old_mean_D =\", old_mean_D, \"; new_mean_D =\", new_mean_D, \"\\n\")",
+      "inputs": [
+        "mean_influence",
+        "old_mean_D",
+        "new_mean_D"
+      ],
+      "outputs": [],
+      "operation": "分开显示逐人平均、旧函数新权重平均与新函数新权重平均，避免把三个量混为同一对象。",
+      "formulaTex": null,
+      "dimensions": {
+        "mean_influence": [],
+        "old_mean_D": [],
+        "new_mean_D": []
+      }
+    }
+  ],
+  "objects": {
+    "project_root": {
+      "key": "project_root",
+      "label": "project_root",
+      "type": "character vector",
+      "dimensions": [],
+      "dimensionText": "路径或参数字符串"
+    },
+    "z": {
+      "key": "z",
+      "label": "z",
+      "type": "numeric scalar (double)",
+      "dimensions": [],
+      "dimensionText": "长度1"
+    },
+    "observations": {
+      "key": "observations",
+      "label": "observations",
+      "type": "data.frame",
+      "dimensions": [
+        "n",
+        3
+      ],
+      "dimensionText": "5735行×3列（x,a,y）"
+    },
+    "support_D": {
+      "key": "support_D",
+      "label": "support_D",
+      "type": "numeric vector",
+      "dimensions": [
+        2
+      ],
+      "dimensionText": "长度2；按结局0、1对齐"
+    },
+    "p": {
+      "key": "p",
+      "label": "p",
+      "type": "numeric vector",
+      "dimensions": [
+        2
+      ],
+      "dimensionText": "长度2；按结局0、1对齐"
+    },
+    "mu_t": {
+      "key": "mu_t",
+      "label": "mu_t",
+      "type": "numeric scalar (double)",
+      "dimensions": [],
+      "dimensionText": "长度1"
+    },
+    "point": {
+      "key": "point",
+      "label": "point",
+      "type": "numeric vector",
+      "dimensions": [
+        2
+      ],
+      "dimensionText": "长度2；按结局0、1对齐"
+    },
+    "old_mean_D": {
+      "key": "old_mean_D",
+      "label": "old_mean_D",
+      "type": "numeric scalar (double)",
+      "dimensions": [],
+      "dimensionText": "长度1"
+    },
+    "mean_influence": {
+      "key": "mean_influence",
+      "label": "mean_influence",
+      "type": "numeric scalar (double)",
+      "dimensions": [],
+      "dimensionText": "长度1"
+    },
+    "source_files": {
+      "key": "source_files",
+      "label": "source_files",
+      "type": "character vector",
+      "dimensions": [],
+      "dimensionText": "路径或参数字符串"
+    },
+    "events": {
+      "key": "events",
+      "label": "events",
+      "type": "numeric scalar (double)",
+      "dimensions": [],
+      "dimensionText": "长度1"
+    },
+    "linear_mean": {
+      "key": "linear_mean",
+      "label": "linear_mean",
+      "type": "numeric scalar (double)",
+      "dimensions": [],
+      "dimensionText": "长度1"
+    },
+    "alive": {
+      "key": "alive",
+      "label": "alive",
+      "type": "numeric vector",
+      "dimensions": [
+        "n"
+      ],
+      "dimensionText": "长度n；dim为NULL"
+    },
+    "script_path": {
+      "key": "script_path",
+      "label": "script_path",
+      "type": "character vector",
+      "dimensions": [],
+      "dimensionText": "路径或参数字符串"
+    },
+    "new_mean_D": {
+      "key": "new_mean_D",
+      "label": "new_mean_D",
+      "type": "numeric scalar (double)",
+      "dimensions": [],
+      "dimensionText": "长度1"
+    },
+    "influence": {
+      "key": "influence",
+      "label": "influence",
+      "type": "numeric vector",
+      "dimensions": [
+        "n"
+      ],
+      "dimensionText": "长度n；dim为NULL"
+    },
+    "derivative": {
+      "key": "derivative",
+      "label": "derivative",
+      "type": "numeric scalar (double)",
+      "dimensions": [],
+      "dimensionText": "长度1"
+    },
+    "mu": {
+      "key": "mu",
+      "label": "mu",
+      "type": "numeric scalar (double)",
+      "dimensions": [],
+      "dimensionText": "长度1"
+    },
+    "survival_influence": {
+      "key": "survival_influence",
+      "label": "survival_influence",
+      "type": "numeric vector",
+      "dimensions": [
+        "n"
+      ],
+      "dimensionText": "长度n；dim为NULL"
+    },
+    "n": {
+      "key": "n",
+      "label": "n",
+      "type": "integer scalar",
+      "dimensions": [],
+      "dimensionText": "长度1"
+    },
+    "delta": {
+      "key": "delta",
+      "label": "delta",
+      "type": "numeric scalar (double)",
+      "dimensions": [],
+      "dimensionText": "长度1"
+    },
+    "t": {
+      "key": "t",
+      "label": "t",
+      "type": "numeric scalar (double)",
+      "dimensions": [],
+      "dimensionText": "长度1"
+    },
+    "data": {
+      "key": "data",
+      "label": "data",
+      "type": "list",
+      "dimensions": [],
+      "dimensionText": "命名容器；各成员按自身维度"
+    },
+    "grouped_mean_D": {
+      "key": "grouped_mean_D",
+      "label": "grouped_mean_D",
+      "type": "numeric scalar (double)",
+      "dimensions": [],
+      "dimensionText": "长度1"
+    },
+    "survival": {
+      "key": "survival",
+      "label": "survival",
+      "type": "numeric scalar (double)",
+      "dimensions": [],
+      "dimensionText": "长度1"
+    },
+    "rate": {
+      "key": "rate",
+      "label": "rate",
+      "type": "numeric scalar (double)",
+      "dimensions": [],
+      "dimensionText": "长度1"
+    },
+    "check": {
+      "key": "check",
+      "label": "check",
+      "type": "list",
+      "dimensions": [],
+      "dimensionText": "命名容器；各成员按自身维度"
+    },
+    "y": {
+      "key": "y",
+      "label": "y",
+      "type": "numeric vector",
+      "dimensions": [
+        "n"
+      ],
+      "dimensionText": "长度n；dim为NULL"
+    },
+    "script_argument": {
+      "key": "script_argument",
+      "label": "script_argument",
+      "type": "character vector",
+      "dimensions": [],
+      "dimensionText": "路径或参数字符串"
+    },
+    "p_t": {
+      "key": "p_t",
+      "label": "p_t",
+      "type": "numeric vector",
+      "dimensions": [
+        2
+      ],
+      "dimensionText": "长度2；按结局0、1对齐"
+    },
+    "risk": {
+      "key": "risk",
+      "label": "risk",
+      "type": "numeric scalar (double)",
+      "dimensions": [],
+      "dimensionText": "长度1"
+    },
+    "new_support_D": {
+      "key": "new_support_D",
+      "label": "new_support_D",
+      "type": "numeric vector",
+      "dimensions": [
+        2
+      ],
+      "dimensionText": "长度2；按结局0、1对齐"
+    },
+    "support_y": {
+      "key": "support_y",
+      "label": "support_y",
+      "type": "numeric vector",
+      "dimensions": [
+        2
+      ],
+      "dimensionText": "长度2；按结局0、1对齐"
+    },
+    "rows": {
+      "key": "rows",
+      "label": "rows",
+      "type": "data.frame",
+      "dimensions": [
+        "n",
+        63
+      ],
+      "dimensionText": "5735行×63列"
+    }
+  }
+}

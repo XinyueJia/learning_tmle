@@ -1,0 +1,14 @@
+[
+  {
+    "id": "zh",
+    "language": "zh-CN",
+    "title": "中文版",
+    "module": "../zh/edition.js"
+  },
+  {
+    "id": "en",
+    "language": "en-GB",
+    "title": "English",
+    "module": "../en/edition.js"
+  }
+]

@@ -1,0 +1,11 @@
+{
+  "date": "2026-10-18",
+  "compared_with": "Previous delivered sampling-if release",
+  "original_display_equations_retained_in_order": 63,
+  "new_display_equations": 6,
+  "chapters_1_to_8_byte_identical": true,
+  "all_pre_existing_shared_files_unchanged": 29,
+  "all_existing_zh_Julia_R_files_unchanged": 35,
+  "new_shared_module": "shared/js/eif-correction.js",
+  "source_csv_sha256": "9ef4ab578be4b40ad5d97d3a7e08ffdc1f9f76aeeefee51b4996e4221556f8e8"
+}

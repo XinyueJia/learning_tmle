@@ -1,0 +1,104 @@
+{
+  "date": "2026-10-16",
+  "scope": "Chapter0§5.1: graphical estimator components with IF in a separate mathematical error-analysis layer",
+  "entry": "http://127.0.0.1:4174/zh/?edition=estimator-map#chapter-0",
+  "previous_verification": "zh/docs/VERIFICATION-before-estimator-map.json",
+  "implemented": [
+    "Plug-in sample→fit pX/Q→standardise and contrast→estimate component diagram",
+    "Independent IF theory layer: target/model→construct and verify D_P→per-record contributions→conditional error decomposition",
+    "Actual SVG records, fitted risk bars and schematic signed influence contributions",
+    "Previous precise error derivation and fit-error figure retained in expandable content",
+    "Desktop row and mobile ordered column, local symbol popover, accessible graphical descriptions"
+  ],
+  "mathematical_boundaries": [
+    "Hypothetical fitted values are not fits from the fixed200 CSV",
+    "The IF bars are conceptual with no alleged ATE EIF values",
+    "IF is not required as a runtime step in every estimator",
+    "IF-average error representation and sufficiently small remainder require conditions",
+    "No new ATE EIF, asymptotic efficiency, censored-survival or identification theorem is claimed"
+  ],
+  "preserved": {
+    "original_chapter0_display_formula_groups_byte_identical": 4,
+    "protected_other_chapter_numerical_data_Julia_app_files_byte_identical": 24
+  },
+  "build": {
+    "command": "sh scripts/node.sh scripts/build.js",
+    "exit_code": 0,
+    "chapters": 9
+  },
+  "javascript": {
+    "command": "sh scripts/node.sh --test tests/*.test.js tests/zh/*.test.js",
+    "passed": 86,
+    "failed": 0,
+    "exit_code": 0
+  },
+  "browser": {
+    "estimator_diagram": {
+      "command": "sh scripts/node.sh tests/zh/ch00-estimator-browser.cjs",
+      "viewports": [
+        [
+          1360,
+          900
+        ],
+        [
+          375,
+          900
+        ]
+      ],
+      "exit_code": 0,
+      "checks": [
+        "Four components in correct order",
+        "IF analysis distinct from plug-in execution",
+        "Hypothetical fit21pp and error+1pp",
+        "Schematic bars and conditional remainder",
+        "Accessible SVGs and MathML",
+        "Folded numerical example/keyboard and symbol popover",
+        "Desktop horizontal/mobile vertical layout",
+        "No page overflow, console errors or external requests"
+      ]
+    },
+    "full_course": {
+      "command": "sh scripts/node.sh tests/zh/browser.cjs",
+      "chapters": 9,
+      "viewports": [
+        [
+          1360,
+          900
+        ],
+        [
+          375,
+          900
+        ]
+      ],
+      "exit_code": 0,
+      "checks": [
+        "Seven actual chapter0 figures",
+        "Original error calculation opens with its callbacks",
+        "All chapters interactions/reset/details/MathML/keyboard/layout/console"
+      ]
+    }
+  },
+  "independent_review": "zh/reviews/ch00-estimator-map.md",
+  "screenshots_inspected": [
+    "output/zh/playwright/ch00-estimator-map-1360.png",
+    "output/zh/playwright/ch00-estimator-map-375.png"
+  ],
+  "numerical_scope": "Unchanged numerical core, data and Julia verified against prior release; Julia/cross-language execution not repeated for this visual/pedagogy change",
+  "unverified": [
+    "Physical mobile devices and other browser engines",
+    "Full screen-reader speech",
+    "Beginner learning outcomes",
+    "Fresh Chrome regression from a separately extracted release"
+  ],
+  "open_issues": [],
+  "verified_source_sha256": {
+    "zh/src/chapters/ch00.md": "093fc972818462572d2f2f499ca2180e4e9419143e15e5a434eb00e8497578c7",
+    "zh/renderers/chapter0-visuals.js": "10373ac97b19007112a9948d51b1e7df63f0bdc501076035225f283c5a4e42c2",
+    "zh/src/style.css": "8ab42eb0d494493518f3a4bb2a7f9dbdc18a029735081760ea247f1dc20e71d9",
+    "tests/zh/browser.cjs": "9e7cd353231faf9d089f7296265fbb2448971745d7c4151f933f51980441d368",
+    "tests/zh/ch00-estimator-browser.cjs": "003e0d65e615593adf830ffe7743ecbd0b79a4608c9f28a95696ba63d3be6abd",
+    "shared/js/math.js": "f5112eb05b733a6a9e6a19528f91da9c3df140102a0168f6fb70d9afd8cff3a3",
+    "dist/zh/index.html": "d1cd5d1ef59ba3833eec2b20f6e7db200d615bd1601148b4891d6d2f633dc5b7"
+  },
+  "delivery": "releases/EIF_Tutorial_Complete.zip and .sha256; package.py checks original materials, CRC, SHA256 and every member against current workspace"
+}
