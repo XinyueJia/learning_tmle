@@ -1,6 +1,6 @@
 # 发布 learning-tmle 到 GitHub Pages
 
-仓库名称为 `learning-tmle`。英文标题为 **Learning TMLE: Notes on Influence Functions and Doubly Robust Estimation**；中文标题为 **Learning TMLE：影响函数与双重稳健估计学习笔记**。
+仓库名称为 `learning_tmle`。英文标题为 **Learning TMLE: Notes on Influence Functions and Doubly Robust Estimation**；中文标题为 **Learning TMLE：影响函数与双重稳健估计学习笔记**。
 
 本项目采用 GitHub Actions 从源码构建并发布；网站默认打开英文版，可切换中文。工作流仅手动触发，并只允许仓库默认分支进入部署任务。
 
@@ -11,12 +11,14 @@
 | `.github/workflows/pages.yml` | 构建、测试与 Pages 部署配置 |
 | `package.json`、`pnpm-lock.yaml`、`editions.json` | Node/pnpm 版本要求、锁定依赖、两版课程配置 |
 | `scripts/` | 构建、Pages 产物检查、语言菜单及本地工具 |
-| `en/`、`zh/` | 可编辑课程、渲染器、交互、Julia/R、文献和作者记录；保留原始材料 |
+| `en/`、`zh/` | 可编辑课程、渲染器、交互、Julia/R与读者文献；忽略本地作者记录 |
 | `shared/` | 数学模块、共享浏览器加载器、公开 RHC 数据及来源说明 |
 | `tests/` | 数学、正文、构建结构与浏览器回归测试 |
-| `.gitignore`、`README.md`、`PUBLISHING.md` | 忽略规则、项目与发布说明 |
+| `.gitignore`、`README.md`、`PUBLISHING.md`、`DEVELOPMENT.md` | 忽略规则、阅读介绍、发布及维护说明 |
 
 以下内容已由 `.gitignore` 排除：`node_modules/`、`.pnpm-store/`、`dist/`、`output/`、`releases/`、日志、系统文件和 Python 缓存。无需提交构建好的 HTML、截图或完整交付 ZIP。Actions 会自行生成 `dist/`；**不要将源码根目录作为 Pages 网站目录上传**。
+
+开发日志、验证报告、审校与交接记录、README旧稿和工作参考材料同样留在本地：`en/docs/`（保留`PUBLISHING.md`）、`zh/docs/`、两版`reviews/`以及`zh/reference/`不会提交，也不会进入公开ZIP。课程参考文献与原始数据出处仍公开。已进入旧提交的文件不会因新增忽略规则自动从历史中消失。
 
 ## 发布前在本地检查
 
@@ -38,16 +40,16 @@ EIF_BROWSER_CHANNEL=chromium pnpm run test:browser:en
 
 ## 第一次提交与推送
 
-本地项目已在 `main` 分支初始化 Git；当前工作目录完成首次提交后，可从添加远端和推送步骤继续。以下完整命令供首次导入全新目录时参考。先在 GitHub 新建一个空仓库（使用 GitHub Free 时可选公开仓库），名称设为 `learning-tmle`。首次建立远端仓库时，保持为空，不额外创建 README 或 `.gitignore`。将下面的 `YOUR_USERNAME` 替换为你的 GitHub 用户名；下述示例使用约定的仓库名 `learning-tmle`。
+当前工作目录已从 `https://github.com/XinyueJia/learning_tmle.git` 克隆，`main` 跟踪 `origin/main`。以下完整命令供首次导入全新目录时参考。先在 GitHub 新建一个空仓库（使用 GitHub Free 时可选公开仓库），名称设为 `learning_tmle`。首次建立远端仓库时，保持为空，不额外创建 README 或 `.gitignore`。下述示例使用实际仓库地址；现有克隆无需再次初始化或添加远端。
 
 ```sh
-cd /Users/xinyuejia/Projects/TMLE_tutorial
+cd /Users/xinyuejia/Projects/learning_tmle
 
 git init -b main
-git add .github .gitignore README.md PUBLISHING.md package.json pnpm-lock.yaml editions.json scripts shared en zh tests
+git add .github .gitignore README.md PUBLISHING.md DEVELOPMENT.md package.json pnpm-lock.yaml editions.json scripts shared en zh tests
 git diff --cached --stat
 git commit -m "Publish Learning TMLE study notes for GitHub Pages"
-git remote add origin https://github.com/YOUR_USERNAME/learning-tmle.git
+git remote add origin https://github.com/XinyueJia/learning_tmle.git
 git push -u origin main
 ```
 
@@ -65,12 +67,12 @@ git push -u origin main
 使用常规项目仓库时，地址是：
 
 ```text
-https://YOUR_USERNAME.github.io/learning-tmle/
-https://YOUR_USERNAME.github.io/learning-tmle/en/#chapter-8
-https://YOUR_USERNAME.github.io/learning-tmle/zh/#chapter-8
+https://xinyuejia.github.io/learning_tmle/
+https://xinyuejia.github.io/learning_tmle/en/#chapter-8
+https://xinyuejia.github.io/learning_tmle/zh/#chapter-8
 ```
 
-根入口跳转英文；直接访问 `/zh/` 保持中文。若仓库名为 `YOUR_USERNAME.github.io`，网站位于域名根目录，去掉示例中的 `/learning-tmle/`。
+根入口跳转英文；直接访问 `/zh/` 保持中文。若仓库名为 `YOUR_USERNAME.github.io`，网站位于域名根目录，去掉示例中的 `/learning_tmle/`。
 
 ## 发布后核对与更新
 

@@ -1,9 +1,0 @@
-# English edition integration review
-
-The lead integrated three scoped responsibilities: chapter prose, rendered figures/code explanations, and runtime/executable source. Ownership prevented simultaneous source overwrites; JSON metadata synchronisation preceded the final explanatory-prose pass. Chapter review checked the runtime's distribution/estimator distinctions separately. The supplied Chinese materials remain intact.
-
-Both editions use the same shared numerical modules and original RHC file. Chapter formula blocks and interactive mounts were compared, including all cancellation arguments and the one-step/AIPW identity. The eighteen mathematical-object stages retain the same patient entries, dimensions and values in mathematical, Julia and R modes. English source comments and explanatory maps were synchronised without changing executable assertions; shared Julia display comments are explicitly localised while preserving executable statements.
-
-The first integration runs caught a stale initial-chapter language URL, a theme stylesheet-order regression and browser-test locator issues. These were corrected. Final verification: 240 tests, 19 English executable programmes, all nine English chapters at1360/790/375 under a repository prefix, and Chinese all-chapter regression at1360/375. Logs and exact scope are in docs/VERIFICATION.json. The lead visually inspected English chapter openings and the variance explanation. Real GitHub deployment remains a separate, unperformed operation.
-
-The active English course has complete chapter text, figures, exercises, answers, technical disclosures and Julia/R explanations. Hidden historical synthetic helper translations have a lighter editorial review and are not exposed as English supplementary routes. Reference source text remains in the original archive.

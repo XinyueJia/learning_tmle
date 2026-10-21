@@ -1,6 +1,6 @@
 # Publish Learning TMLE on GitHub Pages
 
-Use the repository name `learning-tmle`. The English title is **Learning TMLE: Notes on Influence Functions and Doubly Robust Estimation**; the Chinese edition uses **Learning TMLE：影响函数与双重稳健估计学习笔记**.
+Use the repository name `learning_tmle`. The English title is **Learning TMLE: Notes on Influence Functions and Doubly Robust Estimation**; the Chinese edition uses **Learning TMLE：影响函数与双重稳健估计学习笔记**.
 
 Use Node.js 24 and pnpm 9.15.9, matching the workflow; `package.json` pins the pnpm version:
 
@@ -16,17 +16,17 @@ EIF_BROWSER_CHANNEL=chromium pnpm run test:browser:en
 
 The generated `dist/` directory is the complete static website. Its root opens English by default; the language menu offers English and Chinese, and `/en/` and `/zh/` contain the parallel courses. Both use `shared/` for the original RHC observations and numerical engines, and `vendor/` for local KaTeX and fonts. No server-side computation, credentials or patient-data upload is needed.
 
-All internal URLs are relative. The same build works at `https://OWNER.github.io/` and at `https://OWNER.github.io/learning-tmle/`. Keep the complete `dist/` directory structure, including each edition’s `chapters/` directory: the entry page fetches the selected chapter on demand. There is no Vite `base` setting to change.
+All internal URLs are relative. The same build works at `https://OWNER.github.io/` and at `https://xinyuejia.github.io/learning_tmle/`. Keep the complete `dist/` directory structure, including each edition’s `chapters/` directory: the entry page fetches the selected chapter on demand. There is no Vite `base` setting to change.
 
 ## Files to commit
 
-Commit `.github/`, `scripts/`, `shared/`, `en/`, `zh/`, `tests/`, `.gitignore`, `README.md`, `PUBLISHING.md`, `package.json`, `pnpm-lock.yaml` and `editions.json`. Keep the original reference materials and data attribution. The ignore rules exclude dependencies, the generated `dist/`, local evidence in `output/` and ZIP bundles in `releases/`. Actions rebuilds and publishes only `dist/`.
+Commit `.github/`, `scripts/`, `shared/`, `en/`, `zh/`, `tests/`, `.gitignore`, `README.md`, `PUBLISHING.md`, `DEVELOPMENT.md`, `package.json`, `pnpm-lock.yaml` and `editions.json`. Keep reader-facing references and data attribution. Local working materials and author records are ignored. The ignore rules exclude dependencies, the generated `dist/`, local evidence in `output/` and ZIP bundles in `releases/`. Actions rebuilds and publishes only `dist/`. Progress/verification logs, reviews, chapter handoffs, archived READMEs and working reference snapshots are local-only: `en/docs/` except this guide, `zh/docs/`, both `reviews/` directories and `zh/reference/`. They are also excluded from public ZIP bundles. Existing Git history is unaffected by these ignore rules.
 
-The local project is initialised on `main`; no remote is configured. After the initial commit, this checkout can proceed to adding a remote and pushing. [The Chinese publishing guide](../../PUBLISHING.md) includes initialisation, staging and push commands, the full submission table and troubleshooting steps.
+This checkout is cloned from `https://github.com/XinyueJia/learning_tmle.git`; `main` tracks `origin/main`. Contributor setup is described in [DEVELOPMENT.md](../../DEVELOPMENT.md). [The Chinese publishing guide](../../PUBLISHING.md) includes initialisation, staging and push commands, the full submission table and troubleshooting steps.
 
 ## Publish when ready
 
-1. Create an empty repository named `learning-tmle`, then commit and push the documented source files.
+1. Create an empty repository named `learning_tmle`, then commit and push the documented source files.
 2. Under **Settings → Pages → Build and deployment**, choose **GitHub Actions**.
 3. In **Actions**, select **Publish Learning TMLE to GitHub Pages**, choose **Run workflow**, and select the default branch. The workflow must already be present on that branch. Only the default branch can enter the deployment job.
 4. The workflow builds both editions, checks the artifact, runs the available numerical/content tests and Chromium browser checks under a repository prefix, and uploads only `dist/`. The deployment job publishes the uploaded artifact to the `github-pages` environment.

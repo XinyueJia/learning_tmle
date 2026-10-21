@@ -11,3 +11,11 @@ output/
 # Local Python bytecode
 __pycache__/
 *.py[cod]
+
+# Local author records, audits, handoffs and original working materials
+/en/docs/*
+!/en/docs/PUBLISHING.md
+/zh/docs/
+/en/reviews/
+/zh/reviews/
+/zh/reference/
